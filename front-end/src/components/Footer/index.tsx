@@ -3,11 +3,10 @@ export const Footer = () => {
     <div className="bg-gray-100 dark:bg-gray-800">
       <div className="container mx-auto px-10 lg:px-28 py-10 flex flex-col lg:grid grid-cols-4 gap-5">
         <div className="flex flex-col">
-          <span className="text-gray-800 dark:text-gray-300">
-            Jalan Kusuma Bhakti no 13 Kelurahan Kubu Gulai Bancah, Kota
-            Bukittinggi, Sumatra Barat
-          </span>
-          <p className="text-gray-800 dark:text-gray-300">bcbkt3@gmail.com</p>
+          <span className="text-gray-800 dark:text-gray-300">Mendalo</span>
+          <p className="text-gray-800 dark:text-gray-300">
+            RossiCake@gmail.com
+          </p>
           <span className="text-gray-800 dark:text-gray-300">08123456789</span>
         </div>
 
@@ -60,8 +59,7 @@ export const Footer = () => {
 
         <div className="logo flex flex-col">
           <span className="text-gray-800 dark:text-gray-300">
-            © 2020 BC HNI Bukittinggi 3. All Right Reserved. Design by Quls
-            Projects
+            © 2025 Rossi Cake. All Right Reserved. Design by Team PPSI Projects
           </span>
           <div className="logo w-20 h-5 bg-green-400 dark:bg-green-500"></div>
         </div>

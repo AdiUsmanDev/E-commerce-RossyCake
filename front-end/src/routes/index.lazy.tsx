@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import GridItem from "@/components/GridItem";
 import { Box, Lock, Search, Settings, Sparkles } from "lucide-react";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
+import { GuestLayouts } from "@/components/Layouts/GuestLayout";
 
 export const Route = createLazyFileRoute("/")({
   component: RouteComponent,
@@ -21,13 +22,15 @@ export const Route = createLazyFileRoute("/")({
 function RouteComponent() {
   return (
     <>
-      <div className="container mx-auto px-10 lg:px-28 pt-24 md:py-5 flex flex-col gap-10">
-        <HeroSection />
-        <Categories />
-        <NewArrival />
-        <Adds />
-        <Promotion />
-      </div>
+      <GuestLayouts>
+        <div className="container mx-auto px-10 lg:px-28 pt-24 md:py-5 flex flex-col gap-10">
+          <HeroSection />
+          <Categories />
+          <NewArrival />
+          <Adds />
+          <Promotion />
+        </div>
+      </GuestLayouts>
     </>
   );
 }
