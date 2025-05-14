@@ -1,4 +1,3 @@
-// FloatingDock.tsx
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
@@ -9,37 +8,22 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { Button as BtnMoving } from "./moving-border";
+
 import { useRef, useState } from "react";
-import { TabsList, TabsTrigger } from "./tabs";
 
 export const FloatingDock = ({
   items,
   desktopClassName,
   mobileClassName,
-  onChange,
-  currentValue,
 }: {
-  items: { title: string; icon: React.ReactNode; value: string }[];
+  items: { title: string; icon: React.ReactNode; href: string }[];
   desktopClassName?: string;
   mobileClassName?: string;
-  onChange?: (value: string) => void;
-  currentValue?: string;
 }) => {
   return (
     <>
-      <FloatingDockDesktop
-        items={items}
-        className={desktopClassName}
-        onChange={onChange}
-        currentValue={currentValue}
-      />
-      <FloatingDockMobile
-        items={items}
-        className={mobileClassName}
-        onChange={onChange}
-        currentValue={currentValue}
-      />
+      <FloatingDockDesktop items={items} className={desktopClassName} />
+      <FloatingDockMobile items={items} className={mobileClassName} />
     </>
   );
 };
@@ -47,85 +31,64 @@ export const FloatingDock = ({
 const FloatingDockMobile = ({
   items,
   className,
-  onChange,
-  currentValue,
 }: {
-  items: { title: string; icon: React.ReactNode; value: string }[];
+  items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
-  onChange?: (value: string) => void;
-  currentValue?: string;
 }) => {
   const [open, setOpen] = useState(false);
   return (
-    <TabsList className="bg-transparent">
-      <div className={cn("relative block md:hidden", className)}>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              layoutId="nav"
-              className="absolute inset-x-0 bottom-full mb-2 flex flex-col gap-2"
-            >
-              {items.map((item, idx) => (
-                <motion.div
+    <div className={cn("relative block md:hidden", className)}>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            layoutId="nav"
+            className="absolute inset-x-0 bottom-full mb-2 flex flex-col gap-2"
+          >
+            {items.map((item, idx) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: 10,
+                  transition: {
+                    delay: idx * 0.05,
+                  },
+                }}
+                transition={{ delay: (items.length - 1 - idx) * 0.05 }}
+              >
+                <a
+                  href={item.href}
                   key={item.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{
-                    opacity: 0,
-                    y: 10,
-                    transition: {
-                      delay: idx * 0.05,
-                    },
-                  }}
-                  transition={{ delay: (items.length - 1 - idx) * 0.05 }}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900"
                 >
-                  <button
-                    className="flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-                    onClick={() => {
-                      setOpen(false);
-                    }}
-                  >
-                    <TabsTrigger
-                      value={item.value}
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-full transition-colors",
-                        currentValue === item.value
-                          ? "bg-gray-300 dark:bg-neutral-700"
-                          : "bg-gray-50 dark:bg-neutral-900"
-                      )}
-                    >
-                      <div className="h-4 w-4">{item.icon}</div>
-                    </TabsTrigger>
-                  </button>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <BtnMoving
-          containerClassName="h-10 w-10"
-          borderRadius="1.75rem"
-          className="bg-white  dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
-          onClick={() => setOpen(!open)}
-        >
-          <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
-        </BtnMoving>
-      </div>
-    </TabsList>
+                  <div className="h-4 w-4">{item.icon}</div>
+                </a>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-800"
+      >
+        <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
+      </button>
+    </div>
   );
 };
 
 const FloatingDockDesktop = ({
   items,
   className,
-  onChange,
-  currentValue,
 }: {
-  items: { title: string; icon: React.ReactNode; value: string }[];
+  items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
-  onChange?: (value: string) => void;
-  currentValue?: string;
 }) => {
   let mouseX = useMotionValue(Infinity);
   return (
@@ -134,19 +97,11 @@ const FloatingDockDesktop = ({
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
         "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex dark:bg-neutral-900",
-        className
+        className,
       )}
     >
       {items.map((item) => (
-        <IconContainer
-          key={item.title}
-          mouseX={mouseX}
-          title={item.title}
-          icon={item.icon}
-          value={item.value}
-          isActive={item.value === currentValue}
-          onClick={onChange}
-        />
+        <IconContainer mouseX={mouseX} key={item.title} {...item} />
       ))}
     </motion.div>
   );
@@ -156,21 +111,18 @@ function IconContainer({
   mouseX,
   title,
   icon,
-  value,
-  onClick,
-  isActive,
+  href,
 }: {
   mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
-  value: string;
-  onClick?: (value: string) => void;
-  isActive?: boolean;
+  href: string;
 }) {
   let ref = useRef<HTMLDivElement>(null);
 
   let distance = useTransform(mouseX, (val) => {
     let bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+
     return val - bounds.x - bounds.width / 2;
   });
 
@@ -181,7 +133,7 @@ function IconContainer({
   let heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [20, 40, 20],
   );
 
   let width = useSpring(widthTransform, {
@@ -209,18 +161,13 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <button onClick={() => onClick?.(value)}>
+    <a href={href}>
       <motion.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={cn(
-          "relative flex aspect-square items-center justify-center rounded-full",
-          isActive
-            ? "bg-gray-300 dark:bg-neutral-700"
-            : "bg-gray-200 dark:bg-neutral-800"
-        )}
+        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800"
       >
         <AnimatePresence>
           {hovered && (
@@ -241,6 +188,6 @@ function IconContainer({
           {icon}
         </motion.div>
       </motion.div>
-    </button>
+    </a>
   );
 }
