@@ -7,6 +7,7 @@ const mysql = require("mysql2");
 const { getUsers } = require('./users');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 const SECRET_KEY = "secret123";
@@ -96,6 +97,9 @@ app.post('/register', async (req, res) => {
 
 
 //app.use('/productapi', productRoutes);
+
+
+
 
 app.listen(3000, () => {
   console.log("Server running on http://localhost:3000");
