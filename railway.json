@@ -1,0 +1,7 @@
+{
+    "build": {
+      "builder": "NIXPACKS",
+      "buildCommand": "cd login-register && npm install",
+      "startCommand": "cd login-register && npm start"
+    }
+  }
