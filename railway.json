@@ -1,7 +1,13 @@
 {
     "build": {
+        "env": {
+      "NODE_ENV": "production"
+    },
       "builder": "NIXPACKS",
       "buildCommand": "cd login-register && npm install",
       "startCommand": "cd login-register && npm start"
-    }
+        
+    },
+    "rootDirectory": "login-register"
   }
+
