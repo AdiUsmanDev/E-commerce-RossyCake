@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginIndexImport } from './routes/login/index'
+import { Route as AdminIndexImport } from './routes/admin/index'
 import { Route as UserAccountIndexImport } from './routes/user/account/index'
 
 // Create Virtual Routes
@@ -41,6 +42,12 @@ const LoginIndexRoute = LoginIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AdminIndexRoute = AdminIndexImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const UserAccountIndexRoute = UserAccountIndexImport.update({
   id: '/user/account/',
   path: '/user/account/',
@@ -56,6 +63,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexImport
       parentRoute: typeof rootRoute
     }
     '/login/': {
@@ -86,6 +100,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
   '/shop': typeof ShopIndexLazyRoute
   '/user/account': typeof UserAccountIndexRoute
@@ -93,6 +108,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
   '/shop': typeof ShopIndexLazyRoute
   '/user/account': typeof UserAccountIndexRoute
@@ -101,6 +117,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
   '/shop/': typeof ShopIndexLazyRoute
   '/user/account/': typeof UserAccountIndexRoute
@@ -108,15 +125,16 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/shop' | '/user/account'
+  fullPaths: '/' | '/admin' | '/login' | '/shop' | '/user/account'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/shop' | '/user/account'
-  id: '__root__' | '/' | '/login/' | '/shop/' | '/user/account/'
+  to: '/' | '/admin' | '/login' | '/shop' | '/user/account'
+  id: '__root__' | '/' | '/admin/' | '/login/' | '/shop/' | '/user/account/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   ShopIndexLazyRoute: typeof ShopIndexLazyRoute
   UserAccountIndexRoute: typeof UserAccountIndexRoute
@@ -124,6 +142,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   ShopIndexLazyRoute: ShopIndexLazyRoute,
   UserAccountIndexRoute: UserAccountIndexRoute,
@@ -140,6 +159,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/admin/",
         "/login/",
         "/shop/",
         "/user/account/"
@@ -147,6 +167,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/admin/": {
+      "filePath": "admin/index.tsx"
     },
     "/login/": {
       "filePath": "login/index.tsx"

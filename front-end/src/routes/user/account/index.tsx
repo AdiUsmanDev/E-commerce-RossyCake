@@ -76,7 +76,7 @@ function RouteComponent() {
   ];
   return (
     <GuestLayouts>
-      <div className="container mt-12 mx-auto px-5 md:px-28 md:h-[70vh] py-10">
+      <div className="container mt-12 mx-auto px-5 md:px-28  py-10">
         <Tabs
           defaultValue="editProfile"
           className="w-full relative  flex gap-3"
