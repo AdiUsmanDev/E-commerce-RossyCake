@@ -35,8 +35,9 @@ import {
 } from "@/components/ui/accordion";
 import { Bell, CheckCircle, Ticket } from "lucide-react";
 import { GuestLayouts } from "@/components/Layouts/GuestLayout";
+import Users from "@/modules/user";
 export const Route = createFileRoute("/user/account/")({
-  component: RouteComponent,
+  component: Users,
 });
 
 function RouteComponent() {

@@ -1,9 +1,9 @@
 "use client";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import Admin from "@/modules/Admin";
 
-export const Route = createFileRoute("/admin/")({
+export const Route = createLazyFileRoute("/admin/")({
   component: RouteComponent,
 });
 

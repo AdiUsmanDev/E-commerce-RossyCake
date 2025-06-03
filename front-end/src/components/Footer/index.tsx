@@ -1,3 +1,10 @@
+import {
+  IconBrandFacebook,
+  IconBrandInstagram,
+  IconBrandTiktok,
+  IconBrandWhatsapp,
+} from "@tabler/icons-react";
+
 export const Footer = () => {
   return (
     <div className="bg-gray-100 dark:bg-gray-800">
@@ -43,16 +50,16 @@ export const Footer = () => {
           <span className="text-gray-800 dark:text-gray-300">Contact Us</span>
           <ul className="flex gap-2">
             <li className="bg-green-200 dark:bg-green-600 p-1 rounded-full hover:bg-green-400 dark:hover:bg-green-500 transition">
-              <img src="/svg/wa.svg" className="w-8 h-auto" alt="wa-icon" />
+              <IconBrandWhatsapp />
             </li>
             <li className="bg-green-200 dark:bg-green-600 p-1 rounded-full hover:bg-green-400 dark:hover:bg-green-500 transition">
-              <img src="/svg/ig.svg" className="w-8 h-auto" alt="ig-icon" />
+              <IconBrandInstagram />
             </li>
             <li className="bg-green-200 dark:bg-green-600 p-1 rounded-full hover:bg-green-400 dark:hover:bg-green-500 transition">
-              <img src="/svg/fb.svg" className="w-8 h-auto" alt="fb-icon" />
+              <IconBrandFacebook />
             </li>
             <li className="bg-green-200 dark:bg-green-600 p-1 rounded-full hover:bg-green-400 dark:hover:bg-green-500 transition">
-              <img src="/svg/tt.svg" className="w-8 h-auto" alt="tt-icon" />
+              <IconBrandTiktok />
             </li>
           </ul>
         </div>
