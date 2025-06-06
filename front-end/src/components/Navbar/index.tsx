@@ -2,22 +2,21 @@ import { Link } from "@tanstack/react-router";
 import { FloatingNav } from "../ui/floating-navbar";
 import DarkMode from "../DarkMode";
 
-const navItems = [
-  { name: "Home", link: "/" },
-  // { name: "About ", link: "/about/aboutUs" },
-  // { name: "Product", link: "/about/aboutProduct" },
-  { name: "Shop", link: "/shop" },
-  // { name: "Login", link: "/login" },
-  // { name: "akun", link: "/user/account" },
-];
+// In a real app, this would be in its own file and use React Context.
+// Set isLoggedIn to true to see "Akun", false to see "Login".
+const useAuth = () => {
+  const isLoggedIn = false; // <-- CHANGE THIS TO TEST
+  return { isLoggedIn };
+};
 
-const NavbarMobile = () => (
+const NavbarMobile = ({ navItems }) => (
   <div className="relative w-full px-28 lg:hidden">
+    {/* The mobile navbar now receives dynamic items */}
     <FloatingNav navItems={navItems} />
   </div>
 );
 
-const NavbarPc = () => (
+const NavbarPc = ({ isLoggedIn }) => (
   <nav className="py-3 border-b-2 hidden lg:flex">
     <div className="container mx-auto flex items-center justify-between">
       {/* Logo Section */}
@@ -27,30 +26,57 @@ const NavbarPc = () => (
         </Link>
       </div>
 
-      {/* Navbar Items */}
+      {/* Static Navbar Items */}
       <div className="hidden lg:flex items-center space-x-6">
-        {navItems.map(({ name, link }) => (
-          <Link key={link} to={link} className="px-5 py-2 rounded-full">
-            {name}
-          </Link>
-        ))}
+        <Link to="/" className="px-5 py-2 rounded-full">
+          Home
+        </Link>
+        <Link to="/shop" className="px-5 py-2 rounded-full">
+          Shop
+        </Link>
 
         <DarkMode />
-        <Link
-          to="/user/account"
-          className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full"
-        >
-          <span>Akun</span>
-          <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
-        </Link>
+
+        {/* --- Conditional Login/Account Button --- */}
+        {isLoggedIn ? (
+          <Link
+            to="/user/account/" // Correct path for the account page
+            className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full"
+          >
+            <span>Akun</span>
+            <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
+          </Link>
+        ) : (
+          <Link
+            to="/login" // Correct path for the login page
+            className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full"
+          >
+            <span>Login</span>
+            <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
+          </Link>
+        )}
       </div>
     </div>
   </nav>
 );
 
-export const Navbar = () => (
-  <>
-    <NavbarPc />
-    <NavbarMobile />
-  </>
-);
+export const Navbar = () => {
+  const { isLoggedIn } = useAuth();
+
+  // Define nav items dynamically based on auth state for the mobile menu
+  const navItems = [
+    { name: "Home", link: "/" },
+    { name: "Shop", link: "/shop" },
+    // Add "Akun" or "Login" to the mobile nav items
+    isLoggedIn
+      ? { name: "Akun", link: "/account/user" }
+      : { name: "Login", link: "/login" },
+  ];
+
+  return (
+    <>
+      <NavbarPc isLoggedIn={isLoggedIn} />
+      <NavbarMobile navItems={navItems} />
+    </>
+  );
+};

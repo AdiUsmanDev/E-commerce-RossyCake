@@ -1,13 +1,45 @@
+"use client"; // Diperlukan untuk useState dan useEffect di Next.js App Router
+
+import React, { useState, useEffect } from "react"; // Impor useEffect
 import { GuestLayouts } from "@/components/Layouts/GuestLayout";
 import HeaderMarket from "./headerMarket";
 import ListProduct from "./listProduct";
 import { CartItem, Product } from "@/types/product.types";
 import { shopProducts } from "@/data/dumyProducts";
-import { useState } from "react";
 
-const shop = () => {
-  const [products, setProducts] = useState<Product[]>(shopProducts); // Daftar semua produk
-  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Item di keranjang
+const ShopPage = () => { // Mengganti nama komponen menjadi PascalCase (praktik umum)
+  const [products, setProducts] = useState<Product[]>(shopProducts);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // --- EFEK UNTUK MEMUAT KERANJANG DARI LOCALSTORAGE ---
+  // Berjalan hanya sekali saat komponen pertama kali di-mount.
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem("shopCart");
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart);
+        if (Array.isArray(parsedCart)) {
+          setCartItems(parsedCart);
+        }
+      }
+    } catch (error) {
+      console.error("Gagal memuat keranjang dari localStorage:", error);
+      // Jika data korup, hapus data yang salah dari localStorage
+      localStorage.removeItem("shopCart");
+    }
+  }, []); // Dependency array kosong berarti efek ini hanya berjalan sekali.
+
+  // --- EFEK UNTUK MENYIMPAN KERANJANG KE LOCALSTORAGE ---
+  // Berjalan setiap kali state `cartItems` berubah.
+  useEffect(() => {
+    // Kita bisa menambahkan pengecekan agar tidak menyimpan array kosong saat awal render,
+    // tapi menyimpan setiap perubahan (termasuk menjadi kosong) adalah pola yang aman dan sederhana.
+    try {
+      localStorage.setItem("shopCart", JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Gagal menyimpan keranjang ke localStorage:", error);
+    }
+  }, [cartItems]); // Dependency array berisi `cartItems`.
 
   // Fungsi untuk menangani penambahan ke keranjang
   const handleAddToCart = (productToAdd: Product) => {
@@ -24,19 +56,17 @@ const shop = () => {
       }
       return [...prevItems, { ...productToAdd, quantity: 1 }];
     });
-    // Optional: Buka modal keranjang setelah menambah item
-    // setIsCartModalOpen(true); // Anda perlu state isCartModalOpen di sini jika ingin kontrol dari sini
   };
 
   // Fungsi untuk update kuantitas item di keranjang
   const handleUpdateCartItemQuantity = (
     productId: string,
-    quantity: number
+    newQuantity: number
   ) => {
     setCartItems(
       (prevItems) =>
         prevItems
-          .map((item) => (item.id === productId ? { ...item, quantity } : item))
+          .map((item) => (item.id === productId ? { ...item, quantity: newQuantity } : item))
           .filter((item) => item.quantity > 0) // Hapus jika kuantitas jadi 0 atau kurang
     );
   };
@@ -51,12 +81,10 @@ const shop = () => {
   // Fungsi untuk mengosongkan keranjang
   const handleClearCart = () => {
     setCartItems([]);
+    // Menghapus item dari localStorage secara eksplisit juga merupakan praktik yang baik.
+    // Meskipun useEffect di atas akan menyimpan array kosong, removeItem lebih jelas.
+    localStorage.removeItem("shopCart");
   };
-
-  // Jika Anda perlu fetch data produk dari API:
-  // useEffect(() => {
-  //   // fetchProducts().then(data => setProducts(data));
-  // }, []);
 
   return (
     <GuestLayouts>
@@ -73,4 +101,4 @@ const shop = () => {
   );
 };
 
-export default shop;
+export default ShopPage; // Mengganti nama ekspor menjadi PascalCase

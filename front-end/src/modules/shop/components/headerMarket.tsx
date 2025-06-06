@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Input } from "@/components/ui/input";
 import { CartItem, Product } from "@/types/product.types";
+import { useNavigate } from "@tanstack/react-router";
 
 interface HeaderMarketProps {
   cartItems: CartItem[];
@@ -46,7 +47,7 @@ const HeaderMarket = ({
   const [openSearch, setOpenSearch] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
-
+  const navigate = useNavigate  ();
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -63,6 +64,11 @@ const HeaderMarket = ({
     // Logika untuk menampilkan hasil pencarian bisa lebih kompleks,
     // untuk sekarang, CommandList akan tetap statis atau bisa diisi dari 'val' jika ada data.
     setOpenSearch(val.trim().length > 0);
+  };
+
+  const handleCheckout = () => {
+    // Navigasi ke halaman checkout
+    navigate({ to: "/shop/checkout" }); // Sesuaikan dengan path halaman checkout Anda
   };
 
   const totalCartQuantity = cartItems.reduce(
@@ -248,7 +254,10 @@ const HeaderMarket = ({
                   <Button variant="outline" onClick={onClearCart}>
                     Kosongkan Keranjang
                   </Button>
-                  <Button className="flex-grow bg-sky-600 hover:bg-sky-700">
+                  <Button
+                    className="w-full sm:w-auto flex-grow bg-sky-600 hover:bg-sky-700"
+                    onClick={handleCheckout}
+                  >
                     Lanjut ke Pembayaran
                   </Button>
                 </ModalFooter>

@@ -1,3 +1,3 @@
-import shop from "./components/shop";
+import ShopPage from "./components/shop";
 
-export default shop;
+export default ShopPage;
