@@ -1,0 +1,237 @@
+// datasource dan generator
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ===================== ENUMS =====================
+// Menggunakan Enum membuat data lebih konsisten dan aman
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+}
+
+enum VoucherType {
+  PERCENTAGE
+  FIXED
+}
+
+// ===================== MODEL INTI =====================
+
+model users {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  email      String   @unique @db.VarChar(100)
+  password   String   @db.VarChar(100)
+  phone      String?  @db.VarChar(20)
+  role       Role     @default(CUSTOMER) // Menggunakan Enum Role
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relasi
+  addresses  addresses[]
+  orders     orders[]
+  feedbacks  feedbacks[]
+  expenses   expenses[] // Admin bisa membuat expenses
+}
+
+model products {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(12, 2)
+  stock       Int
+  category    String?  @db.VarChar(100)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relasi
+  order_items order_items[]
+}
+
+model orders {
+  id               Int         @id @default(autoincrement())
+  customer_id      Int
+  status           OrderStatus @default(PENDING_PAYMENT)
+  order_date       DateTime    @default(now())
+  sub_total        Decimal     @db.Decimal(12, 2)
+  shipping_cost    Decimal     @db.Decimal(12, 2)
+  discount_amount  Decimal     @default(0) @db.Decimal(12, 2)
+  total_price      Decimal     @db.Decimal(12, 2)
+  shipping_address Json
+  shipping_method  String      @db.VarChar(100)
+  tracking_number  String?     @db.VarChar(100)
+  voucher_id       Int?
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  
+  // Relasi
+  customer         users           @relation(fields: [customer_id], references: [id], onDelete: Restrict)
+  voucher          vouchers?       @relation(fields: [voucher_id], references: [id], onDelete: SetNull)
+  order_items      order_items[]
+  payment          payments?
+  feedbacks        feedbacks[]
+  custom_order     custom_orders?
+
+  @@index([customer_id])
+  @@index([voucher_id])
+}
+
+model order_items {
+  id         Int     @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  quantity   Int
+  price      Decimal @db.Decimal(12, 2)
+
+  // Relasi
+  order   orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product products @relation(fields: [product_id], references: [id], onDelete: Restrict)
+
+  @@index([order_id])
+  @@index([product_id])
+}
+
+// ===================== MODEL BAHAN BAKU =====================
+
+model raw_materials {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique @db.VarChar(150)
+  stock         Decimal  @db.Decimal(12, 2)
+  unit          String   @db.VarChar(20) // Contoh: "gram", "ml", "pcs"
+  reorder_level Decimal  @default(0) @db.Decimal(12, 2) // Batas stok minimum
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+
+// ===================== MODEL PENDUKUNG =====================
+
+model addresses {
+  id          Int     @id @default(autoincrement())
+  user_id     Int
+  label       String  @db.VarChar(100)
+  recipient   String  @db.VarChar(100)
+  phone       String  @db.VarChar(20)
+  street      String  @db.Text
+  city        String  @db.VarChar(100)
+  province    String  @db.VarChar(100)
+  postal_code String  @db.VarChar(10)
+  is_default  Boolean @default(false)
+
+  // Relasi
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model vouchers {
+  id               Int         @id @default(autoincrement())
+  code             String      @unique @db.VarChar(50)
+  description      String?     @db.Text
+  discount_value   Decimal     @db.Decimal(12, 2)
+  discount_type    VoucherType // Menggunakan Enum
+  max_discount     Decimal?    @db.Decimal(12, 2)
+  min_purchase     Decimal     @default(0) @db.Decimal(12, 2)
+  valid_from       DateTime    @default(now())
+  valid_until      DateTime
+  usage_limit      Int         // Maksimal voucher bisa digunakan secara total
+  current_usage    Int         @default(0) // Berapa kali voucher ini sudah dipakai
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  
+  // Relasi
+  orders           orders[]
+}
+
+model payments {
+  id                       Int           @id @default(autoincrement())
+  order_id                 Int           @unique
+  status                   PaymentStatus @default(PENDING)
+  amount                   Decimal       @db.Decimal(12, 2)
+  payment_method           String?       @db.VarChar(100)
+  payment_gateway          String        @default("midtrans") @db.VarChar(50)
+  gateway_transaction_id   String?       @unique @db.VarChar(255)
+  payment_code             String?       @db.Text
+  payment_url              String?       @db.Text
+  created_at               DateTime      @default(now())
+  paid_at                  DateTime?
+  expires_at               DateTime
+  updated_at               DateTime      @updatedAt
+  
+  // Relasi
+  order   orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  invoice invoices?
+}
+
+model invoices {
+  id              Int      @id @default(autoincrement())
+  payment_id      Int      @unique
+  generated_date  DateTime @default(now())
+  file_url        String   @db.VarChar(255)
+
+  // Relasi
+  payment payments @relation(fields: [payment_id], references: [id], onDelete: Cascade)
+}
+
+model feedbacks {
+  id             Int      @id @default(autoincrement())
+  customer_id    Int
+  order_id       Int      @unique
+  message        String?  @db.Text
+  rating         Int
+  submitted_at   DateTime @default(now())
+
+  // Relasi
+  customer users  @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  order    orders @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([customer_id])
+  @@index([order_id])
+}
+
+model expenses {
+  id            Int      @id @default(autoincrement())
+  user_id       Int?     // Diubah dari admin_id menjadi user_id
+  expense_type  String?  @db.VarChar(100)
+  amount        Decimal? @db.Decimal(10, 2)
+  expense_date  DateTime?@db.Date
+  notes         String?  @db.Text
+  
+  // Relasi ke 'users', bukan lagi 'admins'
+  user          users?   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id])
+}
+
+model custom_orders {
+  id                   Int       @id @default(autoincrement())
+  order_id             Int?      @unique
+  request_description  String?   @db.Text
+  due_date             DateTime? @db.Date
+  notes                String?   @db.Text
+  
+  // Relasi
+  orders orders? @relation(fields: [order_id], references: [id], onDelete: Cascade)
+}
