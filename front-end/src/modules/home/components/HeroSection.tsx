@@ -5,11 +5,19 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { heroImages } from "@/data/Banner";
+import Autoplay from "embla-carousel-autoplay";
 
 export const HeroSection = () => {
   return (
     <div className="w-full ">
-      <Carousel className="w-full  ">
+      <Carousel
+        className="w-full  "
+        plugins={[
+          Autoplay({
+            delay: 2000,
+          }),
+        ]}
+      >
         <CarouselContent>
           {heroImages.map((item, index) => (
             <CarouselItem key={index}>

@@ -1,13 +1,12 @@
 // src/app/user/account/RouteComponent.tsx
-"use client"; // Jika menggunakan Next.js App Router
+"use client";
 
-import React, { JSX, ReactNode } from "react"; // useState tidak lagi dibutuhkan di sini jika default tab sudah cukup
+import React, { JSX, ReactNode, useEffect } from "react";
 import { GuestLayouts } from "@/components/Layouts/GuestLayout";
-import { FloatingDock } from "@/components/ui/floating-dock"; // Asumsi path ini benar
+import { FloatingDock } from "@/components/ui/floating-dock";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import AccountNavigation from "./AccountNavigation";
-import DisplayEditProfile from "./DisplayEditProfile";
 import DisplayBooking from "./DisplayBooking";
 import DisplayNotification from "./DisplayNotification";
 import DisplayVoucher from "./DisplayVoucher";
@@ -17,61 +16,83 @@ import {
   IconNotification,
   IconUser,
 } from "@tabler/icons-react";
-// Impor komponen-komponen yang sudah dipisah
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/redux/store";
+import { fetchUserProfile, logout } from "@/lib/redux/slices/authSlice";
+import { useNavigate } from "@tanstack/react-router";
+import { LoaderCircle } from "lucide-react";
+import DisplayEditProfile from "./DisplayEditProfile";
 
-// Definisikan tipe untuk link jika belum ada secara global
+// Interface dan komponen wrapper tidak perlu diubah
 interface NavLinkItem {
   title: string;
-  value: string; // Digunakan untuk TabsTrigger dan TabsContent value
+  value: string;
   icon: JSX.Element;
-  href?: string; // Opsional, mungkin tidak digunakan jika Tabs yang mengontrol navigasi
 }
-
-// Komponen wrapper sederhana untuk konten Tab, bisa juga di-inline
-const DisplayWrapper = ({ children }: { children: ReactNode }) => {
-  return (
-    <Card className="h-full w-full shadow-none border-0 md:border md:shadow-sm dark:border-neutral-700">
-      {children}
-    </Card>
-  );
-};
+const DisplayWrapper = ({ children }: { children: ReactNode }) => (
+  <Card className="h-full w-full shadow-none border-0 md:border md:shadow-sm dark:border-neutral-700">
+    {children}
+  </Card>
+);
 
 const Users = () => {
-  // Data links sekarang didefinisikan di sini agar bisa di-pass
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  // Ambil semua state yang relevan dari Redux
+  const { user, token, status } = useSelector((state: RootState) => state.auth);
+
+  // Efek untuk mengambil data user jika belum ada (misal: setelah refresh halaman)
+  useEffect(() => {
+    // Hanya dispatch jika ada token, tapi belum ada data user, dan tidak sedang dalam proses fetching
+    if (token && !user && status !== "loading") {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch, token, user, status]);
+
+  // Efek untuk redirect jika tidak terautentikasi
+  useEffect(() => {
+    // Jika proses auth sudah selesai (berhasil/gagal) dan tidak ada token, redirect ke halaman login
+    if (!token && (status === "succeeded" || status === "failed")) {
+      navigate({ to: "/auth" });
+    }
+  }, [token, status, navigate]);
+
   const accountLinks: NavLinkItem[] = [
-    {
-      title: "Profil Saya",
-      value: "editProfile",
-      icon: <IconUser />,
-    },
-    {
-      title: "Pesanan Saya",
-      value: "orders",
-      icon: <IconBasket />,
-    },
-    {
-      title: "Notifikasi",
-      value: "notifications",
-      icon: <IconNotification />,
-    },
-    {
-      title: "Voucher Saya",
-      value: "voucher",
-      icon: <IconDiscount />,
-    },
+    { title: "Profil Saya", value: "editProfile", icon: <IconUser /> },
+    { title: "Pesanan Saya", value: "orders", icon: <IconBasket /> },
+    { title: "Notifikasi", value: "notifications", icon: <IconNotification /> },
+    { title: "Voucher Saya", value: "voucher", icon: <IconDiscount /> },
   ];
 
-  // Contoh data pengguna untuk AccountNavigation
-  const currentUserData = {
-    name: "Budi Perkasa",
-    address: "Jl. Merdeka No. 17, Jakarta",
-    avatarUrl: "https://github.com/shadcn.png", // Ganti dengan URL avatar pengguna
+  const handleUserLogout = () => {
+    dispatch(logout());
+    // Redirect ke halaman utama setelah logout
+    navigate({ to: "/" });
   };
 
-  const handleUserLogout = () => {
-    console.log("User logged out");
-    // Implementasi logika logout (hapus token, redirect ke login, dll.)
-  };
+  // --- KUNCI SINKRONISASI ---
+  // Tampilkan loader jika:
+  // 1. Sedang dalam proses loading awal ('idle' atau 'loading').
+  // 2. Ada token tapi data 'user' belum ada (menunggu fetchUserProfile selesai).
+  const isStillLoading = status === "loading" || (token && !user);
+
+  if (isStillLoading) {
+    return (
+      <GuestLayouts>
+        <div className="container flex items-center justify-center min-h-[calc(100vh-10rem)]">
+          <LoaderCircle className="h-10 w-10 animate-spin" />
+        </div>
+      </GuestLayouts>
+    );
+  }
+
+  // Jika tidak loading dan tetap tidak ada user (misal: token tidak valid), redirect
+  // Ini adalah pengaman tambahan
+  if (!user) {
+    // Atau tampilkan pesan error, redirect lebih baik untuk UX
+    navigate({ to: "/auth" });
+    return null; // Render null sambil menunggu navigasi
+  }
 
   return (
     <GuestLayouts>
@@ -80,23 +101,27 @@ const Users = () => {
           defaultValue="editProfile"
           className="w-full relative flex flex-col md:flex-row gap-4 lg:gap-6"
         >
-          {/* Navigasi Desktop (Sidebar) */}
+          {/* Navigasi (Desktop) */}
           <div className="navigation hidden md:block md:w-1/4 lg:w-1/5 shrink-0">
             <AccountNavigation
-              links={accountLinks}
-              userData={currentUserData}
+              userData={{
+                name: user.name,
+                address: "Alamat belum diatur", // Placeholder
+                avatarUrl: `https://ui-avatars.com/api/?name=${user.name?.replace(
+                  / /g,
+                  "+"
+                )}&background=random`,
+              }}
               onLogout={handleUserLogout}
+              links={accountLinks}
             />
           </div>
 
           {/* Konten Tab */}
           <div className="display w-full md:w-3/4 lg:w-4/5 h-auto md:min-h-[calc(100vh-10rem)]">
-            {" "}
-            {/* min-h untuk desktop */}
             <DisplayWrapper>
-              {" "}
-              {/* Wrapper Card untuk semua TabsContent */}
               <TabsContent value="editProfile" className="mt-0">
+                {/* Komponen child sekarang aman untuk dirender karena 'user' sudah pasti ada */}
                 <DisplayEditProfile />
               </TabsContent>
               <TabsContent value="orders" className="mt-0">
@@ -111,33 +136,18 @@ const Users = () => {
             </DisplayWrapper>
           </div>
 
-          {/* Navigasi Mobile (Floating Dock) */}
-          {/* FloatingDock muncul di bagian bawah pada layar kecil */}
+          {/* Navigasi Bawah (Mobile) */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 h-20 pb-envSafe flex items-center justify-center z-50">
-            {/* Background untuk area FloatingDock agar tidak transparan */}
             <div className="absolute bottom-0 left-0 right-0 h-full bg-background/80 dark:bg-neutral-900/80 backdrop-blur-sm border-t dark:border-neutral-700"></div>
             <FloatingDock
               items={accountLinks.map((link) => ({
-                // FloatingDock mungkin perlu format item berbeda
-                label: link.title,
-                icon: React.cloneElement(link.icon, { className: "w-5 h-5" }), // Sesuaikan styling ikon untuk dock
-                value: link.value, // Pastikan FloatingDock menggunakan ini untuk TabsTrigger
-                // onClick: () => {} // Jika FloatingDock tidak otomatis trigger Tabs
+                title: link.title, // ✅ sesuai
+                icon: React.cloneElement(link.icon, {
+                  className: "w-5 h-5",
+                }),
+                href: link.value, // ✅ `value` diganti jadi `href`
               }))}
-              // Anda mungkin perlu TabsList dan TabsTrigger di sini jika FloatingDock tidak menanganinya
-              // Contoh: Ganti FloatingDock dengan TabsList horizontal sederhana untuk mobile
-              className="relative z-10" // className untuk FloatingDock itu sendiri
             />
-            {/* Jika FloatingDock tidak terintegrasi dengan Tabs, Anda perlu TabsList di sini:
-            <TabsList className="flex justify-around items-center p-1 bg-transparent h-full w-full max-w-md mx-auto relative z-10">
-                {accountLinks.map(link => (
-                    <TabsTrigger key={link.value} value={link.value} className="flex flex-col items-center justify-center h-full p-1 data-[state=active]:text-primary">
-                        {React.cloneElement(link.icon, {className: "w-5 h-5 mb-0.5"})}
-                        <span className="text-xs">{link.title}</span>
-                    </TabsTrigger>
-                ))}
-            </TabsList>
-            */}
           </div>
         </Tabs>
       </div>
@@ -145,4 +155,4 @@ const Users = () => {
   );
 };
 
-export default Users; // Ekspor default jika ini file RouteComponent.tsx
+export default Users;

@@ -1,4 +1,4 @@
-import { ProductProops } from "@/common/types/product.types";
+import { ProductProops } from "@/types/product.types";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,

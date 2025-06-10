@@ -1,5 +1,5 @@
-// src/app/user/account/components/DisplayEditProfile.tsx
-import React, { useState, useEffect } from "react"; // useEffect ditambahkan untuk logging
+import React, { useState, useEffect, FormEvent } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CardHeader,
   CardTitle,
@@ -9,140 +9,213 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-type ProfileData = {
-  fullName: string;
-  phone: string;
-  email: string;
-  password?: string;
-};
-
-// Data awal yang mungkin Anda dapatkan dari API atau props
-const fetchedInitialProfileData: ProfileData = {
-  fullName: "John Doe",
-  phone: "081234567890",
-  email: "johndoe@example.com",
-  password: "", // Biasanya password tidak diambil dari backend untuk ditampilkan
-};
+import { AppDispatch, RootState } from "@/lib/redux/store";
+import { updateUserProfile } from "@/lib/redux/slices/authSlice";
+import { LoaderCircle } from "lucide-react";
+import { UpdateProfilePayload } from "@/services/profile.service";
 
 const DisplayEditProfile = () => {
-  const [edit, setOnEdit] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, status, error } = useSelector((state: RootState) => state.auth);
 
-  type ProfileData = {
-    fullName: string;
-    phone: string;
-    email: string;
-    password: string;
+  // === STATE MANAGEMENT ===
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
+  // State baru untuk melacak apakah ada perubahan pada form
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // === EFFECTS ===
+  // Efek untuk mengisi form saat data 'user' dari Redux tersedia atau berubah
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name ?? "",
+        phone: user.phone ?? "",
+        email: user.email ?? "",
+        password: "",
+      });
+    }
+  }, [user]);
+
+  // Efek untuk mendeteksi perubahan pada form dan mengaktifkan/menonaktifkan tombol simpan
+  useEffect(() => {
+    if (!user || !isEditing) {
+      setHasChanges(false);
+      return;
+    }
+    // Bandingkan data di form dengan data asli dari user
+    const isDataChanged =
+      formData.name !== user.name ||
+      formData.phone !== user.phone ||
+      formData.email !== user.email ||
+      !!formData.password; // Cek juga jika password baru diisi
+
+    setHasChanges(isDataChanged);
+  }, [formData, user, isEditing]);
+
+  // === HANDLERS ===
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 1. Ambil id dan value dari elemen input yang sedang berubah
+    const { id, value } = e.target;
+
+    // 2. Perbarui state
+    setFormData((prev) => ({
+      ...prev, // Salin semua nilai state yang lama
+      [id]: value, // Perbarui nilai untuk key yang sesuai dengan 'id' input
+    }));
+  };
+  const handleSaveChanges = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user || !hasChanges) return;
+
+    // 1. Membuat objek KOSONG untuk menampung perubahan
+    const changes: Partial<UpdateProfilePayload> = {};
+
+    // 2. Memeriksa setiap field satu per satu
+    //    HANYA jika ada perbedaan, data akan dimasukkan ke objek 'changes'
+    if (formData.name !== user.name) changes.name = formData.name;
+    if (formData.phone !== user.phone) changes.phone = formData.phone;
+    if (formData.email !== user.email) changes.email = formData.email;
+    if (formData.password) changes.password = formData.password;
+
+    // 3. Hanya jika objek 'changes' TIDAK KOSONG, data dikirim ke server
+    if (Object.keys(changes).length > 0) {
+      // Hanya objek 'changes' yang dikirim, bukan seluruh 'formData'
+      await dispatch(updateUserProfile(formData as UpdateProfilePayload));
+      // ...
+    }
   };
 
-  const profileData: ProfileData = {
-    fullName: "John Doe",
-    phone: "081234567890",
-    email: "johndoe@example.com",
-    password: "12345678",
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    // Kembalikan data form ke data user semula
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        password: "",
+      });
+    }
   };
+
+  // === RENDER LOGIC ===
+  const isLoading = status === "loading";
+
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <LoaderCircle className="animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <>
       <CardHeader>
-        <CardTitle>Profile</CardTitle>
+        <CardTitle>Profil Saya</CardTitle>
         <CardDescription>
           Kelola informasi profil Anda untuk mengontrol, melindungi dan
-          mengamankan akun
+          mengamankan akun.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4 px-4 pt-2">
+        <form onSubmit={handleSaveChanges} className="space-y-4 px-4 pt-2">
+          {/* ... Input fields (tidak berubah) ... */}
           <div>
-            <Label className="font-bold " htmlFor="fullName">
+            <Label className="font-bold" htmlFor="name">
               Nama Lengkap
             </Label>
             <Input
+              id="name"
               type="text"
-              id="fullName"
-              defaultValue={profileData?.fullName}
+              value={formData.name}
+              onChange={handleInputChange}
+              disabled={!isEditing || isLoading}
               className="mt-2"
-              disabled={!edit}
-              placeholder="masukan nama lengkap"
             />
           </div>
-
           <div>
-            <Label className="font-bold " htmlFor="phone">
+            <Label className="font-bold" htmlFor="phone">
               Nomor Telepon
             </Label>
             <Input
-              type="tel"
               id="phone"
-              disabled={!edit}
-              defaultValue={profileData?.phone}
+              type="tel"
+              value={formData.phone || ""}
+              onChange={handleInputChange}
+              disabled={!isEditing || isLoading}
               className="mt-2"
-              placeholder="masukan phone"
             />
           </div>
-
           <div>
-            <Label className="font-bold " htmlFor="email">
+            <Label className="font-bold" htmlFor="email">
               Email
             </Label>
             <Input
-              type="email"
               id="email"
-              disabled={!edit}
-              defaultValue={profileData?.email}
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              disabled={!isEditing || isLoading}
               className="mt-2"
-              placeholder="masukan email"
             />
           </div>
-          <div>
-            <Label className="font-bold " htmlFor="email">
-              Password
-            </Label>
-            <Input
-              type="password"
-              id="password"
-              disabled={!edit}
-              defaultValue={profileData?.password}
-              className="mt-2"
-            />
+
+          {isEditing && (
+            <div>
+              <Label className="font-bold" htmlFor="password">
+                Password Baru (Opsional)
+              </Label>
+              <Input
+                id="password"
+                type="text"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Isi untuk mengubah password"
+                className="mt-2"
+                disabled={isLoading}
+              />
+            </div>
+          )}
+          {status === "failed" && error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
+
+          {/* Tombol Aksi yang Disempurnakan */}
+          <div className="pt-4 flex gap-2">
+            {!isEditing ? (
+              <Button type="button" onClick={() => setIsEditing(true)}>
+                Edit Profil
+              </Button>
+            ) : (
+              <>
+                <Button type="submit" disabled={isLoading || !hasChanges}>
+                  {isLoading && (
+                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Simpan Perubahan
+                </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={handleCancelEdit}
+                  disabled={isLoading}
+                >
+                  Batal
+                </Button>
+              </>
+            )}
           </div>
         </form>
-        <div className="m-4 btn-action flex gap-2">
-          <Button
-            onClick={() => setOnEdit(true)}
-            className={`transition-all duration-300 ease-in-out transform px-4 py-2 rounded-md border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 hover:shadow-md ${
-              !edit
-                ? "opacity-100 scale-100"
-                : "opacity-0 scale-95 pointer-events-none"
-            }`}
-          >
-            Edit
-          </Button>
-
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setOnEdit(false)}
-              className={`transition-all duration-300 ease-in-out transform px-4 py-2 rounded-md border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 hover:shadow-md ${
-                edit
-                  ? "opacity-100 scale-100"
-                  : "opacity-0 scale-95 pointer-events-none"
-              }`}
-            >
-              cancel
-            </Button>
-            <Button
-              onClick={() => setOnEdit(false)}
-              className={`transition-all duration-300 ease-in-out transform px-4 py-2 rounded-md border border-neutral-300 bg-neutral-100 text-neutral-500 text-sm hover:-translate-y-1 hover:shadow-md ${
-                edit
-                  ? "opacity-100 scale-100"
-                  : "opacity-0 scale-95 pointer-events-none"
-              }`}
-            >
-              selesai
-            </Button>
-          </div>
-        </div>
       </CardContent>
     </>
   );
 };
+
 export default DisplayEditProfile;

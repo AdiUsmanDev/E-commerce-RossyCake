@@ -2,10 +2,10 @@
 
 import { GuestLayouts } from "@/components/Layouts/GuestLayout";
 import { HeroSection } from "./HeroSection";
-import { CategoriesSection } from "./CategoriesSection";
 import { NewArrivalsSection } from "./NewArrivalsSection";
-import { FeaturesSection } from "./FeaturesSection";
+// import { FeaturesSection } from "./FeaturesSection";
 import { PromotionsSection } from "./PromotionsSection";
+import CategoriesSection from "./CategoriesSection";
 
 export function HomePage() {
   return (
@@ -14,7 +14,7 @@ export function HomePage() {
         <HeroSection />
         <CategoriesSection />
         <NewArrivalsSection />
-        <FeaturesSection />
+        {/* <FeaturesSection /> */}
         <PromotionsSection />
       </div>
     </GuestLayouts>

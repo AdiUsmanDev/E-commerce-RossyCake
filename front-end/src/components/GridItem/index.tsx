@@ -1,24 +1,31 @@
-import React from 'react';
+import React from "react";
 import { GlowingEffect } from "../ui/glowing-effect"; // Path ke GlowingEffect Anda
 
 // 1. Interface props diubah: `icon` diganti dengan `imageUrl`
 interface GridItemProps {
   area: string; // Prop 'area' untuk layout grid tetap dipertahankan
-  imageUrl: string; // Prop baru untuk URL gambar
+  imageUrl?: string | null; // Prop baru untuk URL gambar
   title: string;
   description: React.ReactNode;
+  icon?: React.ComponentType;
 }
-
-const GridItem = ({ area, imageUrl, title, description }: GridItemProps) => {
+const GridItem = ({
+  area,
+  imageUrl,
+  title,
+  description,
+  icon,
+}: GridItemProps) => {
   return (
     // Gunakan 'group' untuk efek hover pada elemen anak
-    <li className={`group min-h-[14rem] list-none rounded-2.5xl md:rounded-3xl overflow-hidden ${area}`}>
+    <li
+      className={`group min-h-[14rem] list-none rounded-2.5xl md:rounded-3xl overflow-hidden ${area}`}
+    >
       {/* Container utama sekarang menjadi 'relative' untuk menampung gambar absolut.
         Padding dan border yang sebelumnya ada di div dalam sekarang dipindahkan ke sini jika diperlukan,
         atau kita buat gambar mengisi penuh hingga ke sudut. Untuk efek terbaik, kita akan buat gambar mengisi penuh.
       */}
       <div className="relative h-full w-full">
-
         {/* Efek glow tetap ada dan akan bekerja di atas seluruh area item */}
         <GlowingEffect
           spread={40}

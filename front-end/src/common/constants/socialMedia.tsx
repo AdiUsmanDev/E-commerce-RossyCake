@@ -1,2 +1,2 @@
-import { SocialMediaProps } from "../types/socialMedia";
+import { SocialMediaProps } from "../../types/socialMedia";
 export const SOCIAL_MEDIA: SocialMediaProps[] = [];

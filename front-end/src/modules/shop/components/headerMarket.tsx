@@ -14,26 +14,20 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Command, CommandInput } from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar, Minus, Plus, Search, ShoppingCart, X } from "lucide-react";
+import { Minus, Plus, Search, ShoppingCart, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { CartItem } from "@/common/types/product.types";
+import { CartItem } from "@/types/product.types";
 import { useNavigate } from "@tanstack/react-router";
 
 interface HeaderMarketProps {
   cartItems: CartItem[];
-  onUpdateCartItemQuantity: (productId: string, quantity: number) => void;
-  onRemoveCartItem: (productId: string) => void;
+  onUpdateCartItemQuantity: (productId: number, quantity: number) => void;
+  onRemoveCartItem: (productId: number) => void;
   onClearCart: () => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 const HeaderMarket = ({
@@ -41,9 +35,10 @@ const HeaderMarket = ({
   onUpdateCartItemQuantity,
   onRemoveCartItem,
   onClearCart,
+  searchQuery,
+  onSearchChange,
 }: HeaderMarketProps) => {
   const [openSearch, setOpenSearch] = useState(false);
-  const [valueSearch, setValueSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,45 +82,18 @@ const HeaderMarket = ({
       </div>
 
       <div className="flex flex-col md:flex-row items-center gap-3">
-        {/* [FIXED] Search bar sekarang mengambil lebar penuh di mobile */}
         <div className="relative w-full md:max-w-xs lg:max-w-sm">
           <Command className="rounded-lg border shadow-sm h-auto">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <CommandInput
-              value={valueSearch}
-              onValueChange={setValueSearch}
-              onFocus={() => setOpenSearch(true)}
-              onBlur={() => setTimeout(() => setOpenSearch(false), 150)}
+              value={searchQuery}
+              onValueChange={onSearchChange}
               placeholder="Cari produk..."
               className="pl-9"
             />
-            {/* [FIXED] Daftar pencarian sekarang muncul di atas konten lain */}
-            <AnimatePresence>
-              {openSearch && valueSearch && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="absolute top-full mt-1 w-full bg-white dark:bg-slate-800 border rounded-md shadow-lg z-50"
-                >
-                  <CommandList>
-                    <CommandEmpty>Tidak ada hasil ditemukan.</CommandEmpty>
-                    <CommandGroup heading="Saran">
-                      <CommandItem
-                        onSelect={() => console.log("Navigasi ke Kalender")}
-                      >
-                        <Calendar className="mr-2 h-4 w-4" />
-                        <span>Kalender Promo</span>
-                      </CommandItem>
-                    </CommandGroup>
-                  </CommandList>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </Command>
         </div>
 
-        {/* [FIXED] Tombol keranjang sekarang di sebelah kanan dan mengambil lebar sisa di mobile */}
         <div className="w-full md:w-auto flex justify-end ">
           <Modal>
             <ModalTrigger>
@@ -178,8 +146,7 @@ const HeaderMarket = ({
                                 )
                               }
                             >
-                              {" "}
-                              <Minus size={14} />{" "}
+                              <Minus size={14} />
                             </Button>
                             <span className="w-5 text-center text-sm">
                               {item.quantity}
@@ -194,8 +161,7 @@ const HeaderMarket = ({
                                 )
                               }
                             >
-                              {" "}
-                              <Plus size={14} />{" "}
+                              <Plus size={14} />
                             </Button>
                             <Button
                               size="icon"
@@ -203,8 +169,7 @@ const HeaderMarket = ({
                               className="text-red-500 hover:text-red-600"
                               onClick={() => onRemoveCartItem(item.id)}
                             >
-                              {" "}
-                              <X size={16} />{" "}
+                              <X size={16} />
                             </Button>
                           </div>
                         </div>

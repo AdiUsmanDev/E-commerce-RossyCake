@@ -1,35 +1,31 @@
 // ListProduct.tsx (atau di dalam file yang sama)
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient"; // Asumsi path ini benar
-import CardProduct from "./cardProduct";
+import CardProduct from "./ProductCard";
 import { useState } from "react";
-import { ProductProops } from "@/common/types/product.types";
+import { Product } from "@/types/product.types";
 
 interface ListProductProps {
-  products: ProductProops[];
-  onAddToCart: (product: ProductProops) => void;
+  products: Product[];
+  onAddToCart: (product: Product) => void;
 }
 
 const ListProduct = ({ products, onAddToCart }: ListProductProps) => {
-  const categories = [
-    "Semua",
-    "Kue Kering",
-    "Kue Potong",
-    "Roti",
-    "Donat",
-    "Minuman",
-  ];
+  const categories = Array.from(
+    new Set(products?.map((product) => product.category))
+  );
+
   const [selectedCategory, setSelectedCategory] = useState("Semua");
 
   const filteredProducts =
     selectedCategory === "Semua"
       ? products
-      : products.filter((p) => p.category === selectedCategory);
+      : products?.filter((p) => p.category === selectedCategory);
 
   return (
     <>
       <div className="categories pt-10 flex justify-between items-center flex-wrap mb-6">
         <div className="flex justify-start flex-wrap text-center gap-2">
-          {categories.map((category) => (
+          {categories.map((category: string) => (
             <HoverBorderGradient
               key={category}
               containerClassName="rounded-full"
@@ -42,7 +38,7 @@ const ListProduct = ({ products, onAddToCart }: ListProductProps) => {
           ))}
         </div>
       </div>
-      {filteredProducts.length > 0 ? (
+      {filteredProducts?.length > 0 ? (
         <div className="listProducts grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 my-10">
           {filteredProducts.map((product) => (
             <CardProduct

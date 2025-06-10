@@ -1,6 +1,5 @@
-// src/app/user/account/components/DisplayBooking.tsx
-import React, { useState } from "react"; // Impor useState
-import { motion } from "framer-motion";
+import React, { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CardHeader,
   CardTitle,
@@ -10,9 +9,7 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption, // Tidak terpakai di AccordionContent saat ini, bisa dihapus jika tidak ada rencana penggunaan
   TableCell,
-  TableFooter, // Tidak terpakai di AccordionContent saat ini
   TableHead,
   TableHeader,
   TableRow,
@@ -23,218 +20,167 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Command,
-  CommandInput,
-  CommandEmpty,
-  CommandList,
-  CommandGroup,
-  CommandItem,
-} from "@/components/ui/command"; // Tambahkan CommandEmpty, dll.
+import { Command, CommandInput } from "@/components/ui/command";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreditCard, Eye, Truck, PackageSearch } from "lucide-react"; // Tambah PackageSearch untuk CommandItem
+import {
+  CreditCard,
+  Eye,
+  LoaderCircle,
+  ServerCrash,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// Definisikan tipe untuk Invoice dan OrderDetail jika belum ada
-interface OrderDetail {
-  name: string;
-  quantity: number;
-  price: string; // Sebaiknya number untuk kalkulasi
-  total: string; // Sebaiknya number
-}
 
-interface Invoice {
-  invoice: string;
-  paymentStatus:
-    | "Paid"
-    | "Pending"
-    | "Unpaid"
-    | "Packing"
-    | "OnDelivery"
-    | "Finish"
-    | "Cancel"; // Perluas tipe status
-  totalAmount: string; // Sebaiknya number
-  paymentMethod: string;
-  date: string; // Sebaiknya format YYYY-MM-DD atau objek Date
-  items: number;
-  pv?: string; // Opsional
-  orderDetails?: OrderDetail[]; // Detail pesanan untuk setiap invoice
-}
+// Impor service dan tipe data yang relevan
+// PERBAIKAN: Impor disesuaikan, dan tipe data didefinisikan secara lokal untuk kejelasan
+import {
+  getMyOrders,
+  updateOrder,
+  deleteOrder,
+} from "@/services/order.service";
+import { Order as OrderType, UpdateOrderDTO } from "@/types/order.types";
+import { useNavigate } from "@tanstack/react-router";
+
+// Helper untuk format mata uang dan tanggal
+const formatCurrency = (amount: number | string) => {
+  const numericAmount =
+    typeof amount === "string" ? parseFloat(amount) : amount;
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(numericAmount);
+};
+
+const formatDate = (dateString: string | Date) => {
+  return new Date(dateString).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
+// Helper untuk memformat status dari snake_case menjadi lebih mudah dibaca
+const formatStatus = (status: string) => {
+  return status
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
 
 const DisplayBooking = () => {
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all"); // State untuk tab aktif
+  const [activeTab, setActiveTab] = useState("all");
+  const navigate = useNavigate();
 
-  // Data dummy invoices dengan orderDetails yang lebih relevan
-  const allInvoices: Invoice[] = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "Rp250.000",
-      paymentMethod: "Credit Card",
-      date: "2025-03-18",
-      items: 2,
-      pv: "10.000",
-      orderDetails: [
-        {
-          name: "Kue Nastar Premium",
-          quantity: 1,
-          price: "Rp150.000",
-          total: "Rp150.000",
-        },
-        {
-          name: "Red Velvet Slice",
-          quantity: 2,
-          price: "Rp35.000",
-          total: "Rp70.000",
-        },
-        // Tambahkan item lain jika totalAmount Rp250.000
-      ],
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "Rp150.000",
-      paymentMethod: "PayPal",
-      date: "2025-03-19",
-      items: 1,
-      pv: "7.500",
-      orderDetails: [
-        {
-          name: "Paket Donat Ceria",
-          quantity: 1,
-          price: "Rp65.000",
-          total: "Rp65.000",
-        },
-      ], // Sesuaikan item & total
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "Rp350.000",
-      paymentMethod: "Bank Transfer",
-      date: "2025-03-20",
-      items: 3,
-      pv: "12.000",
-      orderDetails: [
-        {
-          name: "Cheesecake Blueberry",
-          quantity: 2,
-          price: "Rp42.000",
-          total: "Rp84.000",
-        },
-        {
-          name: "Kopi Susu Gula Aren",
-          quantity: 3,
-          price: "Rp22.000",
-          total: "Rp66.000",
-        },
-      ], // Sesuaikan item & total
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Packing",
-      totalAmount: "Rp180.000",
-      paymentMethod: "COD",
-      date: "2025-03-21",
-      items: 2,
-      pv: "9.000",
-      orderDetails: [
-        {
-          name: "Roti Sobek Cokelat Keju",
-          quantity: 2,
-          price: "Rp48.000",
-          total: "Rp96.000",
-        },
-      ],
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "OnDelivery",
-      totalAmount: "Rp95.000",
-      paymentMethod: "Credit Card",
-      date: "2025-03-22",
-      items: 1,
-      pv: "4.500",
-      orderDetails: [
-        {
-          name: "Kastengel Keju Edam",
-          quantity: 1,
-          price: "Rp95.000",
-          total: "Rp95.000",
-        },
-      ],
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Finish",
-      totalAmount: "Rp220.000",
-      paymentMethod: "E-Wallet",
-      date: "2025-03-15",
-      items: 4,
-      pv: "11.000",
-      orderDetails: [
-        {
-          name: "Brownies Panggang",
-          quantity: 2,
-          price: "Rp60.000",
-          total: "Rp120.000",
-        },
-      ],
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Cancel",
-      totalAmount: "Rp100.000",
-      paymentMethod: "Bank Transfer",
-      date: "2025-03-10",
-      items: 1,
-      pv: "5.000",
-      orderDetails: [
-        {
-          name: "Croissant Mentega",
-          quantity: 3,
-          price: "Rp18.000",
-          total: "Rp54.000",
-        },
-      ],
-    },
-  ];
+  // State untuk melacak ID pesanan yang sedang dimutasi
+  const [processingOrder, setProcessingOrder] = useState<{
+    id: number | null;
+    type: "update" | "cancel" | null;
+  }>({ id: null, type: null });
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-  };
-
-  // Logika untuk memfilter invoices berdasarkan tab aktif DAN query pencarian
-  const filteredInvoices = allInvoices.filter((order) => {
-    const matchesTab =
-      activeTab === "all" ||
-      order.paymentStatus.toLowerCase() === activeTab.toLowerCase() ||
-      (activeTab === "notPaid" && order.paymentStatus === "Unpaid") ||
-      (activeTab === "packing" && order.paymentStatus === "Packing") ||
-      (activeTab === "onDelivery" && order.paymentStatus === "OnDelivery") ||
-      (activeTab === "finish" && order.paymentStatus === "Finish") ||
-      (activeTab === "cancel" && order.paymentStatus === "Cancel");
-
-    const matchesSearch =
-      searchQuery === "" ||
-      order.invoice.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.paymentStatus.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (order.orderDetails &&
-        order.orderDetails.some((detail) =>
-          detail.name.toLowerCase().includes(searchQuery.toLowerCase())
-        ));
-
-    return matchesTab && matchesSearch;
+  // 1. Mengambil data pesanan menggunakan useQuery
+  const {
+    data: orders = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<OrderType[]>({
+    queryKey: ["myOrders"],
+    queryFn: getMyOrders, // Asumsi getMyOrders sudah menangani struktur { status, data }
   });
 
-  // Handler untuk klik tombol aksi (contoh)
-  const handlePay = (invoiceId: string) =>
-    alert(`Proses pembayaran untuk: ${invoiceId}`);
-  const handleTrackOrder = (invoiceId: string) =>
-    alert(`Lacak pesanan: ${invoiceId}`);
-  const handleViewDetails = (invoiceId: string) =>
-    alert(`Lihat detail pesanan: ${invoiceId}`);
+  // 2. Setup `useMutation` untuk memperbarui pesanan
+  const { mutate: updateOrderStatus, isPending: isUpdating } = useMutation({
+    mutationFn: ({
+      orderId,
+      payload,
+    }: {
+      orderId: number;
+      payload: UpdateOrderDTO;
+    }) => updateOrder(orderId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myOrders"] });
+    },
+    onError: (err: Error) => {
+      console.error(err);
+    },
+  });
+
+  // 3. Setup `useMutation` untuk membatalkan pesanan
+  const { mutate: cancelOrder, isPending: isCancelling } = useMutation({
+    mutationFn: (orderId: number) => deleteOrder(orderId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myOrders"] });
+    },
+  });
+
+  // 4. Logika filter diperbarui untuk status baru
+  const filteredInvoices = useMemo(() => {
+    if (!orders) return [];
+
+    return orders.filter((order) => {
+      const lowerCaseStatus = order.status.toLowerCase();
+      const matchesTab =
+        activeTab === "all" ||
+        (activeTab === "notPaid" && lowerCaseStatus === "pending_payment") ||
+        (activeTab === "packing" && lowerCaseStatus === "paid") || // Map "Dikemas" ke status "PAID"
+        (activeTab === "onDelivery" && lowerCaseStatus === "shipped") ||
+        (activeTab === "finish" && lowerCaseStatus === "delivered") ||
+        (activeTab === "cancel" && lowerCaseStatus === "cancelled");
+
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      const matchesSearch =
+        searchQuery === "" ||
+        order.id.toString().includes(lowerCaseQuery) ||
+        lowerCaseStatus.includes(lowerCaseQuery) ||
+        (order.order_items &&
+          order.order_items.some((item) =>
+            item.product?.name.toLowerCase().includes(lowerCaseQuery)
+          ));
+
+      return matchesTab && matchesSearch;
+    });
+  }, [orders, activeTab, searchQuery]);
+
+  // 5. Handler untuk aksi-aksi
+  const handlePay = (orderId: number) => {
+    navigate({ to: `/shop/checkout/${orderId}` });
+  };
+
+  const handleCancel = (orderId: number) => {
+    if (window.confirm("Apakah Anda yakin ingin membatalkan pesanan ini?")) {
+      setProcessingOrder({ id: orderId, type: "cancel" });
+      cancelOrder(orderId, {
+        onSettled: () => setProcessingOrder({ id: null, type: null }),
+      });
+    }
+  };
+
+  // Tampilan saat loading (menggunakan isLoading dari useQuery)
+  if (isLoading) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center">
+        <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Memuat pesanan Anda...</p>
+      </div>
+    );
+  }
+
+  // Tampilan saat terjadi error
+  if (isError) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-center">
+        <ServerCrash className="h-12 w-12 text-destructive" />
+        <p className="mt-4 font-semibold text-destructive">Gagal memuat data</p>
+        <p className="text-muted-foreground text-sm">
+          {(error as Error).message}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -247,9 +193,8 @@ const DisplayBooking = () => {
           <CommandInput
             placeholder="Cari pesanan (No. Invoice, Status, Nama Produk)..."
             value={searchQuery}
-            onValueChange={handleSearchChange} // Menggunakan onValueChange untuk CommandInput
+            onValueChange={setSearchQuery}
           />
-          {/* CommandList bisa ditampilkan jika ada saran atau hasil instan, saat ini filter langsung ke daftar */}
         </Command>
       </CardHeader>
       <CardContent className="p-0 md:p-2 lg:p-4 flex-grow flex flex-col overflow-hidden">
@@ -298,66 +243,52 @@ const DisplayBooking = () => {
               </TabsTrigger>
             </TabsList>
           </div>
-
-          {/* Menggunakan ScrollArea untuk konten tab agar bisa discroll jika melebihi tinggi */}
           <ScrollArea className="flex-grow pr-1">
             <TabsContent value={activeTab} className="mt-0">
-              {" "}
-              {/* Hanya render konten tab yang aktif */}
               {filteredInvoices.length > 0 ? (
-                filteredInvoices.map(
-                  (
-                    order,
-                    index // Menggunakan index untuk value AccordionItem sementara
-                  ) => (
+                filteredInvoices.map((order) => {
+                  const isBeingUpdated =
+                    isUpdating &&
+                    processingOrder.id === order.id &&
+                    processingOrder.type === "update";
+                  const isBeingCancelled =
+                    isCancelling &&
+                    processingOrder.id === order.id &&
+                    processingOrder.type === "cancel";
+
+                  return (
                     <Accordion
-                      key={order.invoice}
+                      key={order.id}
                       type="single"
                       collapsible
                       className="mb-2 border dark:border-neutral-700 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                     >
                       <AccordionItem
-                        value={`item-${order.invoice}`}
+                        value={`item-${order.id}`}
                         className="border-b-0"
                       >
                         <AccordionTrigger className="p-3 hover:bg-muted/50 dark:hover:bg-muted/30 rounded-t-lg text-sm">
                           <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full gap-2 md:gap-4 text-left">
                             <div
                               className="font-semibold text-neutral-800 dark:text-neutral-100 md:w-[120px] truncate"
-                              title={order.invoice}
+                              title={`#${order.id}`}
                             >
-                              #{order.invoice}
+                              #{order.id}
                             </div>
                             <div className="md:w-[150px]">
                               <p className="text-xs text-neutral-500 dark:text-neutral-400">
                                 Tanggal Pesan
                               </p>
                               <p className="text-neutral-700 dark:text-neutral-300">
-                                {order.date}
+                                {formatDate(order.created_at)}
                               </p>
                             </div>
                             <div className="md:w-[100px]">
                               <p className="text-xs text-neutral-500 dark:text-neutral-400">
                                 Status
                               </p>
-                              <p
-                                className={`font-medium ${
-                                  order.paymentStatus === "Paid"
-                                    ? "text-green-600 dark:text-green-400"
-                                    : order.paymentStatus === "Pending"
-                                      ? "text-yellow-600 dark:text-yellow-400"
-                                      : order.paymentStatus === "Unpaid"
-                                        ? "text-red-600 dark:text-red-400"
-                                        : order.paymentStatus === "Packing"
-                                          ? "text-blue-600 dark:text-blue-400"
-                                          : order.paymentStatus === "OnDelivery"
-                                            ? "text-purple-600 dark:text-purple-400"
-                                            : order.paymentStatus === "Finish"
-                                              ? "text-teal-600 dark:text-teal-400"
-                                              : "text-neutral-500 dark:text-neutral-400" // Cancel
-                                }`}
-                              >
-                                {order.paymentStatus}
+                              <p className={`font-medium capitalize`}>
+                                {formatStatus(order.status)}
                               </p>
                             </div>
                             <div className="md:w-[80px] text-left md:text-right">
@@ -365,7 +296,7 @@ const DisplayBooking = () => {
                                 Items
                               </p>
                               <p className="text-neutral-700 dark:text-neutral-300">
-                                {order.items}
+                                {order.order_items?.length}
                               </p>
                             </div>
                             <div className="md:w-[120px] text-left md:text-right">
@@ -373,7 +304,7 @@ const DisplayBooking = () => {
                                 Total
                               </p>
                               <p className="font-semibold text-neutral-800 dark:text-neutral-100">
-                                {order.totalAmount}
+                                {formatCurrency(order.total_price)}
                               </p>
                             </div>
                           </div>
@@ -382,8 +313,7 @@ const DisplayBooking = () => {
                           <p className="text-sm font-semibold mb-2">
                             Detail Item:
                           </p>
-                          {order.orderDetails &&
-                          order.orderDetails.length > 0 ? (
+                          {order.order_items && order.order_items.length > 0 ? (
                             <Table className="bg-background dark:bg-neutral-800/50 text-xs">
                               <TableHeader>
                                 <TableRow>
@@ -400,21 +330,22 @@ const DisplayBooking = () => {
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
-                                {order.orderDetails.map((item, itemIdx) => (
-                                  <TableRow
-                                    key={`${order.invoice}-item-${itemIdx}`}
-                                  >
+                                {order.order_items.map((item) => (
+                                  <TableRow key={item.id}>
                                     <TableCell className="font-medium">
-                                      {item.name}
+                                      {item.product?.name ||
+                                        "Nama produk tidak tersedia"}
                                     </TableCell>
                                     <TableCell className="text-center">
                                       {item.quantity}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                      {item.price}
+                                      {formatCurrency(item.price)}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                      {item.total}
+                                      {formatCurrency(
+                                        parseFloat(item.price) * item.quantity
+                                      )}
                                     </TableCell>
                                   </TableRow>
                                 ))}
@@ -426,34 +357,44 @@ const DisplayBooking = () => {
                             </p>
                           )}
                           <div className="flex flex-wrap items-center gap-2 justify-end mt-4 pt-3 border-t dark:border-neutral-700">
-                            {order.paymentStatus === "Unpaid" && (
-                              <Button
-                                size="sm"
-                                className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
-                                onClick={() => handlePay(order.invoice)}
-                              >
-                                <CreditCard className="mr-1.5 h-3.5 w-3.5" />{" "}
-                                Bayar
-                              </Button>
-                            )}
-                            {order.paymentStatus !== "Finish" &&
-                              order.paymentStatus !== "Cancel" && (
+                            {order.status.toLowerCase() ===
+                              "pending_payment" && (
+                              <>
+                                {/* PERBAIKAN: Tombol bayar tidak lagi menampilkan loader sendiri */}
                                 <Button
                                   size="sm"
-                                  variant="outline"
-                                  className="text-xs"
-                                  onClick={() =>
-                                    handleTrackOrder(order.invoice)
-                                  }
+                                  className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
+                                  onClick={() => handlePay(order.id)}
+                                  disabled={isUpdating || isCancelling}
                                 >
-                                  <Truck className="mr-1.5 h-3.5 w-3.5" /> Lacak
+                                  <CreditCard className="mr-1.5 h-3.5 w-3.5" />{" "}
+                                  Bayar
                                 </Button>
-                              )}
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  className="text-xs"
+                                  onClick={() => handleCancel(order.id)}
+                                  disabled={isUpdating || isCancelling}
+                                >
+                                  {isBeingCancelled ? (
+                                    <LoaderCircle className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                                  )}{" "}
+                                  Batal
+                                </Button>
+                              </>
+                            )}
                             <Button
                               size="sm"
                               variant="ghost"
                               className="text-xs"
-                              onClick={() => handleViewDetails(order.invoice)}
+                              onClick={() =>
+                                navigate({
+                                  to: `/shop/checkout/order-success/${order.id}`,
+                                })
+                              }
                             >
                               <Eye className="mr-1.5 h-3.5 w-3.5" /> Detail
                             </Button>
@@ -461,13 +402,13 @@ const DisplayBooking = () => {
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
-                  )
-                )
+                  );
+                })
               ) : (
                 <p className="p-10 text-center text-neutral-500 dark:text-neutral-400">
                   {searchQuery
                     ? "Tidak ada pesanan yang cocok dengan pencarian Anda."
-                    : `Tidak ada pesanan dengan status "${activeTab}".`}
+                    : `Tidak ada pesanan dalam kategori ini.`}
                 </p>
               )}
             </TabsContent>
@@ -477,4 +418,5 @@ const DisplayBooking = () => {
     </div>
   );
 };
+
 export default DisplayBooking;

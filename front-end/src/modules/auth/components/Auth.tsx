@@ -30,6 +30,7 @@ const AuthPage = () => {
                 bottomText="Already have an account?"
                 switchText="Login"
                 onSwitch={() => setIsSignUp(false)}
+                isSignUp={isSignUp}
               />
             </motion.div>
           ) : (
@@ -51,6 +52,7 @@ const AuthPage = () => {
                 bottomText="Don't have an account?"
                 switchText="Register"
                 onSwitch={() => setIsSignUp(true)}
+                isSignUp={isSignUp}
               />
             </motion.div>
           )}

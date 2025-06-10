@@ -15,7 +15,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as AuthIndexImport } from './routes/auth/index'
 import { Route as UserAccountIndexImport } from './routes/user/account/index'
-import { Route as ShopCheckoutIndexImport } from './routes/shop/checkout/index'
 
 // Create Virtual Routes
 
@@ -23,6 +22,8 @@ const IndexLazyImport = createFileRoute('/')()
 const ShopIndexLazyImport = createFileRoute('/shop/')()
 const AdminIndexLazyImport = createFileRoute('/admin/')()
 const SplatIndexLazyImport = createFileRoute('/$/')()
+const ShopCheckoutIndexLazyImport = createFileRoute('/shop/checkout/')()
+const ShopCheckoutIdLazyImport = createFileRoute('/shop/checkout/$id')()
 const ShopCheckoutOrderSuccessOrderIdLazyImport = createFileRoute(
   '/shop/checkout/order-success/$orderId',
 )()
@@ -59,17 +60,27 @@ const AuthIndexRoute = AuthIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ShopCheckoutIndexLazyRoute = ShopCheckoutIndexLazyImport.update({
+  id: '/shop/checkout/',
+  path: '/shop/checkout/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/shop/checkout/index.lazy').then((d) => d.Route),
+)
+
 const UserAccountIndexRoute = UserAccountIndexImport.update({
   id: '/user/account/',
   path: '/user/account/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const ShopCheckoutIndexRoute = ShopCheckoutIndexImport.update({
-  id: '/shop/checkout/',
-  path: '/shop/checkout/',
+const ShopCheckoutIdLazyRoute = ShopCheckoutIdLazyImport.update({
+  id: '/shop/checkout/$id',
+  path: '/shop/checkout/$id',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/shop/checkout/$id.lazy').then((d) => d.Route),
+)
 
 const ShopCheckoutOrderSuccessOrderIdLazyRoute =
   ShopCheckoutOrderSuccessOrderIdLazyImport.update({
@@ -121,11 +132,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopIndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/shop/checkout/': {
-      id: '/shop/checkout/'
-      path: '/shop/checkout'
-      fullPath: '/shop/checkout'
-      preLoaderRoute: typeof ShopCheckoutIndexImport
+    '/shop/checkout/$id': {
+      id: '/shop/checkout/$id'
+      path: '/shop/checkout/$id'
+      fullPath: '/shop/checkout/$id'
+      preLoaderRoute: typeof ShopCheckoutIdLazyImport
       parentRoute: typeof rootRoute
     }
     '/user/account/': {
@@ -133,6 +144,13 @@ declare module '@tanstack/react-router' {
       path: '/user/account'
       fullPath: '/user/account'
       preLoaderRoute: typeof UserAccountIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/shop/checkout/': {
+      id: '/shop/checkout/'
+      path: '/shop/checkout'
+      fullPath: '/shop/checkout'
+      preLoaderRoute: typeof ShopCheckoutIndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/shop/checkout/order-success/$orderId': {
@@ -153,8 +171,9 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatIndexLazyRoute
   '/admin': typeof AdminIndexLazyRoute
   '/shop': typeof ShopIndexLazyRoute
-  '/shop/checkout': typeof ShopCheckoutIndexRoute
+  '/shop/checkout/$id': typeof ShopCheckoutIdLazyRoute
   '/user/account': typeof UserAccountIndexRoute
+  '/shop/checkout': typeof ShopCheckoutIndexLazyRoute
   '/shop/checkout/order-success/$orderId': typeof ShopCheckoutOrderSuccessOrderIdLazyRoute
 }
 
@@ -164,8 +183,9 @@ export interface FileRoutesByTo {
   '/$': typeof SplatIndexLazyRoute
   '/admin': typeof AdminIndexLazyRoute
   '/shop': typeof ShopIndexLazyRoute
-  '/shop/checkout': typeof ShopCheckoutIndexRoute
+  '/shop/checkout/$id': typeof ShopCheckoutIdLazyRoute
   '/user/account': typeof UserAccountIndexRoute
+  '/shop/checkout': typeof ShopCheckoutIndexLazyRoute
   '/shop/checkout/order-success/$orderId': typeof ShopCheckoutOrderSuccessOrderIdLazyRoute
 }
 
@@ -176,8 +196,9 @@ export interface FileRoutesById {
   '/$/': typeof SplatIndexLazyRoute
   '/admin/': typeof AdminIndexLazyRoute
   '/shop/': typeof ShopIndexLazyRoute
-  '/shop/checkout/': typeof ShopCheckoutIndexRoute
+  '/shop/checkout/$id': typeof ShopCheckoutIdLazyRoute
   '/user/account/': typeof UserAccountIndexRoute
+  '/shop/checkout/': typeof ShopCheckoutIndexLazyRoute
   '/shop/checkout/order-success/$orderId': typeof ShopCheckoutOrderSuccessOrderIdLazyRoute
 }
 
@@ -189,8 +210,9 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/shop'
-    | '/shop/checkout'
+    | '/shop/checkout/$id'
     | '/user/account'
+    | '/shop/checkout'
     | '/shop/checkout/order-success/$orderId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -199,8 +221,9 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/shop'
-    | '/shop/checkout'
+    | '/shop/checkout/$id'
     | '/user/account'
+    | '/shop/checkout'
     | '/shop/checkout/order-success/$orderId'
   id:
     | '__root__'
@@ -209,8 +232,9 @@ export interface FileRouteTypes {
     | '/$/'
     | '/admin/'
     | '/shop/'
-    | '/shop/checkout/'
+    | '/shop/checkout/$id'
     | '/user/account/'
+    | '/shop/checkout/'
     | '/shop/checkout/order-success/$orderId'
   fileRoutesById: FileRoutesById
 }
@@ -221,8 +245,9 @@ export interface RootRouteChildren {
   SplatIndexLazyRoute: typeof SplatIndexLazyRoute
   AdminIndexLazyRoute: typeof AdminIndexLazyRoute
   ShopIndexLazyRoute: typeof ShopIndexLazyRoute
-  ShopCheckoutIndexRoute: typeof ShopCheckoutIndexRoute
+  ShopCheckoutIdLazyRoute: typeof ShopCheckoutIdLazyRoute
   UserAccountIndexRoute: typeof UserAccountIndexRoute
+  ShopCheckoutIndexLazyRoute: typeof ShopCheckoutIndexLazyRoute
   ShopCheckoutOrderSuccessOrderIdLazyRoute: typeof ShopCheckoutOrderSuccessOrderIdLazyRoute
 }
 
@@ -232,8 +257,9 @@ const rootRouteChildren: RootRouteChildren = {
   SplatIndexLazyRoute: SplatIndexLazyRoute,
   AdminIndexLazyRoute: AdminIndexLazyRoute,
   ShopIndexLazyRoute: ShopIndexLazyRoute,
-  ShopCheckoutIndexRoute: ShopCheckoutIndexRoute,
+  ShopCheckoutIdLazyRoute: ShopCheckoutIdLazyRoute,
   UserAccountIndexRoute: UserAccountIndexRoute,
+  ShopCheckoutIndexLazyRoute: ShopCheckoutIndexLazyRoute,
   ShopCheckoutOrderSuccessOrderIdLazyRoute:
     ShopCheckoutOrderSuccessOrderIdLazyRoute,
 }
@@ -253,8 +279,9 @@ export const routeTree = rootRoute
         "/$/",
         "/admin/",
         "/shop/",
-        "/shop/checkout/",
+        "/shop/checkout/$id",
         "/user/account/",
+        "/shop/checkout/",
         "/shop/checkout/order-success/$orderId"
       ]
     },
@@ -273,11 +300,14 @@ export const routeTree = rootRoute
     "/shop/": {
       "filePath": "shop/index.lazy.tsx"
     },
-    "/shop/checkout/": {
-      "filePath": "shop/checkout/index.tsx"
+    "/shop/checkout/$id": {
+      "filePath": "shop/checkout/$id.lazy.tsx"
     },
     "/user/account/": {
       "filePath": "user/account/index.tsx"
+    },
+    "/shop/checkout/": {
+      "filePath": "shop/checkout/index.lazy.tsx"
     },
     "/shop/checkout/order-success/$orderId": {
       "filePath": "shop/checkout/order-success/$orderId.lazy.tsx"

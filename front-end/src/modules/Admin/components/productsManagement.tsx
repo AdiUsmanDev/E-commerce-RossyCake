@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 // Mengimpor data dummy dan tipe data
 import { Products } from "@/data/products"; // Ganti nama impor agar lebih jelas
-import { ProductProops } from "@/common/types/product.types"; // Ganti nama impor agar konsisten
+import { ProductProops } from "@/types/product.types"; // Ganti nama impor agar konsisten
 
 // Mengimpor komponen UI dari shadcn/ui
 import {

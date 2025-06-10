@@ -20,11 +20,12 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "global.d.ts", "src/common/types", "src/data"],
+  "include": ["src", "global.d.ts", "src/types", "src/data"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

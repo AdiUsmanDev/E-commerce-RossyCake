@@ -1,5 +1,5 @@
-import { GridItemData } from "@/common/types/Banner.type";
-import { ProductProops } from "@/common/types/product.types";
+import { GridItemData } from "@/types/Banner.type";
+import { ProductProops } from "@/types/product.types";
 import { Products } from "./products";
 import { Box, Lock, Sparkles } from "lucide-react";
 
