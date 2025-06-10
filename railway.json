@@ -1,3 +1,7 @@
 {
-  "rootDirectory": "back-end"
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd back-end && npm install && npm run build",
+    "startCommand": "cd back-end && npm start"
+  }
 }
