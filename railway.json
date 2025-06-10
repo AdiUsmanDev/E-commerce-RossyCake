@@ -1,7 +1,4 @@
 {
-  "build": {
-    "root": "back-end"
-  }
+  "rootDirectory": "back-and"
 }
-
 
