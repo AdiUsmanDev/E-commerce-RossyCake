@@ -32,3 +32,8 @@
     "prisma": "^6.9.0"
   }
 }
+
+"scripts": {
+  "build": "your-build-command",
+  "start": "node ./src/index.js"
+}
