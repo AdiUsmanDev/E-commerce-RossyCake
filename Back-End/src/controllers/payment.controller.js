@@ -14,7 +14,7 @@ export const createDebitPayment = async (req, res, next) => {
     }
 
     const result = await paymentService.createDebitPayment(
-      value.orderId,
+      value.order_id,
       value.bank
     );
     res200("Pembayaran berhasil dibuat", { paymentUrl: result }, res);

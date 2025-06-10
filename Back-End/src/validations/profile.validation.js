@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const update = Joi.object({
-  fullName: Joi.string().required().messages({
+  name: Joi.string().required().messages({
     "string.base": "Nama harus berupa teks.",
     "string.empty": "Nama tidak boleh kosong.",
     "any.required": "Nama diperlukan.",
@@ -20,9 +20,19 @@ export const update = Joi.object({
     "string.email": "Email harus berupa alamat email yang valid.",
     "any.required": "Email diperlukan.",
   }),
-  password: Joi.string().min(8).messages({
-    "string.base": "Password harus berupa teks.",
-    "string.min": "Password harus terdiri dari minimal 10 karakter.",
-    "any.required": "Password diperlukan.",
-  }),
+  password: Joi.string()
+    // 1. Mengizinkan string kosong. Ini penting agar jika frontend
+    //    mengirim password: "", Joi akan menganggapnya sebagai "tidak diisi"
+    //    dan tidak akan memvalidasi panjang minimalnya.
+    .allow("")
+    // 2. Menandai field ini sebagai opsional. Jika properti password
+    //    tidak ada sama sekali di payload, validasi akan dilewati.
+    .optional()
+    // 3. Validasi panjang minimal HANYA berlaku jika string tidak kosong.
+    .min(8)
+    .messages({
+      "string.base": "Password harus berupa teks.",
+      // 4. Pesan error disesuaikan dengan aturan min(8).
+      "string.min": "Password harus terdiri dari minimal 8 karakter.",
+    }),
 });

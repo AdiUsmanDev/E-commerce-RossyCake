@@ -17,7 +17,7 @@ export const login = Joi.object({
 });
 
 export const register = Joi.object({
-  fullName: Joi.string().required().messages({
+  name: Joi.string().required().messages({
     "string.base": "Nama harus berupa teks.",
     "string.empty": "Nama tidak boleh kosong.",
     "any.required": "Nama diperlukan.",
@@ -35,5 +35,3 @@ export const register = Joi.object({
     "any.required": "Password diperlukan.",
   }),
 });
-
-

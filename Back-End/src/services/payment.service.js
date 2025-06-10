@@ -6,25 +6,19 @@ import prisma from "../configs/db.js";
 // import { generateQrCode } from "../utils/generateQrcode.js";
 import { Error404 } from "../utils/customError.js";
 
-export const createDebitPayment = async (orderId, bank) => {
-  // 1. Ambil data order dari database dengan relasi yang diperlukan.
-  // Pastikan order tersebut milik user yang benar dan statusnya masih menunggu pembayaran.
+export const createDebitPayment = async (order_id, bank) => {
   const order = await prisma.orders.findUnique({
-    where: {
-      id: orderId,
-    },
+    where: { id: order_id },
     include: {
-      customer: true, // Relasi ke tabel 'users'
+      customer: true,
       order_items: {
-        // Relasi ke 'order_items'
         include: {
-          product: true, // Termasuk detail produk untuk `item_details`
+          product: true,
         },
       },
     },
   });
 
-  // Jika order tidak ditemukan, lempar error.
   if (!order) {
     throw new Error404("Pesanan tidak ditemukan atau sudah diproses.");
   }
@@ -36,7 +30,7 @@ export const createDebitPayment = async (orderId, bank) => {
     name: item.product.name.substring(0, 50),
   }));
 
-  const gross_amount_benar = item_details.reduce((total, item) => {
+  const gross_amount = item_details.reduce((total, item) => {
     return total + item.price * item.quantity;
   }, 0);
 
@@ -44,37 +38,27 @@ export const createDebitPayment = async (orderId, bank) => {
     payment_type: "bank_transfer",
     transaction_details: {
       order_id: `ORDER-${order.id}-${Date.now()}`,
-      gross_amount: gross_amount_benar,
+      gross_amount,
     },
-    // Ambil detail pelanggan dari relasi 'customer'.
     customer_details: {
       email: order.customer.email,
       first_name: order.customer.name,
       phone: order.customer.phone,
     },
-    // Map setiap item di pesanan ke format `item_details` Midtrans.
-    item_details: order.order_items.map((item) => ({
-      id: item.product_id,
-      name: item.product.name,
-      price: Number(item.product.price),
-      quantity: item.quantity,
-    })),
-    // Tentukan bank tujuan untuk VA.
+    item_details,
     bank_transfer: {
-      bank: bank,
+      bank,
     },
   };
 
-  // 3. Kirim request 'charge' ke Midtrans.
   const chargeResponse = await coreApi.charge(paymentParameter);
   const vaNumber = chargeResponse.va_numbers?.[0]?.va_number || "N/A";
 
-  // 4. Buat atau perbarui (upsert) catatan pembayaran di database kita.
-  // Ini lebih aman daripada `create` karena menangani jika user mencoba membayar lagi.
   await prisma.payments.upsert({
     where: { order_id: order.id },
     update: {
       gateway_transaction_id: chargeResponse.transaction_id,
+      bank,
       payment_code: vaNumber,
       amount: parseFloat(chargeResponse.gross_amount),
       status: "PENDING",
@@ -87,12 +71,17 @@ export const createDebitPayment = async (orderId, bank) => {
       status: "PENDING",
       payment_method: chargeResponse.payment_type,
       payment_gateway: "MIDTRANS",
+      bank,
       payment_code: vaNumber,
       expires_at: new Date(chargeResponse.expiry_time),
     },
   });
 
-  return chargeResponse;
+  // ✅ Return both payment result and related order data
+  return {
+    payment: chargeResponse,
+    order,
+  };
 };
 
 export const cancelPayment = async (midtransOrderId) => {
@@ -232,11 +221,11 @@ export const checkPaymentStatus = async (midtransOrderId) => {
   return transactionStatus;
 };
 
-export const createGoPayPayment = async (orderId) => {
+export const createGoPayPayment = async (order_id) => {
   // 1. Dapatkan detail order dari database
   const order = await prisma.orders.findUnique({
     where: {
-      id: orderId,
+      id: order_id,
     },
     include: {
       customer: true,

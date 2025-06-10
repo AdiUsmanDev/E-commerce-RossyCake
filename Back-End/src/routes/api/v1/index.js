@@ -16,12 +16,12 @@ export default (app) => {
 
   router.get("/", IndexController.index);
   authRoutes(router);
+  vocherRoutes(router);
   productRoutes(router);
 
   router.use(authMiddleware);
   profileRoutes(router);
   orderRoutes(router);
   paymentRoutes(router);
-  vocherRoutes(router);
   rawMaterialRoutes(router);
 };

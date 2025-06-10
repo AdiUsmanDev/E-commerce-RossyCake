@@ -1,7 +1,8 @@
 // src/api/orders/order.service.js
 
 import prisma from "../configs/db.js";
-import { Error400, Error404 } from "../utils/customError.js";
+import { Error400, Error404, Error409 } from "../utils/customError.js";
+import { res404 } from "../utils/response.js";
 
 export const store = async (userId, orderData) => {
   const { items, ...shippingDetails } = orderData;
@@ -41,9 +42,9 @@ export const store = async (userId, orderData) => {
 
       const now = new Date();
       if (now < voucher.valid_from || now > voucher.valid_until)
-        throw new Error404("Voucher sudah tidak berlaku.");
+        throw new Error409("Voucher sudah tidak berlaku.");
       if (sub_total < voucher.min_purchase)
-        throw new Error404(
+        throw new Error409(
           `Minimum pembelian untuk voucher ini adalah Rp ${voucher.min_purchase}.`
         );
 
@@ -123,7 +124,7 @@ export const store = async (userId, orderData) => {
         // Jika error terjadi (karena kondisi 'where' tidak terpenuhi),
         // berarti kuota habis tepat saat akan diupdate.
         // Transaksi akan otomatis di-rollback oleh Prisma.
-        throw new Error404(
+        throw new Error400(
           "Gagal menggunakan voucher, kuota mungkin sudah habis."
         );
       }
@@ -164,7 +165,8 @@ export const getOrderById = async (id, userId) => {
       payment: true,
     },
   });
-  if (!order) throw new ErrorNotFound("Order tidak ditemukan.");
+
+  if (!order) throw new Error404("Order tidak ditemukan.");
   return order;
 };
 

@@ -30,7 +30,6 @@ export const createVoucher = async (req, res, next) => {
 
 export const getAllVouchers = async (req, res, next) => {
   try {
-    // Tidak ada body yang perlu divalidasi untuk GET all
     const vouchers = await voucherService.getAllVouchers();
     res200("Berhasil mendapatkan semua voucher", vouchers, res);
   } catch (error) {

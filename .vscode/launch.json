@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Node.js Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/index.js",
+      "program": "${workspaceFolder}/Back-End/src/index.js",
       "outFiles": ["${workspaceFolder}/**/*.js"],
       "runtimeArgs": ["--nolazy"],
       "env": {

@@ -59,7 +59,7 @@ export const login = async ({ email, password }) => {
   }
 };
 export const register = async (data) => {
-  const { email, password, fullName } = data;
+  const { email, password, name } = data;
 
   const existingUser = await prisma.users.findUnique({
     where: { email },
@@ -75,13 +75,8 @@ export const register = async (data) => {
   const newUser = await prisma.users.create({
     data: {
       email,
-      name: fullName,
+      name,
       password: hashedPassword,
-    },
-  });
-  await prisma.carts.create({
-    data: {
-      customer_id: newUser.id,
     },
   });
 

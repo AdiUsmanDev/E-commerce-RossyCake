@@ -19,7 +19,7 @@ export const storeOrder = async (req, res, next) => {
   }
 };
 
-export const getOrders = async (req, res, next) => {
+export const  getOrders = async (req, res, next) => {
   try {
     const { id } = req.user;
 
