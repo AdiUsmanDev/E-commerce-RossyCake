@@ -34,6 +34,5 @@
 }
 
 "scripts": {
-  "build": "your-build-command",
   "start": "node src/index.js"
 }
