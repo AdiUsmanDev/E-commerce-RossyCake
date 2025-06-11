@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect, ReactNode, ChangeEvent } from "react";
+import { useState, FormEvent, useEffect, ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "@tanstack/react-router";
 import { AppDispatch, RootState } from "@/lib/redux/store";
@@ -8,6 +8,7 @@ import { loginUser, registerUser } from "@/lib/redux/slices/authSlice";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import InputAuth from "./InputAuth";
 import { LoaderCircle, User, Mail, Lock } from "lucide-react";
+import { Route } from "@/routes/auth";
 
 // Props baru untuk AuthForm, lebih sederhana
 interface AuthFormProps {
@@ -25,6 +26,8 @@ type FormState = {
 const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const { redirect } = Route.useSearch();
   const { status, error, token } = useSelector(
     (state: RootState) => state.auth
   );

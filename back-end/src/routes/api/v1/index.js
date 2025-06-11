@@ -8,6 +8,7 @@ import orderRoutes from "./order.routes.js";
 import paymentRoutes from "./payment.routes.js";
 import vocherRoutes from "./vocher.routes.js";
 import rawMaterialRoutes from "./rawMaterial.routes.js";
+import usersRoutes from "./users.routes.js";
 
 export default (app) => {
   const router = Router();
@@ -24,4 +25,5 @@ export default (app) => {
   orderRoutes(router);
   paymentRoutes(router);
   rawMaterialRoutes(router);
+  usersRoutes(router);
 };

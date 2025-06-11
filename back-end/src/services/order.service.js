@@ -4,6 +4,26 @@ import prisma from "../configs/db.js";
 import { Error400, Error404, Error409 } from "../utils/customError.js";
 import { res404 } from "../utils/response.js";
 
+
+
+export const getAllOrdersAdmin = async () => {
+  try {
+    const orders = await prisma.orders.findMany({
+      orderBy: {
+        order_date: 'desc', // Urutkan dari yang terbaru
+      },
+      // Sertakan data yang relevan jika perlu, misal: item
+      include: {
+        order_items: true,
+      },
+    });
+    return orders;
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    throw new Error("Gagal mengambil data pesanan dari database.");
+  }
+};
+
 export const store = async (userId, orderData) => {
   const { items, ...shippingDetails } = orderData;
 

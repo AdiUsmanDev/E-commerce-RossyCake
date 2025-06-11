@@ -1,15 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
+import { useQueries } from "@tanstack/react-query";
 import {
-  IconArchive, // Untuk Produk
-  IconBuildingWarehouse, // Untuk Bahan Baku
-  IconDiscount2, // Untuk Diskon/Voucher
-  IconUsers, // Untuk Pengguna
-  IconAlertTriangle, // Untuk Stok Rendah
-  IconCash, // Untuk Nilai
-  IconCalendarTime, // Untuk Kadaluarsa
-  IconUserCheck, // Untuk User Aktif
+  IconArchive,
+  IconBuildingWarehouse,
+  IconDiscount2,
+  IconHourglass,
+  IconTrendingUp,
+  IconUsers,
 } from "@tabler/icons-react";
 import {
   Breadcrumb,
@@ -19,187 +18,53 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-// Impor tipe data yang sudah ada
-// import { Product } from './path-to-product-type';
-// import { Material } from './path-to-material-type';
-// import { DiscountVoucher } from './path-to-discount-type';
-// import { User } from './path-to-user-type';
 
-// --- Definisi Tipe Data (ulangi jika tidak diimpor) ---
-interface Product {
-  product: string;
-  name: string;
-  price: number;
-  totalAmount: number;
-  imageUrl: string;
-  description: string;
-}
+// Impor semua service dan tipe data yang dibutuhkan
+import { getProducts } from "@/services/product.service";
 
-interface Material {
-  id: string;
-  name: string;
-  supplier?: string;
-  stock: number;
-  unit: string;
-  pricePerUnit: number;
-  description?: string;
-}
+import { getAllOrders } from "@/services/order.service";
 
-interface DiscountVoucher {
-  id: string;
-  name: string;
-  type: "percentage" | "fixed_amount" | "free_shipping";
-  value: number;
-  description?: string;
-  startDate: string;
-  endDate: string;
-  status: "active" | "inactive" | "expired";
-  minPurchase?: number;
-}
+import { Product } from "@/types/product.types";
 
-interface User {
-  id: string;
-  username: string;
-  fullName: string;
-  email: string;
-  role: "admin" | "staff" | "customer";
-  status: "active" | "inactive" | "suspended";
-  lastLogin?: string;
-}
+import { Order } from "@/types/order.types";
+import { getAllRawMaterials } from "@/services/RawMaterials.service";
+import { getAllVouchers } from "@/services/vocher.service";
+import { getAllUsers } from "@/services/users.service";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@radix-ui/react-select";
 
-// --- Data Dummy (gunakan data yang sudah ada atau definisikan di sini) ---
-const initialProductsData: Product[] = [
-  {
-    product: "KUE001",
-    name: "Black Forest Klasik",
-    price: 250000,
-    totalAmount: 5,
-    imageUrl: "...",
-    description: "...",
-  },
-  {
-    product: "KUE002",
-    name: "Red Velvet Cupcakes",
-    price: 120000,
-    totalAmount: 30,
-    imageUrl: "...",
-    description: "...",
-  },
-  {
-    product: "KUE003",
-    name: "Nastar Premium",
-    price: 150000,
-    totalAmount: 8,
-    imageUrl: "...",
-    description: "...",
-  },
-];
-
-const initialMaterialsData: Material[] = [
-  {
-    id: "BB001",
-    name: "Tepung Terigu",
-    supplier: "PT Boga Sari",
-    stock: 50,
-    unit: "kg",
-    pricePerUnit: 12500,
-  },
-  {
-    id: "BB002",
-    name: "Gula Pasir",
-    supplier: "CV Manis",
-    stock: 7,
-    unit: "kg",
-    pricePerUnit: 16000,
-  },
-  {
-    id: "BB003",
-    name: "Mentega Tawar",
-    supplier: "PT Dairy Farm",
-    stock: 20,
-    unit: "kg",
-    pricePerUnit: 85000,
-  },
-];
-
-const initialDiscountsData: DiscountVoucher[] = [
-  {
-    id: "HEMAT20",
-    name: "Diskon Akhir Pekan 20%",
-    type: "percentage",
-    value: 20,
-    startDate: "2025-06-01",
-    endDate: "2025-12-31",
-    status: "active",
-    minPurchase: 100000,
-  },
-  {
-    id: "ONGKIRGRATIS",
-    name: "Voucher Gratis Ongkir",
-    type: "free_shipping",
-    value: 0,
-    startDate: "2025-05-01",
-    endDate: "2025-06-30",
-    status: "active",
-  },
-  {
-    id: "EXPIRED01",
-    name: "Promo Lama",
-    type: "fixed_amount",
-    value: 10000,
-    startDate: "2024-01-01",
-    endDate: "2024-01-31",
-    status: "expired",
-  },
-];
-
-const initialUsersData: User[] = [
-  {
-    id: "USR001",
-    username: "adminutama",
-    fullName: "Admin Utama",
-    email: "admin@example.com",
-    role: "admin",
-    status: "active",
-  },
-  {
-    id: "USR002",
-    username: "budisetia",
-    fullName: "Budi Setiawan",
-    email: "budi@example.com",
-    role: "staff",
-    status: "active",
-  },
-  {
-    id: "USR003",
-    username: "citraayu",
-    fullName: "Citra Ayu",
-    email: "citra@example.com",
-    role: "customer",
-    status: "inactive",
-  },
-];
-
-// --- Komponen Kartu Indikator ---
-interface IndicatorCardProps {
+// Komponen Kartu Indikator (sudah baik, hanya sedikit penyesuaian)
+const IndicatorCard: React.FC<{
   title: string;
   icon: React.ReactNode;
   mainValue: string | number;
   mainLabel: string;
   subValue?: string | number;
   subLabel?: string;
-  colorClass?: string; // Kelas warna untuk ikon dan nilai utama
-}
-
-const IndicatorCard: React.FC<IndicatorCardProps> = ({
+  colorClass?: string;
+  isLoading?: boolean;
+}> = ({
   title,
   icon,
   mainValue,
   mainLabel,
   subValue,
   subLabel,
-  colorClass = "text-sky-600 dark:text-sky-400",
+  colorClass = "text-sky-400",
+  isLoading,
 }) => {
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg animate-pulse">
+        <div className="h-6 bg-gray-200 dark:bg-neutral-700 rounded w-1/2 mb-4"></div>
+        <div className="h-10 bg-gray-200 dark:bg-neutral-700 rounded w-3/4 mb-2"></div>
+        <div className="h-4 bg-gray-200 dark:bg-neutral-700 rounded w-full mb-4"></div>
+        <div className="h-px bg-gray-200 dark:bg-neutral-700 my-2"></div>
+        <div className="h-6 bg-gray-200 dark:bg-neutral-700 rounded w-1/2"></div>
+        <div className="h-4 bg-gray-200 dark:bg-neutral-700 rounded w-1/3 mt-1"></div>
+      </div>
+    );
+  }
   return (
     <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="flex items-center justify-between mb-3">
@@ -221,7 +86,7 @@ const IndicatorCard: React.FC<IndicatorCardProps> = ({
       </p>
       {subValue !== undefined && subLabel && (
         <>
-          <hr className="my-2 border-neutral-200 dark:border-neutral-700" />
+          <Separator className="my-2 dark:bg-neutral-700" />
           <p className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
             {subValue}
           </p>
@@ -234,51 +99,136 @@ const IndicatorCard: React.FC<IndicatorCardProps> = ({
   );
 };
 
-// --- Komponen Utama Dashboard ---
-const DashboardOverviewPage: React.FC = () => {
-  // Kalkulasi Indikator
-  // Produk
-  const totalProducts = initialProductsData.length;
-  const lowStockProducts = initialProductsData.filter(
-    (p) => p.totalAmount < 10
-  ).length; // Stok < 10 dianggap rendah
-  const totalProductValue = initialProductsData.reduce(
-    (sum, p) => sum + p.price * p.totalAmount,
-    0
-  );
+// Komponen Baru untuk Ringkasan Keuangan
+const FinanceManagementPanel: React.FC<{
+  orders: Order[];
+  isLoading: boolean;
+}> = ({ orders, isLoading }) => {
+  const formatCurrency = (amount: number | string) => {
+    // 1. Ubah input menjadi angka, parseFloat akan mengabaikan karakter non-numerik.
+    const numericAmount =
+      typeof amount === "string" ? parseFloat(amount) : amount;
 
-  // Bahan Baku
-  const totalRawMaterials = initialMaterialsData.length;
-  const lowStockRawMaterials = initialMaterialsData.filter(
-    (m) => m.stock < 10
-  ).length; // Stok < 10 (kg/liter/dll) dianggap rendah
-  const totalRawMaterialValue = initialMaterialsData.reduce(
-    (sum, m) => sum + m.stock * m.pricePerUnit,
-    0
-  );
+    // 2. Periksa apakah hasilnya adalah angka yang valid.
+    if (isNaN(numericAmount)) {
+      // Jika tidak valid, kembalikan nilai default.
+      return "Rp 0";
+    }
 
-  // Diskon & Voucher
-  const totalDiscounts = initialDiscountsData.length;
-  const activeDiscounts = initialDiscountsData.filter(
-    (d) => d.status === "active"
-  ).length;
-  // Contoh: Voucher yang akan kadaluarsa dalam 30 hari dari sekarang (membutuhkan logika tanggal lebih canggih)
-  // Untuk sederhana, kita bisa hitung yang expired
-  const expiredDiscounts = initialDiscountsData.filter(
-    (d) => d.status === "expired"
-  ).length;
+    // 3. Jika valid, format angka murni tersebut.
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(numericAmount);
+  };
 
-  // Pengguna
-  const totalUsers = initialUsersData.length;
-  const activeUsers = initialUsersData.filter(
-    (u) => u.status === "active"
-  ).length;
-  const adminUsers = initialUsersData.filter((u) => u.role === "admin").length;
+  const { paidStats, pendingStats } = useMemo(() => {
+    const paid = { count: 0, amount: 0 };
+    const pending = { count: 0, amount: 0 };
+
+    orders.forEach((order) => {
+      // PERBAIKAN: Ubah string menjadi angka sebelum menjumlahkan
+      const priceAsNumber = parseFloat(order.total_price);
+
+      if (order.status === "PENDING_PAYMENT") {
+        pending.count++;
+        pending.amount += priceAsNumber;
+      } else if (order.status !== "CANCELLED") {
+        paid.count++;
+        paid.amount += priceAsNumber;
+      }
+    });
+
+    return { paidStats: paid, pendingStats: pending };
+  }, [orders]);
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg animate-pulse h-40"></div>
+        <div className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg animate-pulse h-40"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
-      <div className="flex flex-col gap-3 mb-2">
-        <h1 className="bg-clip-text text-transparent text-start bg-gradient-to-b from-neutral-900 to-neutral-700 dark:from-neutral-200 dark:to-neutral-400 text-3xl md:text-4xl lg:text-5xl font-sans py-2 md:py-3 relative z-20 font-bold tracking-tight">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card className="dark:bg-neutral-800">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Pendapatan Terkonfirmasi
+          </CardTitle>
+          <IconTrendingUp className="h-5 w-5 text-green-500" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-green-500">
+            {formatCurrency(paidStats.amount)}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            dari {paidStats.count} pesanan lunas
+          </p>
+        </CardContent>
+      </Card>
+      <Card className="dark:bg-neutral-800">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Menunggu Pembayaran
+          </CardTitle>
+          <IconHourglass className="h-5 w-5 text-yellow-500" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold text-yellow-500">
+            {formatCurrency(pendingStats.amount)}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            dari {pendingStats.count} pesanan belum lunas
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+// Komponen Utama Dashboard
+const DashboardOverviewPage: React.FC = () => {
+  const results = useQueries({
+    queries: [
+      { queryKey: ["products"], queryFn: getProducts },
+      { queryKey: ["rawMaterials"], queryFn: getAllRawMaterials },
+      { queryKey: ["vouchers"], queryFn: getAllVouchers },
+      { queryKey: ["users"], queryFn: getAllUsers },
+      { queryKey: ["allOrders"], queryFn: getAllOrders },
+    ],
+  });
+
+  const isLoading = results.some((query) => query.isLoading);
+  const products: Product[] = results[0].data || [];
+  const rawMaterials: RawMaterial[] = results[1].data || [];
+  const vouchers: Voucher[] = results[2].data || [];
+  const users: User[] = results[3].data || [];
+  const orders: Order[] = results[4].data || [];
+
+  const stats = useMemo(
+    () => ({
+      totalProducts: products.length,
+      lowStockProducts: products.filter((p) => p.stock < 10).length,
+      totalRawMaterials: rawMaterials.length,
+      lowStockRawMaterials: rawMaterials.filter(
+        (m) => m.stock < m.reorder_level
+      ).length,
+      activeVouchers: vouchers.filter(
+        (v) => new Date(v.valid_until) >= new Date()
+      ).length,
+      totalUsers: users.length,
+    }),
+    [products, rawMaterials, vouchers, users]
+  );
+
+  return (
+    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8 w-full">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
           Dashboard Ringkasan
         </h1>
         <Breadcrumb>
@@ -286,7 +236,7 @@ const DashboardOverviewPage: React.FC = () => {
             <BreadcrumbItem>
               <BreadcrumbLink href="/admin">Admin</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator>/</BreadcrumbSeparator>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>Dashboard</BreadcrumbPage>
             </BreadcrumbItem>
@@ -294,71 +244,55 @@ const DashboardOverviewPage: React.FC = () => {
         </Breadcrumb>
       </div>
 
-      {/* Grid untuk Kartu Indikator */}
+      {/* Panel Keuangan Baru */}
+      <FinanceManagementPanel orders={orders} isLoading={isLoading} />
+
+      {/* Kartu Indikator Lainnya */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <IndicatorCard
+          isLoading={isLoading}
           title="Ringkasan Produk"
           icon={<IconArchive />}
-          mainValue={totalProducts}
+          mainValue={stats.totalProducts}
           mainLabel="Total Jenis Produk"
-          subValue={
-            lowStockProducts > 0
-              ? `${lowStockProducts} Produk Stok Rendah`
-              : "Stok Produk Aman"
+          subValue={`${stats.lowStockProducts} Stok Rendah`}
+          subLabel={
+            stats.lowStockProducts > 0 ? "Segera restock!" : "Stok aman"
           }
-          subLabel={lowStockProducts > 0 ? "Segera restock!" : ""}
-          colorClass="text-blue-600 dark:text-blue-400"
+          colorClass="text-blue-500 dark:text-blue-400"
         />
         <IndicatorCard
+          isLoading={isLoading}
           title="Status Bahan Baku"
           icon={<IconBuildingWarehouse />}
-          mainValue={totalRawMaterials}
-          mainLabel="Total Jenis Bahan Baku"
-          subValue={`Rp${totalRawMaterialValue.toLocaleString("id-ID")}`}
-          subLabel="Total Nilai Stok Bahan"
-          colorClass="text-green-600 dark:text-green-400"
+          mainValue={stats.totalRawMaterials}
+          mainLabel="Total Jenis Bahan"
+          subValue={`${stats.lowStockRawMaterials} Stok Rendah`}
+          subLabel={
+            stats.lowStockRawMaterials > 0 ? "Perlu pengadaan" : "Stok aman"
+          }
+          colorClass="text-cyan-500 dark:text-cyan-400"
         />
         <IndicatorCard
+          isLoading={isLoading}
           title="Diskon & Voucher"
           icon={<IconDiscount2 />}
-          mainValue={activeDiscounts}
-          mainLabel="Diskon/Voucher Aktif"
-          subValue={`${totalDiscounts} Total Dibuat`}
-          subLabel={`${expiredDiscounts} Kadaluarsa`}
-          colorClass="text-orange-600 dark:text-orange-400"
+          mainValue={stats.activeVouchers}
+          mainLabel="Voucher Aktif"
+          subValue={`${vouchers.length} Total Voucher`}
+          subLabel="Dikelola oleh admin"
+          colorClass="text-orange-500 dark:text-orange-400"
         />
         <IndicatorCard
+          isLoading={isLoading}
           title="Manajemen Pengguna"
           icon={<IconUsers />}
-          mainValue={totalUsers}
-          mainLabel="Total Pengguna Terdaftar"
-          subValue={`${activeUsers} Pengguna Aktif`}
-          subLabel={`${adminUsers} Admin`}
-          colorClass="text-purple-600 dark:text-purple-400"
+          mainValue={stats.totalUsers}
+          mainLabel="Total Pengguna"
+          subValue={`${users.filter((u) => u.role === "ADMIN").length} Admin`}
+          subLabel={`${users.filter((u) => u.role === "CUSTOMER").length} Pelanggan`}
+          colorClass="text-purple-500 dark:text-purple-400"
         />
-      </div>
-
-      {/* Anda bisa menambahkan bagian lain di sini, seperti:
-          - Grafik ringkasan penjualan (membutuhkan data transaksi)
-          - Daftar produk terlaris
-          - Notifikasi penting
-          - Pintasan ke halaman manajemen lainnya
-      */}
-      <div className="mt-8 p-6 bg-white dark:bg-neutral-800 rounded-xl shadow-lg">
-        <h3 className="text-xl font-semibold mb-4 text-neutral-700 dark:text-neutral-300">
-          Aktivitas Terbaru (Contoh)
-        </h3>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Belum ada aktivitas terbaru untuk ditampilkan. Fitur ini dapat
-          menampilkan log pesanan baru, pendaftaran pengguna, atau perubahan
-          stok penting.
-        </p>
-        {/* Contoh list aktivitas
-        <ul className="space-y-2">
-          <li className="text-sm text-neutral-500 dark:text-neutral-400">Produk "Black Forest Klasik" berhasil ditambahkan.</li>
-          <li className="text-sm text-neutral-500 dark:text-neutral-400">User "citraayu" mengubah status menjadi aktif.</li>
-        </ul>
-        */}
       </div>
     </div>
   );

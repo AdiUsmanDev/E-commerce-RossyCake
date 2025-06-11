@@ -1,39 +1,46 @@
 // src/types/voucher.types.ts
 
+// Enum untuk tipe diskon, mencerminkan skema Joi dan Prisma
 export enum VoucherType {
   PERCENTAGE = "PERCENTAGE",
   FIXED = "FIXED",
+  FREE_SHIPPING = "FREE_SHIPPING", // Menggunakan snake_case yang benar
 }
 
+// Interface utama untuk objek Voucher yang diterima dari API
 export interface Voucher {
   id: number;
   code: string;
-  description?: string;
-  discount_value: number;
+  description: string | null;
   discount_type: VoucherType;
-  max_discount?: number;
+  discount_value: number;
+  max_discount: number | null;
   min_purchase: number;
-  valid_from: string;
-  valid_until: string;
   usage_limit: number;
   current_usage: number;
+  valid_from: string; // Tipe ISO date string
+  valid_until: string; // Tipe ISO date string
+  created_at: string;
+  updated_at: string;
 }
 
-// Data yang dibutuhkan untuk membuat voucher baru
-export type CreateVoucherDTO = Omit<Voucher, "id" | "current_usage">;
-
-// Data yang bisa diubah pada voucher
-export type UpdateVoucherDTO = Partial<CreateVoucherDTO>;
-
-// Payload untuk menerapkan voucher ke keranjang
-export interface ApplyVoucherPayload {
+// Tipe data untuk payload saat MEMBUAT voucher baru.
+// Disesuaikan dengan skema validasi Joi.
+export interface CreateVoucherDTO {
   code: string;
-  subTotal: number; // Subtotal belanja untuk validasi min_purchase
+  description?: string;
+  discount_type: VoucherType;
+  discount_value: number;
+  max_discount?: number;
+  min_purchase?: number;
+  valid_until: string; // ISO date string
+  usage_limit: number;
 }
 
-// Respons setelah menerapkan voucher
-export interface ApplyVoucherResponse {
-  discountAmount: number;
-  finalPrice: number;
-  message: string;
+// Tipe data untuk payload saat MEMPERBARUI voucher.
+// Hanya field yang diizinkan oleh skema validasi Joi.
+export interface UpdateVoucherDTO {
+  description?: string;
+  valid_until?: string; // ISO date string
+  usage_limit?: number;
 }

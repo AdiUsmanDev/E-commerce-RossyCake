@@ -8,7 +8,6 @@ import { User } from "@/types/user.types";
 const NavbarMobile = ({
   navItems,
   isLoggedIn,
-  user,
 }: {
   navItems: { name: string; link: string }[];
   isLoggedIn: boolean;

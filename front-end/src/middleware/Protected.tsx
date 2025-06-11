@@ -30,11 +30,6 @@ const Protected = ({ children, roles }: ProtectedProps) => {
     }
   }, [dispatch, token, user, authStatus]);
 
-  // --- Logika Render ---
-
-  // 1. Tampilkan loader jika:
-  //    - Status Redux sedang 'loading'.
-  //    - ATAU jika ada token tapi data user belum terisi (kondisi setelah reload).
   if (authStatus === "loading" || (token && !user)) {
     return (
       <GuestLayouts>
@@ -44,23 +39,20 @@ const Protected = ({ children, roles }: ProtectedProps) => {
       </GuestLayouts>
     );
   }
+  if (!token) {
+    navigate({ to: "/auth" });
+  }
 
-  // 2. Jika user sudah ada (berhasil login dan fetch), periksa perannya.
-  if (user) {
-    // Cek apakah peran user ada di dalam daftar peran yang diizinkan.
+  if (user && token) {
     const isAuthorized = roles.includes(user.role);
 
     if (isAuthorized) {
-      // Jika diizinkan, tampilkan konten halaman yang dilindungi.
       return <>{children}</>;
     } else {
-      // Jika tidak diizinkan, tampilkan halaman error akses ditolak.
       return <NotAdminErrorPage />;
     }
   }
 
-  // 3. Fallback: Render null jika tidak ada user dan tidak sedang loading.
-  //    Ini untuk mencegah "flicker" sebelum useEffect melakukan redirect.
   return;
 };
 

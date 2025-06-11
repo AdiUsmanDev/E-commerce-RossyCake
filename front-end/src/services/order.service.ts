@@ -5,6 +5,11 @@ import apiClient from "../api/apiClient";
 import { CreateOrderDTO } from "@/types/Checkout.type";
 import { ApiResponse } from "@/types/api.types";
 
+export const getAllOrders = async (): Promise<Order[]> => {
+  const response = await apiClient.get<ApiResponse<Order[]>>("/orders/all");
+  return response.data.data;
+};
+
 export const getMyOrders = async (): Promise<Order[]> => {
   const response = await apiClient.get<ApiResponse<Order[]>>("/orders/");
   return response.data.data;

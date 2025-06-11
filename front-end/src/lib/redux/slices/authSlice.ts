@@ -14,7 +14,7 @@ import {
   UpdateProfilePayload,
 } from "@/services/profile.service";
 
-// Interface untuk state, tidak berubah
+// Interface untuk state
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -22,7 +22,7 @@ interface AuthState {
   error: string | null;
 }
 
-// Inisialisasi state awal, tidak berubah
+// Inisialisasi state awal
 const initialState: AuthState = {
   user: null,
   token:
@@ -32,9 +32,7 @@ const initialState: AuthState = {
 };
 
 // --- Async Thunks ---
-// Definisi async thunk Anda sudah baik, tidak perlu diubah.
-// loginUser, registerUser, fetchUserProfile, updateUserProfile
-
+// Definisi async thunk Anda sudah baik
 export const loginUser = createAsyncThunk<AuthResponse, LoginPayload>(
   "auth/login",
   async (payload, { rejectWithValue }) => {
@@ -95,14 +93,13 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      // Membersihkan semua data sesi pengguna untuk logout yang bersih.
       state.user = null;
       state.token = null;
       state.status = "idle";
       state.error = null;
+      state.role = null; // PERBAIKAN: Pastikan role juga di-reset saat logout
       localStorage.removeItem("authToken");
     },
-    // **PERBAIKAN 1: Tambahkan action untuk membersihkan error secara manual jika diperlukan**
     clearAuthError: (state) => {
       state.error = null;
     },
@@ -120,6 +117,8 @@ const authSlice = createSlice({
           state.status = "succeeded";
           state.user = action.payload.user;
           state.token = action.payload.token;
+          // PERBAIKAN: Set state 'role' setelah login berhasil
+          state.role = action.payload.user.role;
         }
       )
       .addCase(loginUser.rejected, (state, action) => {
@@ -127,39 +126,25 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // --- Kasus untuk Registrasi ---
-      .addCase(registerUser.pending, (state) => {
-        state.status = "loading";
-        state.error = null; // **PERBAIKAN 2: Konsistensi, bersihkan error saat memulai**
-      })
-      .addCase(registerUser.fulfilled, (state) => {
-        state.status = "succeeded";
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload as string;
-      })
-
       // --- Kasus untuk Mengambil Profil ---
       .addCase(fetchUserProfile.pending, (state) => {
         state.status = "loading";
-        state.error = null; // **PERBAIKAN 2: Konsistensi, bersihkan error saat memulai**
+        state.error = null;
       })
       .addCase(
         fetchUserProfile.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "succeeded";
           state.user = action.payload;
+          // PERBAIKAN: Set state 'role' setelah fetch profile berhasil
+          state.role = action.payload.role;
         }
       )
       .addCase(fetchUserProfile.rejected, (state, action) => {
-        // **PERBAIKAN 3: Penanganan sesi tidak valid yang lebih baik**
-        // Jika fetch profile gagal, ini kemungkinan besar karena token tidak valid.
-        // Lakukan logout otomatis untuk membersihkan state.
-        state.status = "failed"; // Tandai sebagai gagal
+        state.status = "failed";
         state.user = null;
         state.token = null;
-        // Simpan pesan error yang relevan
+        state.role = null; // PERBAIKAN: Reset role jika fetch gagal
         state.error = (action.payload as string) || "Sesi tidak valid.";
         localStorage.removeItem("authToken");
       })
@@ -167,26 +152,37 @@ const authSlice = createSlice({
       // --- Kasus untuk Memperbarui Profil ---
       .addCase(updateUserProfile.pending, (state) => {
         state.status = "loading";
-        state.error = null; // Sudah benar, membersihkan error lama
+        state.error = null;
       })
       .addCase(
         updateUserProfile.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "succeeded";
-          // Pastikan state.user diperbarui dengan data terbaru
           state.user = action.payload;
+          // PERBAIKAN: Update juga role jika ada perubahan
+          state.role = action.payload.role;
         }
       )
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.status = "failed";
-        // Cukup simpan pesan error. Logika logout jika token invalid
-        // sudah ditangani oleh `fetchUserProfile.rejected`.
+        state.error = action.payload as string;
+      })
+
+      // Kasus registrasi tidak perlu mengubah role, jadi bisa dibiarkan
+      .addCase(registerUser.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.status = "failed";
         state.error = action.payload as string;
       });
   },
 });
 
-// Ekspor action baru
 export const { logout, clearAuthError } = authSlice.actions;
 
 export default authSlice.reducer;

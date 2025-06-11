@@ -20,6 +20,7 @@ export const getProfile = async (id) => {
     name: user.name,
     phone: user.phone,
     email: user.email,
+    role: user.role,
   };
 
   return result;

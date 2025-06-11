@@ -6,6 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/redux/store";
 
 export const LayoutAdmin = ({ children }) => {
+  useEffect(() => {
+    document.body.classList.remove("overflow-hidden");
+    document.documentElement.classList.remove("overflow-hidden");
+    document.body.style.overflow = "auto";
+  }, []);
+
   const {
     user,
     token,

@@ -22,6 +22,7 @@ import { fetchUserProfile, logout } from "@/lib/redux/slices/authSlice";
 import { useNavigate } from "@tanstack/react-router";
 import { LoaderCircle } from "lucide-react";
 import DisplayEditProfile from "./DisplayEditProfile";
+import UnderDevelopmentPage from "@/components/UnderDevelopmentPage";
 
 // Interface dan komponen wrapper tidak perlu diubah
 interface NavLinkItem {
@@ -129,6 +130,7 @@ const Users = () => {
               </TabsContent>
               <TabsContent value="notifications" className="mt-0">
                 <DisplayNotification />
+               
               </TabsContent>
               <TabsContent value="voucher" className="mt-0">
                 <DisplayVoucher />

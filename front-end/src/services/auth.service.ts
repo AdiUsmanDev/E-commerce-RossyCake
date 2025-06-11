@@ -9,6 +9,8 @@ import {
   AuthResponse,
 } from "../types/auth.types";
 
+
+
 export const register = async (payload: RegisterPayload): Promise<User> => {
   const response = await apiClient.post<ApiResponse<User>>(
     "/auth/register",

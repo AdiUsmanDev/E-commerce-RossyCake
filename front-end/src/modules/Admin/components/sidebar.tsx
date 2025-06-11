@@ -1,6 +1,7 @@
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconBrandTabler,
+  IconLogout,
   IconMoneybag,
   IconPackage,
   IconSettings,
@@ -12,6 +13,11 @@ import {
 import { useState } from "react";
 import { Logo } from "./logo";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logout } from "@/lib/redux/slices/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "@tanstack/react-router";
+import { AppDispatch } from "@/lib/redux/store";
+import { Button } from "@/components/ui/button";
 
 const SidebarAdmin = () => {
   const links = [
@@ -86,6 +92,12 @@ const SidebarAdmin = () => {
     },
   ];
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate({ to: "/auth" });
+  };
   return (
     <Sidebar open={open} setOpen={setOpen} animate={true}>
       <SidebarBody className="justify-between gap-10">
@@ -104,23 +116,14 @@ const SidebarAdmin = () => {
             ))}
           </TabsList>
         </div>
-        <div>
-          <SidebarLink
-            link={{
-              label: "Manu Arora",
-              href: "#",
-              icon: (
-                <img
-                  src="https://assets.aceternity.com/manu.png"
-                  className="h-7 w-7 shrink-0 rounded-full"
-                  width={50}
-                  height={50}
-                  alt="Avatar"
-                />
-              ),
-            }}
-          />
-        </div>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-500/10"
+          onClick={handleLogout}
+        >
+          <IconLogout className="h-5 w-5 mr-4" />
+          <span className="text-sm">Logout</span>
+        </Button>
       </SidebarBody>
     </Sidebar>
   );

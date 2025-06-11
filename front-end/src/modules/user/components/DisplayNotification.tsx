@@ -7,6 +7,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Bell } from "lucide-react"; // Menggunakan Bell dari lucide-react
+import UnderDevelopmentPage from "@/components/UnderDevelopmentPage";
 
 // Tipe untuk Notifikasi
 interface NotificationItem {
@@ -53,7 +54,8 @@ const DisplayNotification = () => {
   };
   return (
     <>
-      <CardHeader>
+      <UnderDevelopmentPage />
+      {/* <CardHeader>
         <CardTitle>Notifikasi</CardTitle>
         <CardDescription>
           Lihat semua pemberitahuan terbaru terkait akun dan aktivitas Anda.
@@ -104,7 +106,7 @@ const DisplayNotification = () => {
             Tidak ada notifikasi saat ini.
           </p>
         )}
-      </CardContent>
+      </CardContent> */}
     </>
   );
 };
