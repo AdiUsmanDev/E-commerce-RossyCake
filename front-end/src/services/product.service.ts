@@ -1,4 +1,4 @@
-import { Product } from "@/types/product.types";
+import { CreateProductPayload, Product } from "@/types/product.types";
 import apiClient from "../api/apiClient";
 import { ApiResponse } from "@/types/api.types";
 
@@ -16,10 +16,13 @@ export const getProductById = async (productId: number): Promise<Product> => {
 };
 
 export const createProduct = async (
-  productData: Omit<Product, "id">
+  productData: Omit<CreateProductPayload, "id">
 ): Promise<Product> => {
-  const { data } = await apiClient.post<Product>("/products", productData);
-  return data;
+  const response = await apiClient.post<ApiResponse<Product>>(
+    "/products",
+    productData
+  );
+  return response.data.data;
 };
 
 export const updateProduct = async (
@@ -31,4 +34,14 @@ export const updateProduct = async (
     productData
   );
   return data;
+};
+
+export const deleteProduct = async (productId: number): Promise<void> => {
+  if (!productId) {
+    throw new Error("Product ID is required to delete a product.");
+  }
+  // Tidak perlu mengambil 'data' karena respons DELETE biasanya kosong
+  const response = await apiClient.delete(`/products/${productId}`);
+
+  return response.data.data;
 };

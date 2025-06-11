@@ -3128,6 +3128,7 @@ export namespace Prisma {
     price: Decimal | null
     stock: number | null
     category: string | null
+    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -3139,6 +3140,7 @@ export namespace Prisma {
     price: Decimal | null
     stock: number | null
     category: string | null
+    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -3150,6 +3152,7 @@ export namespace Prisma {
     price: number
     stock: number
     category: number
+    image_url: number
     created_at: number
     updated_at: number
     _all: number
@@ -3175,6 +3178,7 @@ export namespace Prisma {
     price?: true
     stock?: true
     category?: true
+    image_url?: true
     created_at?: true
     updated_at?: true
   }
@@ -3186,6 +3190,7 @@ export namespace Prisma {
     price?: true
     stock?: true
     category?: true
+    image_url?: true
     created_at?: true
     updated_at?: true
   }
@@ -3197,6 +3202,7 @@ export namespace Prisma {
     price?: true
     stock?: true
     category?: true
+    image_url?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -3295,6 +3301,7 @@ export namespace Prisma {
     price: Decimal
     stock: number
     category: string | null
+    image_url: string | null
     created_at: Date
     updated_at: Date
     _count: ProductsCountAggregateOutputType | null
@@ -3325,6 +3332,7 @@ export namespace Prisma {
     price?: boolean
     stock?: boolean
     category?: boolean
+    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
     order_items?: boolean | products$order_itemsArgs<ExtArgs>
@@ -3340,11 +3348,12 @@ export namespace Prisma {
     price?: boolean
     stock?: boolean
     category?: boolean
+    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type productsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "category" | "created_at" | "updated_at", ExtArgs["result"]["products"]>
+  export type productsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "category" | "image_url" | "created_at" | "updated_at", ExtArgs["result"]["products"]>
   export type productsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order_items?: boolean | products$order_itemsArgs<ExtArgs>
     _count?: boolean | ProductsCountOutputTypeDefaultArgs<ExtArgs>
@@ -3362,6 +3371,7 @@ export namespace Prisma {
       price: Prisma.Decimal
       stock: number
       category: string | null
+      image_url: string | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["products"]>
@@ -3740,6 +3750,7 @@ export namespace Prisma {
     readonly price: FieldRef<"products", 'Decimal'>
     readonly stock: FieldRef<"products", 'Int'>
     readonly category: FieldRef<"products", 'String'>
+    readonly image_url: FieldRef<"products", 'String'>
     readonly created_at: FieldRef<"products", 'DateTime'>
     readonly updated_at: FieldRef<"products", 'DateTime'>
   }
@@ -9417,6 +9428,7 @@ export namespace Prisma {
     payment_gateway: string | null
     gateway_transaction_id: string | null
     payment_code: string | null
+    bank: string | null
     payment_url: string | null
     created_at: Date | null
     paid_at: Date | null
@@ -9433,6 +9445,7 @@ export namespace Prisma {
     payment_gateway: string | null
     gateway_transaction_id: string | null
     payment_code: string | null
+    bank: string | null
     payment_url: string | null
     created_at: Date | null
     paid_at: Date | null
@@ -9449,6 +9462,7 @@ export namespace Prisma {
     payment_gateway: number
     gateway_transaction_id: number
     payment_code: number
+    bank: number
     payment_url: number
     created_at: number
     paid_at: number
@@ -9479,6 +9493,7 @@ export namespace Prisma {
     payment_gateway?: true
     gateway_transaction_id?: true
     payment_code?: true
+    bank?: true
     payment_url?: true
     created_at?: true
     paid_at?: true
@@ -9495,6 +9510,7 @@ export namespace Prisma {
     payment_gateway?: true
     gateway_transaction_id?: true
     payment_code?: true
+    bank?: true
     payment_url?: true
     created_at?: true
     paid_at?: true
@@ -9511,6 +9527,7 @@ export namespace Prisma {
     payment_gateway?: true
     gateway_transaction_id?: true
     payment_code?: true
+    bank?: true
     payment_url?: true
     created_at?: true
     paid_at?: true
@@ -9614,6 +9631,7 @@ export namespace Prisma {
     payment_gateway: string
     gateway_transaction_id: string | null
     payment_code: string | null
+    bank: string | null
     payment_url: string | null
     created_at: Date
     paid_at: Date | null
@@ -9649,6 +9667,7 @@ export namespace Prisma {
     payment_gateway?: boolean
     gateway_transaction_id?: boolean
     payment_code?: boolean
+    bank?: boolean
     payment_url?: boolean
     created_at?: boolean
     paid_at?: boolean
@@ -9669,6 +9688,7 @@ export namespace Prisma {
     payment_gateway?: boolean
     gateway_transaction_id?: boolean
     payment_code?: boolean
+    bank?: boolean
     payment_url?: boolean
     created_at?: boolean
     paid_at?: boolean
@@ -9676,7 +9696,7 @@ export namespace Prisma {
     updated_at?: boolean
   }
 
-  export type paymentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "order_id" | "status" | "amount" | "payment_method" | "payment_gateway" | "gateway_transaction_id" | "payment_code" | "payment_url" | "created_at" | "paid_at" | "expires_at" | "updated_at", ExtArgs["result"]["payments"]>
+  export type paymentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "order_id" | "status" | "amount" | "payment_method" | "payment_gateway" | "gateway_transaction_id" | "payment_code" | "bank" | "payment_url" | "created_at" | "paid_at" | "expires_at" | "updated_at", ExtArgs["result"]["payments"]>
   export type paymentsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | ordersDefaultArgs<ExtArgs>
     invoice?: boolean | payments$invoiceArgs<ExtArgs>
@@ -9697,6 +9717,7 @@ export namespace Prisma {
       payment_gateway: string
       gateway_transaction_id: string | null
       payment_code: string | null
+      bank: string | null
       payment_url: string | null
       created_at: Date
       paid_at: Date | null
@@ -10081,6 +10102,7 @@ export namespace Prisma {
     readonly payment_gateway: FieldRef<"payments", 'String'>
     readonly gateway_transaction_id: FieldRef<"payments", 'String'>
     readonly payment_code: FieldRef<"payments", 'String'>
+    readonly bank: FieldRef<"payments", 'String'>
     readonly payment_url: FieldRef<"payments", 'String'>
     readonly created_at: FieldRef<"payments", 'DateTime'>
     readonly paid_at: FieldRef<"payments", 'DateTime'>
@@ -14434,6 +14456,7 @@ export namespace Prisma {
     price: 'price',
     stock: 'stock',
     category: 'category',
+    image_url: 'image_url',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -14529,6 +14552,7 @@ export namespace Prisma {
     payment_gateway: 'payment_gateway',
     gateway_transaction_id: 'gateway_transaction_id',
     payment_code: 'payment_code',
+    bank: 'bank',
     payment_url: 'payment_url',
     created_at: 'created_at',
     paid_at: 'paid_at',
@@ -14620,7 +14644,8 @@ export namespace Prisma {
   export const productsOrderByRelevanceFieldEnum: {
     name: 'name',
     description: 'description',
-    category: 'category'
+    category: 'category',
+    image_url: 'image_url'
   };
 
   export type productsOrderByRelevanceFieldEnum = (typeof productsOrderByRelevanceFieldEnum)[keyof typeof productsOrderByRelevanceFieldEnum]
@@ -14685,6 +14710,7 @@ export namespace Prisma {
     payment_gateway: 'payment_gateway',
     gateway_transaction_id: 'gateway_transaction_id',
     payment_code: 'payment_code',
+    bank: 'bank',
     payment_url: 'payment_url'
   };
 
@@ -14905,6 +14931,7 @@ export namespace Prisma {
     price?: DecimalFilter<"products"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"products"> | number
     category?: StringNullableFilter<"products"> | string | null
+    image_url?: StringNullableFilter<"products"> | string | null
     created_at?: DateTimeFilter<"products"> | Date | string
     updated_at?: DateTimeFilter<"products"> | Date | string
     order_items?: Order_itemsListRelationFilter
@@ -14917,6 +14944,7 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrderInput | SortOrder
+    image_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     order_items?: order_itemsOrderByRelationAggregateInput
@@ -14933,6 +14961,7 @@ export namespace Prisma {
     price?: DecimalFilter<"products"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"products"> | number
     category?: StringNullableFilter<"products"> | string | null
+    image_url?: StringNullableFilter<"products"> | string | null
     created_at?: DateTimeFilter<"products"> | Date | string
     updated_at?: DateTimeFilter<"products"> | Date | string
     order_items?: Order_itemsListRelationFilter
@@ -14945,6 +14974,7 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrderInput | SortOrder
+    image_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: productsCountOrderByAggregateInput
@@ -14964,6 +14994,7 @@ export namespace Prisma {
     price?: DecimalWithAggregatesFilter<"products"> | Decimal | DecimalJsLike | number | string
     stock?: IntWithAggregatesFilter<"products"> | number
     category?: StringNullableWithAggregatesFilter<"products"> | string | null
+    image_url?: StringNullableWithAggregatesFilter<"products"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"products"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"products"> | Date | string
   }
@@ -15404,6 +15435,7 @@ export namespace Prisma {
     payment_gateway?: StringFilter<"payments"> | string
     gateway_transaction_id?: StringNullableFilter<"payments"> | string | null
     payment_code?: StringNullableFilter<"payments"> | string | null
+    bank?: StringNullableFilter<"payments"> | string | null
     payment_url?: StringNullableFilter<"payments"> | string | null
     created_at?: DateTimeFilter<"payments"> | Date | string
     paid_at?: DateTimeNullableFilter<"payments"> | Date | string | null
@@ -15422,6 +15454,7 @@ export namespace Prisma {
     payment_gateway?: SortOrder
     gateway_transaction_id?: SortOrderInput | SortOrder
     payment_code?: SortOrderInput | SortOrder
+    bank?: SortOrderInput | SortOrder
     payment_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     paid_at?: SortOrderInput | SortOrder
@@ -15444,6 +15477,7 @@ export namespace Prisma {
     payment_method?: StringNullableFilter<"payments"> | string | null
     payment_gateway?: StringFilter<"payments"> | string
     payment_code?: StringNullableFilter<"payments"> | string | null
+    bank?: StringNullableFilter<"payments"> | string | null
     payment_url?: StringNullableFilter<"payments"> | string | null
     created_at?: DateTimeFilter<"payments"> | Date | string
     paid_at?: DateTimeNullableFilter<"payments"> | Date | string | null
@@ -15462,6 +15496,7 @@ export namespace Prisma {
     payment_gateway?: SortOrder
     gateway_transaction_id?: SortOrderInput | SortOrder
     payment_code?: SortOrderInput | SortOrder
+    bank?: SortOrderInput | SortOrder
     payment_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     paid_at?: SortOrderInput | SortOrder
@@ -15486,6 +15521,7 @@ export namespace Prisma {
     payment_gateway?: StringWithAggregatesFilter<"payments"> | string
     gateway_transaction_id?: StringNullableWithAggregatesFilter<"payments"> | string | null
     payment_code?: StringNullableWithAggregatesFilter<"payments"> | string | null
+    bank?: StringNullableWithAggregatesFilter<"payments"> | string | null
     payment_url?: StringNullableWithAggregatesFilter<"payments"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"payments"> | Date | string
     paid_at?: DateTimeNullableWithAggregatesFilter<"payments"> | Date | string | null
@@ -15829,6 +15865,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
+    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     order_items?: order_itemsCreateNestedManyWithoutProductInput
@@ -15841,6 +15878,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
+    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     order_items?: order_itemsUncheckedCreateNestedManyWithoutProductInput
@@ -15852,6 +15890,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     order_items?: order_itemsUpdateManyWithoutProductNestedInput
@@ -15864,6 +15903,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     order_items?: order_itemsUncheckedUpdateManyWithoutProductNestedInput
@@ -15876,6 +15916,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
+    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -15886,6 +15927,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15897,6 +15939,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16356,6 +16399,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -16374,6 +16418,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -16389,6 +16434,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16407,6 +16453,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16424,6 +16471,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -16438,6 +16486,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16454,6 +16503,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16936,6 +16986,7 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrder
+    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -16953,6 +17004,7 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrder
+    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -16964,6 +17016,7 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrder
+    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -17498,6 +17551,7 @@ export namespace Prisma {
     payment_gateway?: SortOrder
     gateway_transaction_id?: SortOrder
     payment_code?: SortOrder
+    bank?: SortOrder
     payment_url?: SortOrder
     created_at?: SortOrder
     paid_at?: SortOrder
@@ -17520,6 +17574,7 @@ export namespace Prisma {
     payment_gateway?: SortOrder
     gateway_transaction_id?: SortOrder
     payment_code?: SortOrder
+    bank?: SortOrder
     payment_url?: SortOrder
     created_at?: SortOrder
     paid_at?: SortOrder
@@ -17536,6 +17591,7 @@ export namespace Prisma {
     payment_gateway?: SortOrder
     gateway_transaction_id?: SortOrder
     payment_code?: SortOrder
+    bank?: SortOrder
     payment_url?: SortOrder
     created_at?: SortOrder
     paid_at?: SortOrder
@@ -19171,6 +19227,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -19187,6 +19244,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -19357,6 +19415,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19373,6 +19432,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19471,6 +19531,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
+    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -19482,6 +19543,7 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
+    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -19558,6 +19620,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19569,6 +19632,7 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19847,6 +19911,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -19864,6 +19929,7 @@ export namespace Prisma {
     payment_gateway?: string
     gateway_transaction_id?: string | null
     payment_code?: string | null
+    bank?: string | null
     payment_url?: string | null
     created_at?: Date | string
     paid_at?: Date | string | null
@@ -19894,6 +19960,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19911,6 +19978,7 @@ export namespace Prisma {
     payment_gateway?: StringFieldUpdateOperationsInput | string
     gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

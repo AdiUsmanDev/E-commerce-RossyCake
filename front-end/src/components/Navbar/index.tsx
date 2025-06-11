@@ -3,7 +3,7 @@ import { FloatingNav } from "../ui/floating-navbar";
 import DarkMode from "../DarkMode";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/redux/store";
-import { User } from "@/types/api.types"; // Impor tipe User
+import { User } from "@/types/user.types";
 
 const NavbarMobile = ({
   navItems,

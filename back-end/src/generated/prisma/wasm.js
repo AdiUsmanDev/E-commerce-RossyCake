@@ -138,6 +138,7 @@ exports.Prisma.ProductsScalarFieldEnum = {
   price: 'price',
   stock: 'stock',
   category: 'category',
+  image_url: 'image_url',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
@@ -215,6 +216,7 @@ exports.Prisma.PaymentsScalarFieldEnum = {
   payment_gateway: 'payment_gateway',
   gateway_transaction_id: 'gateway_transaction_id',
   payment_code: 'payment_code',
+  bank: 'bank',
   payment_url: 'payment_url',
   created_at: 'created_at',
   paid_at: 'paid_at',
@@ -279,7 +281,8 @@ exports.Prisma.usersOrderByRelevanceFieldEnum = {
 exports.Prisma.productsOrderByRelevanceFieldEnum = {
   name: 'name',
   description: 'description',
-  category: 'category'
+  category: 'category',
+  image_url: 'image_url'
 };
 
 exports.Prisma.JsonNullValueFilter = {
@@ -323,6 +326,7 @@ exports.Prisma.paymentsOrderByRelevanceFieldEnum = {
   payment_gateway: 'payment_gateway',
   gateway_transaction_id: 'gateway_transaction_id',
   payment_code: 'payment_code',
+  bank: 'bank',
   payment_url: 'payment_url'
 };
 

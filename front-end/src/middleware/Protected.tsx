@@ -1,0 +1,67 @@
+import NotAdminErrorPage from "@/components/Forbidden";
+import { GuestLayouts } from "@/components/Layouts/GuestLayout";
+import { fetchUserProfile } from "@/lib/redux/slices/authSlice";
+import { AppDispatch, RootState } from "@/lib/redux/store";
+import { useNavigate } from "@tanstack/react-router";
+import { LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+interface ProtectedProps {
+  children: React.ReactNode;
+  roles: string[]; // list of allowed roles or IDs
+}
+
+const Protected = ({ children, roles }: ProtectedProps) => {
+  // Ambil juga 'status' dari Redux untuk mengetahui state loading
+  const {
+    user,
+    token,
+    status: authStatus,
+  } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  // --- Efek untuk Navigasi ---
+  // Dijalankan setiap kali auth state berubah
+  useEffect(() => {
+    // Hanya dispatch jika ada token, tapi belum ada data user, dan tidak sedang dalam proses fetching
+    if (token && !user && authStatus !== "loading") {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch, token, user, authStatus]);
+
+  // --- Logika Render ---
+
+  // 1. Tampilkan loader jika:
+  //    - Status Redux sedang 'loading'.
+  //    - ATAU jika ada token tapi data user belum terisi (kondisi setelah reload).
+  if (authStatus === "loading" || (token && !user)) {
+    return (
+      <GuestLayouts>
+        <div className="flex justify-center items-center min-h-screen">
+          <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      </GuestLayouts>
+    );
+  }
+
+  // 2. Jika user sudah ada (berhasil login dan fetch), periksa perannya.
+  if (user) {
+    // Cek apakah peran user ada di dalam daftar peran yang diizinkan.
+    const isAuthorized = roles.includes(user.role);
+
+    if (isAuthorized) {
+      // Jika diizinkan, tampilkan konten halaman yang dilindungi.
+      return <>{children}</>;
+    } else {
+      // Jika tidak diizinkan, tampilkan halaman error akses ditolak.
+      return <NotAdminErrorPage />;
+    }
+  }
+
+  // 3. Fallback: Render null jika tidak ada user dan tidak sedang loading.
+  //    Ini untuk mencegah "flicker" sebelum useEffect melakukan redirect.
+  return;
+};
+
+export default Protected;

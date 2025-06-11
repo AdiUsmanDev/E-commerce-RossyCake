@@ -1,9 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-// Mengimpor data dummy dan tipe data
-import { Products } from "@/data/products"; // Ganti nama impor agar lebih jelas
-import { ProductProops } from "@/types/product.types"; // Ganti nama impor agar konsisten
+import React, { useMemo, useState } from "react";
 
 // Mengimpor komponen UI dari shadcn/ui
 import {
@@ -42,110 +39,159 @@ import {
   IconPlus,
   IconSearch,
   IconTrash,
-  IconAlertTriangle, // Ikon untuk dialog konfirmasi
+  IconAlertTriangle,
+  IconServerOff,
 } from "@tabler/icons-react";
 
 // Komponen Form terpisah (seperti yang Anda miliki)
 import { ProductFormFields } from "./ProductFormFields";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  CreateProductPayload,
+  Product,
+  UpdateProductPayload,
+} from "@/types/product.types";
+import {
+  createProduct,
+  deleteProduct,
+  getProducts,
+  updateProduct,
+} from "@/services/product.service";
+import { LoaderCircle } from "lucide-react";
+
+// Komponen Skeleton untuk tabel
+const TableSkeleton = () => (
+  <TableBody>
+    {Array.from({ length: 8 }).map((_, index) => (
+      <TableRow key={`skeleton-${index}`}>
+        <TableCell className="w-[60px]">
+          <div className="h-6 bg-muted animate-pulse rounded-md"></div>
+        </TableCell>
+        <TableCell className="w-[100px] p-1">
+          <div className="h-14 w-14 bg-muted animate-pulse rounded-md"></div>
+        </TableCell>
+        <TableCell>
+          <div className="h-6 bg-muted animate-pulse rounded-md"></div>
+        </TableCell>
+        <TableCell className="w-[150px]">
+          <div className="h-6 bg-muted animate-pulse rounded-md"></div>
+        </TableCell>
+        <TableCell className="w-[100px]">
+          <div className="h-6 bg-muted animate-pulse rounded-md"></div>
+        </TableCell>
+        <TableCell className="w-[120px]">
+          <div className="flex justify-center gap-2">
+            <div className="h-8 w-8 bg-muted animate-pulse rounded-md"></div>
+            <div className="h-8 w-8 bg-muted animate-pulse rounded-md"></div>
+          </div>
+        </TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+);
 
 const ProductsPage: React.FC = () => {
-  // State utama
-  const [productsList, setProductsList] = useState<ProductProops[]>(Products);
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // State untuk mengelola dialog form (create/update)
+  // State untuk dialog
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<"create" | "update">("create");
-  const [editingProduct, setEditingProduct] = useState<ProductProops | null>(
-    null
-  );
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
-  // State untuk mengelola dialog konfirmasi hapus
-  const [productToDelete, setProductToDelete] = useState<ProductProops | null>(
-    null
-  );
+  // 1. Fetching data produk dengan useQuery
+  const {
+    data: products = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Product[]>({
+    queryKey: ["adminProducts"],
+    queryFn: getProducts,
+  });
+
+  // 2. Mutation untuk Create & Update produk
+  const { mutate: saveProduct, isPending: isSaving } = useMutation({
+    mutationFn: (data: {
+      id?: number;
+      payload: CreateProductPayload | UpdateProductPayload;
+    }) => {
+      if (data.id) {
+        return updateProduct(data.id, data.payload as UpdateProductPayload);
+      }
+      return createProduct(data.payload as CreateProductPayload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
+      setIsFormOpen(false);
+      setEditingProduct(null);
+    },
+  });
+
+  // 3. Mutation untuk Delete produk
+  const { mutate: removeProduct, isPending: isDeleting } = useMutation({
+    mutationFn: (productId: number) => deleteProduct(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
+      setProductToDelete(null);
+    },
+    onError: (err) => {
+      alert(`Gagal menghapus produk: ${(err as Error).message}`);
+      setProductToDelete(null);
+    },
+  });
 
   // --- LOGIKA UTAMA ---
-
-  // Mencari produk berdasarkan query
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  const filteredProducts = productsList.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchQuery) ||
-      product.id.toLowerCase().includes(searchQuery)
-  );
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery) ||
+        product.id.toString().toLowerCase().includes(searchQuery)
+    );
+  }, [products, searchQuery]);
 
-  // Membuka form untuk membuat produk baru
   const openCreateForm = () => {
     setEditingProduct(null);
     setFormMode("create");
     setIsFormOpen(true);
   };
 
-  // Membuka form untuk mengedit produk yang ada
-  const openEditForm = (productId: string) => {
-    // [FIXED] Logika find diperbaiki dari `!==` menjadi `===`
-    const productToEdit = productsList.find((p) => p.id === productId);
-    if (productToEdit) {
-      setEditingProduct(productToEdit);
-      setFormMode("update");
-      setIsFormOpen(true);
-    }
+  const openEditForm = (product: Product) => {
+    setEditingProduct(product);
+    setFormMode("update");
+    setIsFormOpen(true);
   };
 
-  // Menangani submit dari form (create atau update)
   const handleFormSubmit = (
-    formData: Omit<ProductProops, "createdAt" | "updatedAt" | "category">
+    formData: CreateProductPayload | UpdateProductPayload
   ) => {
-    const now = new Date().toISOString();
-
-    if (formMode === "create") {
-      // [REFACTORED] Logika pembuatan produk baru lebih bersih dan lengkap
-      const newProduct: ProductProops = {
-        ...formData,
-        id: formData.id || `prod_${Date.now()}`, // Pastikan ID unik
-        category: "Aneka Kue", // Nilai default atau bisa dari form
-        createdAt: now,
-        updatedAt: now,
-      };
-      setProductsList((prev) => [newProduct, ...prev]); // Tambahkan di awal agar terlihat
-    } else if (formMode === "update" && editingProduct) {
-      // [REFACTORED] Logika update sekarang juga memperbarui `updatedAt`
-      const updatedProduct: ProductProops = {
-        ...editingProduct,
-        ...formData,
-        updatedAt: now,
-      };
-      setProductsList((prev) =>
-        prev.map((p) => (p.id === editingProduct.id ? updatedProduct : p))
-      );
+    if (formMode === "update" && editingProduct) {
+      saveProduct({ id: editingProduct.id, payload: formData });
+    } else {
+      saveProduct({ payload: formData });
     }
-
-    // Reset state form setelah submit
-    setIsFormOpen(false);
-    setEditingProduct(null);
   };
 
-  // Menangani proses hapus produk
   const confirmDeleteProduct = () => {
     if (!productToDelete) return;
-    setProductsList((prev) => prev.filter((p) => p.id !== productToDelete.id));
-    setProductToDelete(null); // Tutup dialog konfirmasi
+    removeProduct(productToDelete.id);
   };
 
-  // Menghitung total nilai produk
-  const totalProductValue = filteredProducts.reduce((sum, product) => {
-    return sum + (product.price || 0) * (product.totalAmount || 0);
-  }, 0);
-
-  // --- RENDER KOMPONEN ---
+  const totalProductValue = useMemo(() => {
+    if (!filteredProducts) return 0;
+    return filteredProducts.reduce((sum, product) => {
+      return sum + (product.price || 0) * (product.stock || 0);
+    }, 0);
+  }, [filteredProducts]);
 
   return (
     <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
-      {/* Header Halaman */}
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
           Manajemen Produk
@@ -163,7 +209,6 @@ const ProductsPage: React.FC = () => {
         </Breadcrumb>
       </div>
 
-      {/* Kontrol dan Aksi */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
         <div className="relative flex items-center w-full md:max-w-sm">
           <IconSearch className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500" />
@@ -184,18 +229,17 @@ const ProductsPage: React.FC = () => {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-xl">
-            {/* Menggunakan komponen form yang sudah ada */}
             <ProductFormFields
               mode={formMode}
               initialData={editingProduct}
               onSubmit={handleFormSubmit}
               onCancel={() => setIsFormOpen(false)}
+              isSaving={isSaving}
             />
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Tabel Produk */}
       <ScrollArea className="w-full border rounded-md">
         <div className="h-[calc(100vh-420px)]">
           <Table>
@@ -209,75 +253,99 @@ const ProductsPage: React.FC = () => {
                 <TableHead className="w-[120px] text-center">Aksi</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product, idx) => (
-                  <TableRow key={product.id}>
-                    <TableCell className="font-medium text-center">
-                      {idx + 1}
-                    </TableCell>
-                    <TableCell className="p-1">
-                      <img
-                        src={
-                          product.imageUrl ||
-                          "https://placehold.co/100x100/e2e8f0/e2e8f0?text=."
-                        }
-                        alt={product.name}
-                        className="h-14 w-14 object-cover rounded-md"
-                      />
-                    </TableCell>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell className="text-right">
-                      Rp{product.price.toLocaleString("id-ID")}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {product.totalAmount} pcs
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-center gap-x-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => openEditForm(product.id)}
-                          title="Edit"
-                        >
-                          <IconPencil size={16} />
-                        </Button>
-                        {/* [REFACTORED] Tombol hapus sekarang membuka dialog konfirmasi */}
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => setProductToDelete(product)}
-                          title="Hapus"
-                        >
-                          <IconTrash size={16} />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
+            {isLoading ? (
+              <TableSkeleton />
+            ) : isError ? (
+              <TableBody>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center h-24">
-                    {searchQuery
-                      ? "Produk tidak ditemukan."
-                      : "Belum ada produk."}
+                  <TableCell colSpan={6} className="text-center h-48">
+                    <IconServerOff className="mx-auto h-12 w-12 text-destructive" />
+                    <p className="mt-2 font-semibold text-destructive">
+                      Gagal memuat data
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {(error as Error).message}
+                    </p>
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product, idx) => (
+                    <TableRow key={product.id}>
+                      <TableCell className="font-medium text-center">
+                        {idx + 1}
+                      </TableCell>
+                      <TableCell className="p-1">
+                        <img
+                          src={
+                            product.image_url ||
+                            "https://placehold.co/100x100/e2e8f0/e2e8f0?text=."
+                          }
+                          alt={product.name}
+                          className="h-14 w-14 object-cover rounded-md"
+                        />
+                      </TableCell>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell className="text-right">
+                        {new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                          minimumFractionDigits: 0,
+                        }).format(product.price)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {product.stock} pcs
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-center gap-x-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => openEditForm(product)}
+                            title="Edit"
+                          >
+                            <IconPencil size={16} />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => setProductToDelete(product)}
+                            title="Hapus"
+                          >
+                            <IconTrash size={16} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center h-24">
+                      {searchQuery
+                        ? "Produk tidak ditemukan."
+                        : "Belum ada produk."}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            )}
           </Table>
         </div>
         <ScrollBar orientation="vertical" />
       </ScrollArea>
       <div className="flex justify-end font-semibold p-4 border-t">
-        Total Estimasi Nilai Produk: Rp
-        {totalProductValue.toLocaleString("id-ID")}
+        Total Estimasi Nilai Produk:{" "}
+        {new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+        }).format(totalProductValue)}
       </div>
 
-      {/* [NEW] Dialog Konfirmasi Hapus */}
       <Dialog
         open={!!productToDelete}
         onOpenChange={() => setProductToDelete(null)}
@@ -298,7 +366,14 @@ const ProductsPage: React.FC = () => {
             <DialogClose asChild>
               <Button variant="outline">Batal</Button>
             </DialogClose>
-            <Button variant="destructive" onClick={confirmDeleteProduct}>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteProduct}
+              disabled={isDeleting}
+            >
+              {isDeleting && (
+                <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
+              )}
               Ya, Hapus
             </Button>
           </DialogFooter>

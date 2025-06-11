@@ -23,6 +23,10 @@ export const createProduct = Joi.object({
     "string.base": "Kategori harus berupa teks",
     "string.max": "Kategori maksimal 100 karakter",
   }),
+  image_url: Joi.string().max(100).allow(null, "").messages({
+    "string.base": "link gambar harus berupa teks",
+    "string.max": "link gambar maksimal 100 karakter",
+  }),
 });
 
 export const updateProduct = Joi.object({
