@@ -29,11 +29,11 @@ export const updateProduct = async (
   productId: number,
   productData: Partial<Product>
 ): Promise<Product> => {
-  const { data } = await apiClient.put<Product>(
+  const response = await apiClient.patch<ApiResponse<Product>>(
     `/products/${productId}`,
     productData
   );
-  return data;
+  return response.data.data;
 };
 
 export const deleteProduct = async (productId: number): Promise<void> => {

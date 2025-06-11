@@ -26,7 +26,7 @@ export interface CreateProductPayload {
 // Tipe data untuk payload saat MEMPERBARUI produk.
 // Menggunakan 'Partial' dari tipe Create, yang berarti semua field bersifat opsional.
 // Ini memungkinkan Anda mengirim hanya field yang berubah.
-export type UpdateProductPayload = Partial<CreateProductPayload>;
+export type UpdateProductPayload = Partial<Product>;
 
 // Tipe data untuk item di dalam keranjang belanja.
 // Biasanya merupakan gabungan dari tipe Product dengan properti 'quantity'.

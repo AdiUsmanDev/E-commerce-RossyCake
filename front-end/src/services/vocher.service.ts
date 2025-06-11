@@ -24,11 +24,11 @@ export const getVoucherById = async (voucherId: number): Promise<Voucher> => {
 export const applyVoucher = async (
   payload: ApplyVoucherPayload
 ): Promise<ApplyVoucherResponse> => {
-  const { data } = await apiClient.post<ApplyVoucherResponse>(
+  const response = await apiClient.post<ApplyVoucherResponse>(
     "/vouchers/apply",
     payload
   );
-  return data;
+  return response.data.response;
 };
 
 export const createVoucher = async (
@@ -42,18 +42,18 @@ export const updateVoucher = async (
   voucherId: number,
   voucherData: UpdateVoucherDTO
 ): Promise<Voucher> => {
-  const { data } = await apiClient.patch<Voucher>(
+  const response = await apiClient.patch<Voucher>(
     `/vochers/${voucherId}`,
     voucherData
   );
-  return data;
+  return response.data.data;
 };
 
 export const deleteVoucher = async (
   voucherId: number
 ): Promise<{ message: string }> => {
-  const { data } = await apiClient.delete<{ message: string }>(
+  const v = await apiClient.delete<{ message: string }>(
     `/vochers/${voucherId}`
   );
-  return data;
+  return response.data.data;
 };

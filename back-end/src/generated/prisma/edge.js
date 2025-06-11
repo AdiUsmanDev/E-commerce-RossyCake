@@ -369,7 +369,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\Numpang\\QulsGans\\rossi\\E-commerce-RossyCake\\Back-End\\src\\generated\\prisma",
+      "value": "D:\\Project\\E-commerce-RossyCake\\back-end\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -383,7 +383,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\Numpang\\QulsGans\\rossi\\E-commerce-RossyCake\\Back-End\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\Project\\E-commerce-RossyCake\\back-end\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  IconLoader2,
   IconPencil,
   IconPlus,
   IconSearch,
@@ -41,6 +42,12 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  createVoucher,
+  deleteVoucher,
+  getAllVouchers,
+  updateVoucher,
+} from "@/services/vocher.service";
 
 // Impor form yang sudah disesuaikan untuk Diskon/Voucher
 // import DiscountVoucherFormFields from "./DiscountVoucherFormFields"; // Buat file ini
@@ -52,137 +59,61 @@ const DiscountVoucherFormFields = ({
   initialData,
   onSubmit,
   onCancel,
+  isSubmitting,
 }) => {
+  // State to track the current discount type to conditionally show max_discount
+  const [discountType, setDiscountType] = useState(
+    initialData?.discount_type ?? "PERCENTAGE"
+  );
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    // Ekstrak data dari formData dan panggil onSubmit
     const data = {
-      id: formData.get("id") as string,
-      name: formData.get("name") as string,
-      type: formData.get("type") as
-        | "percentage"
-        | "fixed_amount"
-        | "free_shipping",
-      value: parseFloat(formData.get("value") as string),
+      code: formData.get("code") as string,
+      name: formData.get("name") as string, // Name is not in schema, but good for UI
       description: (formData.get("description") as string) || "",
-      startDate: formData.get("startDate") as string,
-      endDate: formData.get("endDate") as string,
-      status: formData.get("status") as "active" | "inactive" | "expired",
-      minPurchase: formData.get("minPurchase")
-        ? parseFloat(formData.get("minPurchase") as string)
+      discount_type: formData.get("discount_type") as
+        | "PERCENTAGE"
+        | "FIXED"
+        | "FREE_SHIPING",
+      discount_value: parseFloat(formData.get("discount_value") as string),
+      max_discount: formData.get("max_discount")
+        ? parseFloat(formData.get("max_discount") as string)
         : undefined,
+      min_purchase: formData.get("min_purchase")
+        ? parseFloat(formData.get("min_purchase") as string)
+        : 0,
+      valid_until: formData.get("valid_until") as string,
+      usage_limit: parseInt(formData.get("usage_limit") as string, 10),
     };
     onSubmit(data);
   };
-  // JSX Form untuk diskon/voucher (Kode, Nama, Tipe, Nilai, Tgl Mulai, Tgl Selesai, Status, dll.)
-  // Untuk mempersingkat, ini hanya contoh, Anda perlu membuat field input yang lengkap.
   return (
     <form onSubmit={handleSubmit}>
-
       <DialogHeader>
         <DialogTitle>
           {mode === "update"
             ? "Edit Diskon/Voucher"
             : "Tambah Diskon/Voucher Baru"}
         </DialogTitle>
-        <DialogDescription>Lengkapi detail di bawah ini.</DialogDescription>
+        <DialogDescription>
+          Lengkapi detail di bawah ini sesuai skema data yang baru.
+        </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="id" className="text-right">
-            Kode/ID
+          <Label htmlFor="code" className="text-right">
+            Kode
           </Label>
           <Input
-            id="id"
-            name="id"
-            defaultValue={initialData?.id ?? ""}
+            id="code"
+            name="code"
+            defaultValue={initialData?.code ?? ""}
             className="col-span-3"
             readOnly={mode === "update"}
             required
           />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="name" className="text-right">
-            Nama
-          </Label>
-          <Input
-            id="name"
-            name="name"
-            defaultValue={initialData?.name ?? ""}
-            className="col-span-3"
-            required
-          />
-        </div>
-        {/* Tambahkan field lain: type (select), value (number), startDate (date), endDate (date), status (select), etc. */}
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="type" className="text-right">
-            Tipe
-          </Label>
-          <select
-            id="type"
-            name="type"
-            defaultValue={initialData?.type ?? "percentage"}
-            className="col-span-3 p-2 border rounded-md dark:bg-neutral-800"
-          >
-            <option value="percentage">Persentase (%)</option>
-            <option value="fixed_amount">Jumlah Tetap (Rp)</option>
-            <option value="free_shipping">Gratis Ongkir</option>
-          </select>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="value" className="text-right">
-            Nilai
-          </Label>
-          <Input
-            id="value"
-            name="value"
-            type="number"
-            defaultValue={initialData?.value ?? 0}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="startDate" className="text-right">
-            Tgl Mulai
-          </Label>
-          <Input
-            id="startDate"
-            name="startDate"
-            type="date"
-            defaultValue={initialData?.startDate ?? ""}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="endDate" className="text-right">
-            Tgl Selesai
-          </Label>
-          <Input
-            id="endDate"
-            name="endDate"
-            type="date"
-            defaultValue={initialData?.endDate ?? ""}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="status" className="text-right">
-            Status
-          </Label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={initialData?.status ?? "inactive"}
-            className="col-span-3 p-2 border rounded-md dark:bg-neutral-800"
-          >
-            <option value="active">Aktif</option>
-            <option value="inactive">Tidak Aktif</option>
-            <option value="expired">Kadaluarsa</option>
-          </select>
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="description" className="text-right">
@@ -193,17 +124,113 @@ const DiscountVoucherFormFields = ({
             name="description"
             defaultValue={initialData?.description ?? ""}
             className="col-span-3"
-            placeholder="Deskripsi singkat..."
+            placeholder="Deskripsi singkat voucher..."
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="discount_type" className="text-right">
+            Tipe Diskon
+          </Label>
+          <select
+            id="discount_type"
+            name="discount_type"
+            value={discountType}
+            onChange={(e) => setDiscountType(e.target.value)}
+            className="col-span-3 p-2 border rounded-md dark:bg-neutral-800"
+          >
+            <option value="PERCENTAGE">Persentase (%)</option>
+            <option value="FIXED">Jumlah Tetap (Rp)</option>
+            <option value="FREE_SHIPING">Gratis Ongkir</option>
+          </select>
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="discount_value" className="text-right">
+            Nilai Diskon
+          </Label>
+          <Input
+            id="discount_value"
+            name="discount_value"
+            type="number"
+            step="any"
+            defaultValue={initialData?.discount_value ?? 0}
+            className="col-span-3"
+            required
+          />
+        </div>
+        {discountType === "PERCENTAGE" && (
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="max_discount" className="text-right">
+              Maks. Diskon (Rp)
+            </Label>
+            <Input
+              id="max_discount"
+              name="max_discount"
+              type="number"
+              step="any"
+              defaultValue={initialData?.max_discount ?? ""}
+              className="col-span-3"
+              placeholder="Contoh: 50000"
+              required
+            />
+          </div>
+        )}
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="min_purchase" className="text-right">
+            Min. Pembelian (Rp)
+          </Label>
+          <Input
+            id="min_purchase"
+            name="min_purchase"
+            type="number"
+            step="any"
+            defaultValue={initialData?.min_purchase ?? 0}
+            className="col-span-3"
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="usage_limit" className="text-right">
+            Limit Penggunaan
+          </Label>
+          <Input
+            id="usage_limit"
+            name="usage_limit"
+            type="number"
+            defaultValue={initialData?.usage_limit ?? ""}
+            className="col-span-3"
+            required
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="valid_until" className="text-right">
+            Berlaku Hingga
+          </Label>
+          <Input
+            id="valid_until"
+            name="valid_until"
+            type="date"
+            defaultValue={initialData?.valid_until ?? ""}
+            className="col-span-3"
+            required
           />
         </div>
       </div>
       <DialogFooter>
         <DialogClose asChild>
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Batal
           </Button>
         </DialogClose>
-        <Button type="submit">{mode === "update" ? "Update" : "Simpan"}</Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting && (
+            <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+          )}
+          {mode === "update" ? "Update" : "Simpan"}
+        </Button>
       </DialogFooter>
     </form>
   );
@@ -211,93 +238,79 @@ const DiscountVoucherFormFields = ({
 // --- Akhir Placeholder ---
 
 interface DiscountVoucher {
-  id: string;
-  name: string;
-  type: "percentage" | "fixed_amount" | "free_shipping";
-  value: number;
+  apiId: number;
+  code: string;
+  name: string; // Keep name for UI display purposes
   description?: string;
-  startDate: string;
-  endDate: string;
+  discount_type: "PERCENTAGE" | "FIXED" | "FREE_SHIPING";
+  discount_value: number;
+  max_discount?: number;
+  min_purchase?: number;
+  valid_until: string; // formatted as YYYY-MM-DD
+  usage_limit: number;
   status: "active" | "inactive" | "expired";
-  minPurchase?: number;
 }
 
-const initialDiscountsData: DiscountVoucher[] = [
-  // ... (data dummy dari atas) ...
-  {
-    id: "HEMAT20",
-    name: "Diskon Akhir Pekan 20%",
-    type: "percentage",
-    value: 20,
-    description: "Nikmati diskon 20% untuk semua produk setiap akhir pekan.",
-    startDate: "2025-06-01",
-    endDate: "2025-12-31",
-    status: "active",
-    minPurchase: 100000,
-  },
-  {
-    id: "ONGKIRGRATIS",
-    name: "Voucher Gratis Ongkir",
-    type: "free_shipping",
-    value: 0,
-    description: "Gratis ongkir tanpa minimum pembelian.",
-    startDate: "2025-05-01",
-    endDate: "2025-06-30",
-    status: "active",
-  },
-  {
-    id: "POTONGAN15RB",
-    name: "Potongan Langsung Rp15.000",
-    type: "fixed_amount",
-    value: 15000,
-    description: "Dapatkan potongan Rp15.000 untuk pembelian di atas Rp75.000.",
-    startDate: "2025-06-10",
-    endDate: "2025-07-10",
-    status: "inactive",
-    minPurchase: 75000,
-  },
-  {
-    id: "RAMADANHEMAT",
-    name: "Promo Spesial Ramadan",
-    type: "percentage",
-    value: 15,
-    description: "Diskon 15% untuk kue kering selama bulan Ramadan.",
-    startDate: "2025-03-01",
-    endDate: "2025-03-30",
-    status: "expired",
-  },
-  {
-    id: "BARUDAFTAR",
-    name: "Diskon Pengguna Baru",
-    type: "fixed_amount",
-    value: 25000,
-    description: "Potongan Rp25.000 khusus untuk pendaftaran pertama.",
-    startDate: "2025-01-01",
-    endDate: "2025-12-31",
-    status: "active",
-    minPurchase: 50000,
-  },
-];
-
 const DiscountVoucherManagement: React.FC = () => {
-  const [discountsList, setDiscountsList] =
-    useState<DiscountVoucher[]>(initialDiscountsData);
+  const [vouchers, setVouchers] = useState<DiscountVoucher[]>([]);
+  const [isFetching, setIsFetching] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<"create" | "update">("create");
   const [editingDiscount, setEditingDiscount] =
     useState<DiscountVoucher | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const mapApiToComponent = (apiVoucher: ApiVoucher): DiscountVoucher => ({
+    apiId: apiVoucher.id,
+    code: apiVoucher.code,
+    name: apiVoucher.code, // Use code as name if name field doesn't exist in API response
+    description: apiVoucher.description,
+    discount_type: apiVoucher.discount_type,
+    discount_value: apiVoucher.discount_value,
+    max_discount: apiVoucher.max_discount,
+    min_purchase: apiVoucher.min_purchase,
+    valid_until: new Date(apiVoucher.valid_until).toISOString().split("T")[0],
+    usage_limit: apiVoucher.usage_limit,
+    status: apiVoucher.status,
+  });
+
+  const mapComponentToApi = (
+    voucher: Partial<DiscountVoucher>
+  ): CreateVoucherDTO | UpdateVoucherDTO => ({
+    code: voucher.code,
+    description: voucher.description,
+    discount_type: voucher.discount_type,
+    discount_value: voucher.discount_value,
+    max_discount: voucher.max_discount,
+    min_purchase: voucher.min_purchase,
+    valid_until: voucher.valid_until,
+    usage_limit: voucher.usage_limit,
+  });
+
+  const fetchVouchers = useCallback(async () => {
+    setIsFetching(true);
+    setError(null);
+    try {
+      const apiVouchers = await getAllVouchers();
+      setVouchers(apiVouchers.map(mapApiToComponent));
+    } catch (err) {
+      setError(err.message || "Gagal memuat data voucher. Silakan coba lagi.");
+      console.error(err);
+    } finally {
+      setIsFetching(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchVouchers();
+  }, [fetchVouchers]);
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
-
-  const filteredDiscounts = discountsList.filter(
-    (discount) =>
-      discount.name.toLowerCase().includes(searchQuery) ||
-      discount.id.toLowerCase().includes(searchQuery) ||
-      discount.type.toLowerCase().includes(searchQuery)
-  );
 
   const openCreateForm = () => {
     setEditingDiscount(null);
@@ -311,39 +324,72 @@ const DiscountVoucherManagement: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleFormSubmit = (data: DiscountVoucher) => {
-    if (formMode === "create") {
-      setDiscountsList((prev) => [
-        ...prev,
-        { ...data, id: data.id || `VC_NEW_${Date.now().toString().slice(-4)}` },
-      ]);
-    } else if (formMode === "update" && editingDiscount) {
-      setDiscountsList((prev) =>
-        prev.map((d) => (d.id === editingDiscount.id ? { ...d, ...data } : d))
+  const handleFormSubmit = async (formData) => {
+    setIsSubmitting(true);
+    setError(null);
+    const payload = mapComponentToApi(formData);
+    try {
+      if (formMode === "create") {
+        await createVoucher(payload as CreateVoucherDTO);
+      } else if (formMode === "update" && editingDiscount) {
+        // For update, we only send fields that can be changed
+        const updatePayload: UpdateVoucherDTO = {
+          description: payload.description,
+          valid_until: payload.valid_until,
+          usage_limit: payload.usage_limit,
+        };
+        await updateVoucher(editingDiscount.apiId, updatePayload);
+      }
+      setIsFormOpen(false);
+      setEditingDiscount(null);
+      await fetchVouchers();
+    } catch (err) {
+      const action = formMode === "create" ? "menyimpan" : "memperbarui";
+      setError(
+        err.message || `Gagal ${action} voucher. Periksa kembali data Anda.`
       );
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsFormOpen(false);
-    setEditingDiscount(null);
   };
 
-  const handleDeleteDiscount = (discountId: string) => {
+  const handleDeleteDiscount = async (
+    voucherApiId: number,
+    voucherCode: string
+  ) => {
     if (
       window.confirm(
-        `Yakin ingin menghapus diskon/voucher dengan ID: ${discountId}?`
+        `Yakin ingin menghapus voucher dengan kode: ${voucherCode}?`
       )
     ) {
-      setDiscountsList((prev) => prev.filter((d) => d.id !== discountId));
+      setError(null);
+      try {
+        await deleteVoucher(voucherApiId);
+        await fetchVouchers();
+      } catch (err) {
+        setError(err.message || "Gagal menghapus voucher.");
+        console.error(err);
+      }
     }
   };
 
-  const formatDiscountValue = (
-    type: DiscountVoucher["type"],
-    value: number
-  ) => {
-    if (type === "percentage") return `${value}%`;
-    if (type === "fixed_amount") return `Rp${value.toLocaleString("id-ID")}`;
-    if (type === "free_shipping") return "Gratis";
-    return value;
+  const filteredDiscounts = vouchers.filter(
+    (discount) =>
+      discount.name.toLowerCase().includes(searchQuery) ||
+      discount.code.toLowerCase().includes(searchQuery) ||
+      discount.discount_type.toLowerCase().includes(searchQuery)
+  );
+
+  const formatCurrency = (value) => `Rp${(value || 0).toLocaleString("id-ID")}`;
+
+  const formatDiscountDisplay = (voucher: DiscountVoucher) => {
+    if (voucher.discount_type === "PERCENTAGE")
+      return `${voucher.discount_value}%`;
+    if (voucher.discount_type === "FIXED")
+      return formatCurrency(voucher.discount_value);
+    if (voucher.discount_type === "FREE_SHIPING") return "Gratis";
+    return voucher.discount_value;
   };
 
   return (
@@ -367,14 +413,13 @@ const DiscountVoucherManagement: React.FC = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 mb-4">
         <div className="relative flex items-center w-full md:max-w-sm">
-          <IconSearch className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500 dark:text-neutral-400 pointer-events-none" />
+          <IconSearch className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500" />
           <Input
             type="search"
             placeholder="Cari (Kode, Nama, Tipe)..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="pl-10 pr-4 py-2 w-full border-neutral-300 dark:border-neutral-700 rounded-md focus:ring-sky-500 focus:border-sky-500 dark:bg-neutral-800 dark:text-neutral-50"
-            aria-label="Cari Diskon atau Voucher"
+            className="pl-10"
           />
         </div>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -388,6 +433,7 @@ const DiscountVoucherManagement: React.FC = () => {
             <DiscountVoucherFormFields
               mode={formMode}
               initialData={editingDiscount}
+              isSubmitting={isSubmitting}
               onSubmit={handleFormSubmit}
               onCancel={() => setIsFormOpen(false)}
             />
@@ -395,31 +441,31 @@ const DiscountVoucherManagement: React.FC = () => {
         </Dialog>
       </div>
 
-      <ScrollArea className="h-[calc(100vh-420px)] w-full relative rounded-md border">
+      {error && (
+        <div className="text-red-600 text-center p-3 bg-red-100 dark:bg-red-900/20 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800/50">
+          {error}
+        </div>
+      )}
+
+      <ScrollArea className="h-[calc(100vh-450px)] w-full relative rounded-md border">
         <Table>
-          <TableCaption>Daftar diskon dan voucher Anda.</TableCaption>
+          <TableCaption>Daftar diskon dan voucher yang tersedia.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[60px] text-center sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
-                No
-              </TableHead>
               <TableHead className="w-[150px] sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
-                Kode/ID
+                Kode
               </TableHead>
               <TableHead className="sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
-                Nama
-              </TableHead>
-              <TableHead className="w-[120px] sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
-                Tipe
+                Deskripsi
               </TableHead>
               <TableHead className="w-[120px] text-right sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
                 Nilai
               </TableHead>
-              <TableHead className="w-[120px] text-center sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
-                Mulai
+              <TableHead className="w-[140px] text-right sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
+                Maks. Diskon
               </TableHead>
               <TableHead className="w-[120px] text-center sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
-                Selesai
+                Berlaku Hingga
               </TableHead>
               <TableHead className="w-[100px] text-center sticky top-0 z-10 bg-background dark:bg-neutral-900 shadow-sm">
                 Status
@@ -430,42 +476,40 @@ const DiscountVoucherManagement: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredDiscounts.length > 0 ? (
-              filteredDiscounts.map((discount, idx) => (
-                <TableRow key={discount.id}>
-                  <TableCell className="font-medium text-center">
-                    {idx + 1}
-                  </TableCell>
-                  <TableCell className="font-mono">{discount.id}</TableCell>
-                  <TableCell>{discount.name}</TableCell>
-                  <TableCell>
-                    {discount.type === "percentage"
-                      ? "Persentase"
-                      : discount.type === "fixed_amount"
-                        ? "Jumlah Tetap"
-                        : "Gratis Ongkir"}
+            {isFetching ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center h-24">
+                  <IconLoader2 className="mx-auto h-8 w-8 animate-spin text-sky-500" />
+                </TableCell>
+              </TableRow>
+            ) : filteredDiscounts.length > 0 ? (
+              filteredDiscounts.map((voucher) => (
+                <TableRow key={voucher.apiId}>
+                  <TableCell className="font-mono">{voucher.code}</TableCell>
+                  <TableCell>{voucher.description}</TableCell>
+                  <TableCell className="text-right">
+                    {formatDiscountDisplay(voucher)}
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatDiscountValue(discount.type, discount.value)}
+                    {voucher.max_discount
+                      ? formatCurrency(voucher.max_discount)
+                      : "-"}
                   </TableCell>
                   <TableCell className="text-center">
-                    {discount.startDate}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {discount.endDate}
+                    {voucher.valid_until}
                   </TableCell>
                   <TableCell className="text-center">
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        discount.status === "active"
-                          ? "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
-                          : discount.status === "inactive"
-                            ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
-                            : "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100"
+                        voucher.status === "active"
+                          ? "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300"
+                          : voucher.status === "inactive"
+                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300"
+                            : "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300"
                       }`}
                     >
-                      {discount.status.charAt(0).toUpperCase() +
-                        discount.status.slice(1)}
+                      {voucher.status.charAt(0).toUpperCase() +
+                        voucher.status.slice(1)}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
@@ -474,7 +518,7 @@ const DiscountVoucherManagement: React.FC = () => {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => openEditForm(discount)}
+                        onClick={() => openEditForm(voucher)}
                         title="Edit"
                       >
                         <IconPencil size={16} />
@@ -483,7 +527,9 @@ const DiscountVoucherManagement: React.FC = () => {
                         variant="destructive"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleDeleteDiscount(discount.id)}
+                        onClick={() =>
+                          handleDeleteDiscount(voucher.apiId, voucher.code)
+                        }
                         title="Hapus"
                       >
                         <IconTrash size={16} />
@@ -494,23 +540,21 @@ const DiscountVoucherManagement: React.FC = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center h-24">
-                  {" "}
-                  {/* Sesuaikan colSpan */}
+                <TableCell colSpan={7} className="text-center h-24">
                   {searchQuery
-                    ? "Diskon/voucher tidak ditemukan."
-                    : "Belum ada diskon atau voucher."}
+                    ? "Voucher tidak ditemukan."
+                    : "Belum ada voucher."}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={8} className="font-semibold text-right">
-                Total Diskon/Voucher Aktif
+              <TableCell colSpan={6} className="font-semibold text-right">
+                Total Voucher Aktif
               </TableCell>
               <TableCell className="text-right font-semibold">
-                {filteredDiscounts.filter((d) => d.status === "active").length}
+                {vouchers.filter((d) => d.status === "active").length}
               </TableCell>
             </TableRow>
           </TableFooter>

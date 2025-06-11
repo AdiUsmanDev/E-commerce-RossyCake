@@ -6,7 +6,9 @@ import Joi from "joi";
 export const createVoucherSchema = Joi.object({
   code: Joi.string().trim().uppercase().min(3).max(50).required(),
   description: Joi.string().optional().allow(""),
-  discount_type: Joi.string().valid("PERCENTAGE", "FIXED").required(),
+  discount_type: Joi.string()
+    .valid("PERCENTAGE", "FIXED", "FREE_SHIPING")
+    .required(),
   discount_value: Joi.number().positive().required(),
   max_discount: Joi.number()
     .positive()

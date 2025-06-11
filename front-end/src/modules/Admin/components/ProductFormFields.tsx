@@ -75,7 +75,7 @@ export const ProductFormFields = ({
     event.preventDefault();
 
     // Siapkan payload yang bersih sesuai tipe data
-    const payload: CreateProductPayload = {
+    const payload: CreateProductPayload | UpdateProductPayload = {
       name: formData.name,
       price: parseFloat(formData.price) || 0,
       stock: parseInt(formData.stock, 10) || 0,
