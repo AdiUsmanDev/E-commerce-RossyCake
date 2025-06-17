@@ -19,7 +19,26 @@ export const storeOrder = async (req, res, next) => {
   }
 };
 
-export const  getOrders = async (req, res, next) => {
+export const getAllOrders = async (req, res, next) => {
+  try {
+    const orders = await orderService.getAllOrdersAdmin();
+    res200("Berhasil mendapatkan semua data pesanan", orders, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getOrderAdmin = async (req, res, next) => {
+  try {
+    const orderId = req.params.code;
+    const orders = await orderService.getOrderAdmin(orderId);
+    res200("Admin Berhasil mendapatkan Order ", orders, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getOrders = async (req, res, next) => {
   try {
     const { id } = req.user;
 

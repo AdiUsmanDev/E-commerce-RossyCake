@@ -7,6 +7,7 @@ import {
   createRawMaterialSchema,
   updateRawMaterialSchema,
   adjustStockSchema,
+  processBarcodeSchema,
 } from "../validations/rawMaterial.validation.js";
 export const createRawMaterial = async (req, res, next) => {
   try {
@@ -26,7 +27,6 @@ export const createRawMaterial = async (req, res, next) => {
 
 export const getAllRawMaterials = async (req, res, next) => {
   try {
-    // Fungsi ini tidak memerlukan validasi body
     const result = await rawMaterialService.getAllRawMaterials();
     res200("Berhasil mendapatkan semua bahan baku", result, res);
   } catch (error) {
@@ -56,7 +56,7 @@ export const updateRawMaterial = async (req, res, next) => {
 
     const result = await rawMaterialService.updateRawMaterial(
       parseInt(req.params.id),
-      value // Gunakan 'value' hasil validasi, bukan req.value
+      value
     );
     res200("Bahan baku berhasil diperbarui", result, res);
   } catch (error) {
@@ -77,17 +77,26 @@ export const deleteRawMaterial = async (req, res, next) => {
 
 export const adjustStock = async (req, res, next) => {
   try {
-    // Memperbaiki validasi: Pindahkan dari middleware ke controller
     const { error, value } = adjustStockSchema.validate(req.body);
     if (error) {
       throw new Error400(error.details[0].message);
     }
 
-    const result = await rawMaterialService.adjustStock(
-      parseInt(req.params.id),
-      value // Gunakan 'value' hasil validasi, bukan req.value
-    );
+    const result = await rawMaterialService.adjustStock(value);
     res200("Stok berhasil disesuaikan", result, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const processBarcode = async (req, res, next) => {
+  try {
+    const { error, value } = processBarcodeSchema.validate(req.body);
+    if (error) {
+      throw new Error400(error.details[0].message);
+    }
+    const result = await rawMaterialService.processBarcode(value);
+    res200("berhasil scan barcode", result, res);
   } catch (error) {
     next(error);
   }

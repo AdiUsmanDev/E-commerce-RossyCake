@@ -7,7 +7,7 @@ import * as ErrorHandler from "../middlewares/errorHandler.js";
 export const app = express();
 
 const corsOptions = {
-  origin: ["https://rossi-cake.vercel.app/", "http://localhost:5173"],
+  origin: ["https://e-commerce-rossy-cake.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -20,4 +20,3 @@ apiV1(app);
 
 app.use(ErrorHandler.handleNotFound);
 app.use(ErrorHandler.handleOther);
-    

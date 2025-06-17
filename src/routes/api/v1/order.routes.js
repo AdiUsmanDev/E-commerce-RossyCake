@@ -1,7 +1,20 @@
 import * as orderController from "../../../controllers/order.controller.js";
+import { authMiddleware, isAdmin } from "../../../middlewares/auth.js";
 
 export default (router) => {
   const prefix = "/orders";
+  router.get(
+    prefix + "/all", // Gunakan endpoint yang jelas seperti /all
+    authMiddleware,
+    isAdmin,
+    orderController.getAllOrders
+  );
+  router.get(
+    prefix + "/admin/:code", // Gunakan endpoint yang jelas seperti /all
+    authMiddleware,
+    isAdmin,
+    orderController.getOrderAdmin
+  );
 
   router.get(prefix + "/", orderController.getOrders);
   router.post(prefix + "/", orderController.storeOrder);

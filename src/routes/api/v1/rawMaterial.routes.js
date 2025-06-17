@@ -21,7 +21,7 @@ export default (router) => {
 
   // Rute khusus untuk menyesuaikan stok
   router.patch(
-    prefix + "/:id/adjust-stock",
+    prefix + "/adjust-stock",
     authMiddleware,
     isAdmin,
     rawMaterialController.adjustStock
@@ -45,5 +45,12 @@ export default (router) => {
     authMiddleware,
     isAdmin,
     rawMaterialController.deleteRawMaterial
+  );
+
+  router.post(
+    prefix + "/process-barcode", 
+    authMiddleware,
+    isAdmin,
+    rawMaterialController.processBarcode
   );
 };

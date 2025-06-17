@@ -20,6 +20,7 @@ export const getProfile = async (id) => {
     name: user.name,
     phone: user.phone,
     email: user.email,
+    role: user.role,
   };
 
   return result;
@@ -54,7 +55,7 @@ export const update = async (id, data) => {
     where: {
       id: parseInt(id),
     },
-    data: dataToUpdate, // Prisma hanya akan meng-update field yang ada di objek ini
+    data: dataToUpdate,
   });
 
   if (!updatedUser) {
@@ -63,14 +64,13 @@ export const update = async (id, data) => {
     );
   }
 
-  // Buat objek hasil untuk dikembalikan ke frontend.
-  // Pastikan nama properti konsisten dengan yang diharapkan frontend.
   const result = {
     id: updatedUser.id,
-    name: updatedUser.name, // Menggunakan 'fullName' agar konsisten
+    name: updatedUser.name,
     phone: updatedUser.phone,
     email: updatedUser.email,
     updated_at: updatedUser.updated_at,
+    role: updatedUser.role,
   };
 
   return result;
