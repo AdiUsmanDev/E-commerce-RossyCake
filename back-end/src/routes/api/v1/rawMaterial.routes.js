@@ -46,4 +46,11 @@ export default (router) => {
     isAdmin,
     rawMaterialController.deleteRawMaterial
   );
+
+  router.post(
+    prefix + "/process-barcode", 
+    authMiddleware,
+    isAdmin,
+    rawMaterialController.processBarcode
+  );
 };

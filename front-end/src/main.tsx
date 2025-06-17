@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
 import "./index.css";
 
 // Import the generated route tree
@@ -37,6 +38,7 @@ if (!rootElement.innerHTML) {
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
+          <Toaster position="top-center" reverseOrder={false} />
         </QueryClientProvider>
       </Provider>
     </StrictMode>

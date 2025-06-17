@@ -28,6 +28,16 @@ export const getAllOrders = async (req, res, next) => {
   }
 };
 
+export const getOrderAdmin = async (req, res, next) => {
+  try {
+    const orderId = req.params.code;
+    const orders = await orderService.getOrderAdmin(orderId);
+    res200("Admin Berhasil mendapatkan Order ", orders, res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getOrders = async (req, res, next) => {
   try {
     const { id } = req.user;

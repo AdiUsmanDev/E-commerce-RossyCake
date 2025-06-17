@@ -138,22 +138,22 @@ exports.Prisma.ProductsScalarFieldEnum = {
   price: 'price',
   stock: 'stock',
   category: 'category',
-  image_url: 'image_url',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  image_url: 'image_url'
 };
 
 exports.Prisma.OrdersScalarFieldEnum = {
   id: 'id',
   customer_id: 'customer_id',
   status: 'status',
-  order_date: 'order_date',
-  sub_total: 'sub_total',
-  shipping_cost: 'shipping_cost',
-  discount_amount: 'discount_amount',
   total_price: 'total_price',
+  discount_amount: 'discount_amount',
+  order_date: 'order_date',
   shipping_address: 'shipping_address',
+  shipping_cost: 'shipping_cost',
   shipping_method: 'shipping_method',
+  sub_total: 'sub_total',
   tracking_number: 'tracking_number',
   voucher_id: 'voucher_id',
   created_at: 'created_at',
@@ -170,12 +170,21 @@ exports.Prisma.Order_itemsScalarFieldEnum = {
 
 exports.Prisma.Raw_materialsScalarFieldEnum = {
   id: 'id',
-  name: 'name',
   stock: 'stock',
-  unit: 'unit',
   reorder_level: 'reorder_level',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  material_id: 'material_id'
+};
+
+exports.Prisma.MaterialsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  unit: 'unit',
+  barcode: 'barcode',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  defaultStock: 'defaultStock'
 };
 
 exports.Prisma.AddressesScalarFieldEnum = {
@@ -199,29 +208,29 @@ exports.Prisma.VouchersScalarFieldEnum = {
   discount_type: 'discount_type',
   max_discount: 'max_discount',
   min_purchase: 'min_purchase',
-  valid_from: 'valid_from',
   valid_until: 'valid_until',
   usage_limit: 'usage_limit',
-  current_usage: 'current_usage',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  current_usage: 'current_usage',
+  updated_at: 'updated_at',
+  valid_from: 'valid_from'
 };
 
 exports.Prisma.PaymentsScalarFieldEnum = {
   id: 'id',
   order_id: 'order_id',
-  status: 'status',
   amount: 'amount',
   payment_method: 'payment_method',
-  payment_gateway: 'payment_gateway',
-  gateway_transaction_id: 'gateway_transaction_id',
-  payment_code: 'payment_code',
-  bank: 'bank',
-  payment_url: 'payment_url',
+  status: 'status',
   created_at: 'created_at',
-  paid_at: 'paid_at',
   expires_at: 'expires_at',
-  updated_at: 'updated_at'
+  gateway_transaction_id: 'gateway_transaction_id',
+  paid_at: 'paid_at',
+  payment_code: 'payment_code',
+  payment_gateway: 'payment_gateway',
+  payment_url: 'payment_url',
+  updated_at: 'updated_at',
+  bank: 'bank'
 };
 
 exports.Prisma.InvoicesScalarFieldEnum = {
@@ -242,11 +251,11 @@ exports.Prisma.FeedbacksScalarFieldEnum = {
 
 exports.Prisma.ExpensesScalarFieldEnum = {
   id: 'id',
-  user_id: 'user_id',
   expense_type: 'expense_type',
   amount: 'amount',
   expense_date: 'expense_date',
-  notes: 'notes'
+  notes: 'notes',
+  user_id: 'user_id'
 };
 
 exports.Prisma.Custom_ordersScalarFieldEnum = {
@@ -301,9 +310,9 @@ exports.Prisma.ordersOrderByRelevanceFieldEnum = {
   tracking_number: 'tracking_number'
 };
 
-exports.Prisma.raw_materialsOrderByRelevanceFieldEnum = {
+exports.Prisma.materialsOrderByRelevanceFieldEnum = {
   name: 'name',
-  unit: 'unit'
+  barcode: 'barcode'
 };
 
 exports.Prisma.addressesOrderByRelevanceFieldEnum = {
@@ -323,11 +332,11 @@ exports.Prisma.vouchersOrderByRelevanceFieldEnum = {
 
 exports.Prisma.paymentsOrderByRelevanceFieldEnum = {
   payment_method: 'payment_method',
-  payment_gateway: 'payment_gateway',
   gateway_transaction_id: 'gateway_transaction_id',
   payment_code: 'payment_code',
-  bank: 'bank',
-  payment_url: 'payment_url'
+  payment_gateway: 'payment_gateway',
+  payment_url: 'payment_url',
+  bank: 'bank'
 };
 
 exports.Prisma.invoicesOrderByRelevanceFieldEnum = {
@@ -360,6 +369,14 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.UnitEnum = exports.$Enums.UnitEnum = {
+  gram: 'gram',
+  kilogram: 'kilogram',
+  pcs: 'pcs',
+  liter: 'liter',
+  mililiter: 'mililiter'
+};
+
 exports.VoucherType = exports.$Enums.VoucherType = {
   PERCENTAGE: 'PERCENTAGE',
   FIXED: 'FIXED'
@@ -378,6 +395,7 @@ exports.Prisma.ModelName = {
   orders: 'orders',
   order_items: 'order_items',
   raw_materials: 'raw_materials',
+  materials: 'materials',
   addresses: 'addresses',
   vouchers: 'vouchers',
   payments: 'payments',

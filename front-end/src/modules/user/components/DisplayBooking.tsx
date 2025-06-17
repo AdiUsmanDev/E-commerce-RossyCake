@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -28,21 +30,23 @@ import {
   LoaderCircle,
   ServerCrash,
   Trash2,
+  CheckCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import toast from "react-hot-toast";
 
 // Impor service dan tipe data yang relevan
-// PERBAIKAN: Impor disesuaikan, dan tipe data didefinisikan secara lokal untuk kejelasan
 import {
   getMyOrders,
   updateOrder,
   deleteOrder,
+  getOrderById,
 } from "@/services/order.service";
 import { Order as OrderType, UpdateOrderDTO } from "@/types/order.types";
 import { useNavigate } from "@tanstack/react-router";
 
-// Helper untuk format mata uang dan tanggal
+// Helper Functions
 const formatCurrency = (amount: number | string) => {
   const numericAmount =
     typeof amount === "string" ? parseFloat(amount) : amount;
@@ -61,7 +65,6 @@ const formatDate = (dateString: string | Date) => {
   });
 };
 
-// Helper untuk memformat status dari snake_case menjadi lebih mudah dibaca
 const formatStatus = (status: string) => {
   return status
     .replace(/_/g, " ")
@@ -69,19 +72,23 @@ const formatStatus = (status: string) => {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
+// Data Opsi Pengiriman (didefinisikan di sini agar konsisten dengan halaman checkout)
+const SHIPPING_OPTIONS = [
+  { id: "JNE REG", name: "JNE Regular (2-3 Hari)", cost: 18000 },
+  { id: "SiCepat BEST", name: "SiCepat BEST (1-2 Hari)", cost: 25000 },
+];
+
 const DisplayBooking = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
 
-  // State untuk melacak ID pesanan yang sedang dimutasi
   const [processingOrder, setProcessingOrder] = useState<{
     id: number | null;
-    type: "update" | "cancel" | null;
+    type: "update" | "cancel" | "pay_init" | null;
   }>({ id: null, type: null });
 
-  // 1. Mengambil data pesanan menggunakan useQuery
   const {
     data: orders = [],
     isLoading,
@@ -89,10 +96,9 @@ const DisplayBooking = () => {
     error,
   } = useQuery<OrderType[]>({
     queryKey: ["myOrders"],
-    queryFn: getMyOrders, // Asumsi getMyOrders sudah menangani struktur { status, data }
+    queryFn: getMyOrders,
   });
 
-  // 2. Setup `useMutation` untuk memperbarui pesanan
   const { mutate: updateOrderStatus, isPending: isUpdating } = useMutation({
     mutationFn: ({
       orderId,
@@ -109,7 +115,6 @@ const DisplayBooking = () => {
     },
   });
 
-  // 3. Setup `useMutation` untuk membatalkan pesanan
   const { mutate: cancelOrder, isPending: isCancelling } = useMutation({
     mutationFn: (orderId: number) => deleteOrder(orderId),
     onSuccess: () => {
@@ -117,49 +122,109 @@ const DisplayBooking = () => {
     },
   });
 
-  // 4. Logika filter diperbarui untuk status baru
+  // PERBAIKAN: Logika mutasi diperbarui untuk menangani data dengan benar
+  const getOrderForPaymentMutation = useMutation({
+    mutationFn: (orderId: number) => getOrderById(orderId),
+    onSuccess: (data) => {
+      // Buat variabel khusus untuk setiap bagian data yang akan disimpan
+      const shippingAddressForCheckout = data.shipping_address;
+      const cartItemsForCheckout = data.order_items.map((item) => ({
+        id: item.product_id,
+        name: item.product?.name || "Produk Dihapus",
+        price: parseFloat(item.price),
+        quantity: item.quantity,
+        image: item.product?.images?.[0]?.url || "", // Fallback untuk gambar
+      }));
+      const shippingOptionForCheckout = SHIPPING_OPTIONS.find(
+        (opt) => opt.id === data.shipping_method
+      );
+
+      // Simpan ke localStorage dengan kunci yang sama dengan yang dibaca oleh halaman checkout
+      localStorage.setItem(
+        "shippingAddress",
+        JSON.stringify(shippingAddressForCheckout)
+      );
+      localStorage.setItem("shopCart", JSON.stringify(cartItemsForCheckout));
+      if (shippingOptionForCheckout) {
+        localStorage.setItem(
+          "selectedShipping",
+          JSON.stringify(shippingOptionForCheckout)
+        );
+      } else {
+        localStorage.removeItem("selectedShipping");
+      }
+
+      // Arahkan ke halaman checkout utama, yang akan memuat data ini
+      navigate({ to: `/shop/checkout/${data.id}` });
+    },
+    onSettled: () => {
+      setProcessingOrder({ id: null, type: null });
+    },
+  });
+
   const filteredInvoices = useMemo(() => {
     if (!orders) return [];
-
     return orders.filter((order) => {
       const lowerCaseStatus = order.status.toLowerCase();
       const matchesTab =
         activeTab === "all" ||
         (activeTab === "notPaid" && lowerCaseStatus === "pending_payment") ||
-        (activeTab === "packing" && lowerCaseStatus === "paid") || // Map "Dikemas" ke status "PAID"
+        (activeTab === "packing" && lowerCaseStatus === "paid") ||
         (activeTab === "onDelivery" && lowerCaseStatus === "shipped") ||
-        (activeTab === "finish" && lowerCaseStatus === "delivered") ||
+        (activeTab === "finish" && lowerCaseStatus === "completed") ||
         (activeTab === "cancel" && lowerCaseStatus === "cancelled");
-
       const lowerCaseQuery = searchQuery.toLowerCase();
       const matchesSearch =
         searchQuery === "" ||
         order.id.toString().includes(lowerCaseQuery) ||
         lowerCaseStatus.includes(lowerCaseQuery) ||
-        (order.order_items &&
-          order.order_items.some((item) =>
-            item.product?.name.toLowerCase().includes(lowerCaseQuery)
-          ));
-
+        order.order_items?.some((item) =>
+          item.product?.name.toLowerCase().includes(lowerCaseQuery)
+        );
       return matchesTab && matchesSearch;
     });
   }, [orders, activeTab, searchQuery]);
 
-  // 5. Handler untuk aksi-aksi
   const handlePay = (orderId: number) => {
-    navigate({ to: `/shop/checkout/${orderId}` });
+    setProcessingOrder({ id: orderId, type: "pay_init" });
+    toast.promise(getOrderForPaymentMutation.mutateAsync(orderId), {
+      loading: "Mempersiapkan pembayaran...",
+      success: <b>Mengarahkan Anda ke halaman pembayaran...</b>,
+      error: (err) => `Gagal: ${(err as Error).message}`,
+    });
   };
 
   const handleCancel = (orderId: number) => {
     if (window.confirm("Apakah Anda yakin ingin membatalkan pesanan ini?")) {
       setProcessingOrder({ id: orderId, type: "cancel" });
       cancelOrder(orderId, {
+        onSuccess: () => {
+          toast.success("Pesanan berhasil dibatalkan.");
+        },
+        onError: (err) => {
+          toast.error(`Gagal membatalkan: ${(err as Error).message}`);
+        },
         onSettled: () => setProcessingOrder({ id: null, type: null }),
       });
     }
   };
 
-  // Tampilan saat loading (menggunakan isLoading dari useQuery)
+  const handleOrderReceived = (orderId: number) => {
+    setProcessingOrder({ id: orderId, type: "update" });
+    updateOrderStatus(
+      { orderId, payload: { status: "COMPLETED" } },
+      {
+        onSuccess: () => {
+          toast.success("Terima kasih! Pesanan Anda telah selesai.");
+        },
+        onError: (err) => {
+          toast.error(`Gagal: ${(err as Error).message}`);
+        },
+        onSettled: () => setProcessingOrder({ id: null, type: null }),
+      }
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="h-full flex flex-col items-center justify-center">
@@ -169,7 +234,6 @@ const DisplayBooking = () => {
     );
   }
 
-  // Tampilan saat terjadi error
   if (isError) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center">
@@ -205,6 +269,7 @@ const DisplayBooking = () => {
         >
           <div className="categoriesBooking overflow-x-auto whitespace-nowrap pb-2 mb-4 border-b dark:border-neutral-700">
             <TabsList className="w-max justify-start gap-1 bg-transparent px-1">
+              {/* Tabs Triggers */}
               <TabsTrigger
                 value="all"
                 className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm px-3 py-1.5 text-sm"
@@ -255,6 +320,10 @@ const DisplayBooking = () => {
                     isCancelling &&
                     processingOrder.id === order.id &&
                     processingOrder.type === "cancel";
+                  const isInitiatingPayment =
+                    getOrderForPaymentMutation.isPending &&
+                    processingOrder.id === order.id &&
+                    processingOrder.type === "pay_init";
 
                   return (
                     <Accordion
@@ -334,7 +403,7 @@ const DisplayBooking = () => {
                                   <TableRow key={item.id}>
                                     <TableCell className="font-medium">
                                       {item.product?.name ||
-                                        "Nama produk tidak tersedia"}
+                                        "Produk tidak tersedia"}
                                     </TableCell>
                                     <TableCell className="text-center">
                                       {item.quantity}
@@ -360,14 +429,21 @@ const DisplayBooking = () => {
                             {order.status.toLowerCase() ===
                               "pending_payment" && (
                               <>
-                                {/* PERBAIKAN: Tombol bayar tidak lagi menampilkan loader sendiri */}
                                 <Button
                                   size="sm"
                                   className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
                                   onClick={() => handlePay(order.id)}
-                                  disabled={isUpdating || isCancelling}
+                                  disabled={
+                                    isUpdating ||
+                                    isCancelling ||
+                                    isInitiatingPayment
+                                  }
                                 >
-                                  <CreditCard className="mr-1.5 h-3.5 w-3.5" />{" "}
+                                  {isInitiatingPayment ? (
+                                    <LoaderCircle className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <CreditCard className="mr-1.5 h-3.5 w-3.5" />
+                                  )}
                                   Bayar
                                 </Button>
                                 <Button
@@ -375,16 +451,35 @@ const DisplayBooking = () => {
                                   variant="destructive"
                                   className="text-xs"
                                   onClick={() => handleCancel(order.id)}
-                                  disabled={isUpdating || isCancelling}
+                                  disabled={
+                                    isUpdating ||
+                                    isCancelling ||
+                                    isInitiatingPayment
+                                  }
                                 >
                                   {isBeingCancelled ? (
                                     <LoaderCircle className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                                   ) : (
                                     <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                                  )}{" "}
+                                  )}
                                   Batal
                                 </Button>
                               </>
+                            )}
+                            {order.status.toLowerCase() === "shipped" && (
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                                onClick={() => handleOrderReceived(order.id)}
+                                disabled={isUpdating || isCancelling}
+                              >
+                                {isBeingUpdated ? (
+                                  <LoaderCircle className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <CheckCheck className="mr-1.5 h-3.5 w-3.5" />
+                                )}
+                                Pesanan Diterima
+                              </Button>
                             )}
                             <Button
                               size="sm"

@@ -16,12 +16,7 @@ export default (router) => {
     isAdmin,
     usersController.createUser
   );
-  router.patch(
-    prefix + "/users/:id",
-    authMiddleware,
-    isAdmin,
-    usersController.updateUser
-  );
+  router.patch(prefix + "/:id", authMiddleware, usersController.updateUser);
   router.delete(
     prefix + "/users/:id",
     authMiddleware,

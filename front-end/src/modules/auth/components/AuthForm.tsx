@@ -4,19 +4,17 @@ import { useState, FormEvent, useEffect, ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "@tanstack/react-router";
 import { AppDispatch, RootState } from "@/lib/redux/store";
-import { loginUser, registerUser } from "@/lib/redux/slices/authSlice";
+import { loginUser, registerUser, resetAuthStatus } from "@/lib/redux/slices/authSlice";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import InputAuth from "./InputAuth";
-import { LoaderCircle, User, Mail, Lock } from "lucide-react";
-import { Route } from "@/routes/auth";
+import { LoaderCircle, User, Mail, Lock, ArrowLeft } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
-// Props baru untuk AuthForm, lebih sederhana
 interface AuthFormProps {
   isSignUp: boolean;
   onSwitch: () => void;
 }
 
-// State untuk semua field form
 type FormState = {
   name: string;
   email: string;
@@ -27,102 +25,121 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { redirect } = Route.useSearch();
-  const { status, error, token } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { status, token, error } = useSelector((state: RootState) => state.auth);
 
   const [formState, setFormState] = useState<FormState>({
     name: "",
     email: "",
     password: "",
   });
+  // State untuk melacak aksi terakhir yang disubmit
+  const [submittedAction, setSubmittedAction] = useState<"login" | "register" | null>(null);
 
-  const handleInputChange = (field: keyof FormState, value: string) => {
-    setFormState((prev) => ({ ...prev, [field]: value }));
-  };
-  const handleSubmit = async (e: FormEvent) => {
+  // PERBAIKAN: useEffect untuk menampilkan notifikasi berdasarkan status dari Redux
+  useEffect(() => {
+    // Hanya jalankan jika ada aksi yang telah disubmit
+    if (!submittedAction) return;
+
+    if (status === "succeeded") {
+      if (submittedAction === "register") {
+        toast.success("Akun berhasil dibuat! Silakan masuk.");
+        onSwitch(); // Pindah ke form login
+      }
+      // Notifikasi login akan ditangani oleh useEffect di bawah yang menghandle navigasi
+      if (submittedAction === "login" && token) {
+         toast.success("Berhasil masuk!");
+      }
+      setSubmittedAction(null); // Reset aksi
+      dispatch(resetAuthStatus()); // Reset status di Redux
+    }
+
+    if (status === "failed") {
+      toast.error(error || "Terjadi kesalahan.");
+      setSubmittedAction(null); // Reset aksi
+      dispatch(resetAuthStatus()); // Reset status di Redux
+    }
+  }, [status, token, error, submittedAction, dispatch, navigate, onSwitch]);
+
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     if (isSignUp) {
-      // Dispatch register dan tunggu hasilnya
-      const resultAction = await dispatch(
+      setSubmittedAction("register"); // Tandai aksi sebagai 'register'
+      dispatch(
         registerUser({
           name: formState.name,
           email: formState.email,
           password: formState.password,
         })
       );
-      // Jika registrasi berhasil, panggil onSwitch untuk pindah ke form login
-      if (registerUser.fulfilled.match(resultAction)) {
-        onSwitch();
-      }
     } else {
-      // Dispatch login hanya dengan email dan password
+      setSubmittedAction("login"); // Tandai aksi sebagai 'login'
       dispatch(
-        loginUser({ email: formState.email, password: formState.password })
+        loginUser({
+          email: formState.email,
+          password: formState.password,
+        })
       );
     }
   };
+
+  const handleInputChange = (field: keyof FormState, value: string) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
+
   // Redirect setelah login berhasil
   useEffect(() => {
     if (token) {
-      navigate({ to: "/" });
+      // Menunggu sesaat agar notifikasi terlihat sebelum navigasi
+      setTimeout(() => {
+        navigate({ to: "/" });
+      }, 500);
     }
   }, [token, navigate]);
 
   return (
-    <div className="flex flex-col items-center w-full max-w-sm">
+    <div className="relative flex flex-col items-center w-full max-w-sm">
+      <Toaster position="top-center" />
+      <button
+        onClick={() => navigate({ to: "/" })}
+        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        aria-label="Go back"
+      >
+        <ArrowLeft size={24} className="text-gray-600 dark:text-gray-300" />
+      </button>
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-        {isSignUp ? "Create Account" : "Login"}
+        {isSignUp ? "Buat Akun" : "Masuk"}
       </h2>
 
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-1">
-        {/* Input untuk Nama hanya ditampilkan saat registrasi */}
         {isSignUp && (
           <InputAuth
             icon={<User size={20} className="text-gray-400" />}
             type="text"
-            placeholder="Name"
+            placeholder="Nama"
             value={formState.name}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleInputChange("name", e.target.value)
-            }
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("name", e.target.value)}
           />
         )}
-
         <InputAuth
           icon={<Mail size={20} className="text-gray-400" />}
           type="email"
           placeholder="Email"
           value={formState.email}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            handleInputChange("email", e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("email", e.target.value)}
         />
-
         <InputAuth
           icon={<Lock size={20} className="text-gray-400" />}
           type="password"
           placeholder="Password"
           value={formState.password}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            handleInputChange("password", e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("password", e.target.value)}
         />
-
         {!isSignUp && (
-          <a
-            href="#"
-            className="text-sm text-gray-500 dark:text-gray-400 self-end mb-4"
-          >
-            Forgot password?
+          <a href="#" className="text-sm text-gray-500 dark:text-gray-400 self-end mb-4">
+            Lupa password?
           </a>
         )}
-
-        {error && (
-          <p className="text-sm text-red-500 text-center my-2">{error}</p>
-        )}
-
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2.5 mt-2 rounded-full font-semibold hover:bg-blue-600 transition flex items-center justify-center disabled:bg-blue-400"
@@ -131,15 +148,15 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
           {status === "loading" ? (
             <LoaderCircle className="animate-spin" />
           ) : isSignUp ? (
-            "Create Account"
+            "Buat Akun"
           ) : (
-            "Login"
+            "Masuk"
           )}
         </button>
       </form>
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">
-        or continue with
+        atau lanjutkan dengan
       </p>
       <button className="mt-2 w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-full flex items-center justify-center text-gray-600 hover:text-blue-500 hover:border-blue-500 transition">
         <IconBrandGoogle />
@@ -147,12 +164,12 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
 
       <div className="text-center mt-6">
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+          {isSignUp ? "Sudah punya akun?" : "Belum punya akun?"}{" "}
           <button
             onClick={onSwitch}
             className="text-blue-500 font-semibold hover:underline ml-1"
           >
-            {isSignUp ? "Login" : "Sign Up"}
+            {isSignUp ? "Masuk" : "Daftar"}
           </button>
         </p>
       </div>

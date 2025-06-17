@@ -12,10 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { ShieldCheck, LoaderCircle, Copy, Banknote } from "lucide-react";
-import { Order as OrderType } from "@/types/order.types"; // Asumsi tipe ini diimpor
+import { Order as OrderType } from "@/types/order.types";
 import { Label } from "@/components/ui/label";
+import toast from "react-hot-toast"; // Import react-hot-toast
 
-// Helper untuk format mata uang
+// Helper for currency formatting
 const formatCurrency = (amount: number | string) => {
   const numericAmount =
     typeof amount === "string" ? parseFloat(amount) : amount;
@@ -27,7 +28,7 @@ const formatCurrency = (amount: number | string) => {
   }).format(numericAmount);
 };
 
-// Helper untuk memformat nama metode pembayaran
+// Helper for formatting payment method name
 const formatPaymentMethod = (method: string) => {
   return method.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 };
@@ -43,7 +44,6 @@ const PaymentDetailsAndAction: React.FC<PaymentDetailsAndActionProps> = ({
   isProcessing,
   onConfirmAndPay,
 }) => {
-  // Destructuring data dari order untuk kode yang lebih bersih
   const {
     sub_total,
     shipping_cost,
@@ -53,21 +53,25 @@ const PaymentDetailsAndAction: React.FC<PaymentDetailsAndActionProps> = ({
     payment,
   } = order;
 
-  // Menyiapkan data pembayaran dengan pengecekan null-safe
+  // Preparing payment data with null-safe checks
   const paymentMethodFormatted = payment?.payment_method
     ? formatPaymentMethod(payment.payment_method)
     : "Metode Tidak Diketahui";
 
   const paymentCode = payment?.payment_code || "";
 
+  // Changed to use react-hot-toast
   const handleCopyToClipboard = (text: string) => {
-    try {
-      navigator.clipboard.writeText(text);
-      alert("Kode pembayaran berhasil disalin!");
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      alert("Gagal menyalin kode.");
-    }
+    // navigator.clipboard.writeText is more modern and reliable
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success("Kode pembayaran berhasil disalin!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        toast.error("Gagal menyalin kode. Silakan salin manual.");
+      });
   };
 
   return (

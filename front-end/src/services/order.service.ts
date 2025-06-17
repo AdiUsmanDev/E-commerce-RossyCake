@@ -10,6 +10,17 @@ export const getAllOrders = async (): Promise<Order[]> => {
   return response.data.data;
 };
 
+export const getOrderAdmin = async (orderId: number): Promise<Order> => {
+  if (!orderId) {
+    throw new Error("Order ID is required");
+  }
+
+  const response = await apiClient.get<ApiResponse<Order>>(
+    `/orders/admin/${orderId}`
+  );
+  return response.data.data;
+};
+
 export const getMyOrders = async (): Promise<Order[]> => {
   const response = await apiClient.get<ApiResponse<Order[]>>("/orders/");
   return response.data.data;

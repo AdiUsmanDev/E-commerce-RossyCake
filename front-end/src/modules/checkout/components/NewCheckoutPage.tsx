@@ -16,7 +16,7 @@ import {
   LoaderCircle as PageLoader,
 } from "lucide-react";
 import { GuestLayouts } from "@/components/Layouts/GuestLayout";
-import { useRouter, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CartItem } from "@/types/product.types";
 import { ShippingAddress } from "@/types/Checkout.type";
@@ -29,6 +29,17 @@ import { createOrder } from "@/services/order.service";
 import ShippingAndPaymentOptions from "./ShippingAndPaymentOptions";
 import ShippingAddressForm from "./ShippingAddressForm.tsx";
 import OrderSummaryCard from "./OrderSummaryCard.tsx";
+import toast from "react-hot-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // --- Data Konfigurasi ---
 const SHIPPING_OPTIONS = [
@@ -48,31 +59,66 @@ const AVAILABLE_BANKS = [
 ];
 
 const NewCheckoutPage: React.FC = () => {
-  const router = useRouter();
   const navigate = useNavigate();
 
   // === State Management ===
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
-    recipient: "",
-    phone: "",
-    street: "",
-    city: "",
-    province: "",
-    postal_code: "",
+  // PERBAIKAN: Inisialisasi state dari localStorage
+  const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(
+    () => {
+      if (typeof window === "undefined") {
+        return {
+          recipient: "",
+          phone: "",
+          street: "",
+          city: "",
+          province: "",
+          postal_code: "",
+        };
+      }
+      const savedAddress = localStorage.getItem("shippingAddress");
+      return savedAddress
+        ? JSON.parse(savedAddress)
+        : {
+            recipient: "",
+            phone: "",
+            street: "",
+            city: "",
+            province: "",
+            postal_code: "",
+          };
+    }
+  );
+
+  const [selectedShipping, setSelectedShipping] = useState(() => {
+    if (typeof window === "undefined") {
+      return SHIPPING_OPTIONS[0];
+    }
+    const savedShipping = localStorage.getItem("selectedShipping");
+    return savedShipping ? JSON.parse(savedShipping) : SHIPPING_OPTIONS[0];
   });
 
   const [selectedBank, setSelectedBank] = useState(AVAILABLE_BANKS[0]);
-  const [selectedShipping, setSelectedShipping] = useState(SHIPPING_OPTIONS[0]);
   const [selectedPayment, setSelectedPayment] = useState(PAYMENT_METHODS[0]);
-  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null); // State baru untuk voucher
+  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  // === Fetch Data ===
+  // === Fetch & LocalStorage Logic ===
   useEffect(() => {
+    // Memuat keranjang dari localStorage saat komponen pertama kali dirender
     const loadedCart = localStorage.getItem("shopCart");
     if (loadedCart) setCartItems(JSON.parse(loadedCart));
   }, []);
+
+  // PERBAIKAN: Efek baru untuk menyimpan perubahan alamat dan pengiriman ke localStorage
+  useEffect(() => {
+    localStorage.setItem("shippingAddress", JSON.stringify(shippingAddress));
+  }, [shippingAddress]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedShipping", JSON.stringify(selectedShipping));
+  }, [selectedShipping]);
 
   const { data: vouchers = [], isLoading: isLoadingVouchers } = useQuery<
     Voucher[]
@@ -87,7 +133,6 @@ const NewCheckoutPage: React.FC = () => {
       (acc, item) => acc + item.price * item.quantity,
       0
     );
-    // Logika diskon bisa lebih kompleks (persentase, maks diskon, dll)
     const discount = selectedVoucher ? selectedVoucher.discount_value : 0;
     const tot = sub + selectedShipping.cost - discount;
     return {
@@ -102,11 +147,19 @@ const NewCheckoutPage: React.FC = () => {
     mutationFn: (paymentData: CreatePaymentPayload) =>
       createVirtualAccountPayment(paymentData),
     onSuccess: (paymentResult) => {
-      navigate({
-        to: `/shop/checkout/${paymentResult?.paymentUrl?.order?.id}`,
-      });
+      const orderId = paymentResult?.paymentUrl?.order?.id;
+      if (orderId) {
+        toast.success("Pembayaran berhasil dibuat! Mengarahkan...");
+        // Hapus hanya keranjang belanja setelah berhasil membuat pesanan
+        localStorage.removeItem("shopCart");
+        navigate({ to: `/shop/checkout/${orderId}` });
+      } else {
+        toast.error("Gagal mendapatkan detail pembayaran.");
+        setFormError("Gagal mendapatkan detail pembayaran.");
+      }
     },
     onError: (err) => {
+      toast.error(err.message || "Gagal membuat pembayaran.");
       setFormError(err.message || "Gagal membuat pembayaran.");
     },
   });
@@ -114,15 +167,16 @@ const NewCheckoutPage: React.FC = () => {
   const { mutate: processOrder, isPending: isCreatingOrder } = useMutation({
     mutationFn: (orderData: CreateOrderDTO) => createOrder(orderData),
     onSuccess: (createdOrder) => {
-      localStorage.removeItem("shopCart");
+      toast.success("Pesanan berhasil dibuat! Melanjutkan ke pembayaran...");
       const paymentPayload: CreatePaymentPayload = {
         order_id: createdOrder.id,
         bank:
-          selectedPayment.id === "bank_transfer" ? selectedBank.id : undefined, // Logika bank bisa ditambahkan kembali
+          selectedPayment.id === "bank_transfer" ? selectedBank.id : undefined,
       };
       processPayment(paymentPayload);
     },
     onError: (err) => {
+      toast.error(err.message || "Terjadi kesalahan saat membuat pesanan.");
       setFormError(err.message || "Terjadi kesalahan saat membuat pesanan.");
     },
   });
@@ -144,12 +198,19 @@ const NewCheckoutPage: React.FC = () => {
 
   const handleVoucherChange = (voucherIdStr: string) => {
     const voucherId = parseInt(voucherIdStr, 10);
-    if (voucherId === 0) {
+    if (isNaN(voucherId) || voucherId === 0) {
       setSelectedVoucher(null);
+      toast.success("Voucher dibatalkan.");
       return;
     }
     const newVoucher = vouchers.find((v) => v.id === voucherId);
-    if (newVoucher) setSelectedVoucher(newVoucher);
+    if (newVoucher) {
+      setSelectedVoucher(newVoucher);
+      toast.success(`Voucher "${newVoucher.code}" berhasil diterapkan!`);
+    } else {
+      setSelectedVoucher(null);
+      toast.error("Voucher tidak ditemukan atau tidak valid.");
+    }
   };
 
   const handleBankChange = (bankId: string) => {
@@ -157,23 +218,33 @@ const NewCheckoutPage: React.FC = () => {
     if (newBank) setSelectedBank(newBank);
   };
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleConfirmOrderAndSubmit = () => {
     setFormError(null);
-
-    // Validasi alamat & keranjang
-    for (const key in shippingAddress) {
-      if (!shippingAddress[key as keyof ShippingAddress]) {
-        setFormError(`Kolom "${key}" tidak boleh kosong.`);
+    const requiredAddressFields: Array<keyof ShippingAddress> = [
+      "recipient",
+      "phone",
+      "street",
+      "city",
+      "province",
+      "postal_code",
+    ];
+    for (const field of requiredAddressFields) {
+      if (!shippingAddress[field]) {
+        const fieldName = field
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (char) => char.toUpperCase());
+        toast.error(`Kolom "${fieldName}" tidak boleh kosong.`);
+        setFormError(`Kolom "${fieldName}" tidak boleh kosong.`);
         return;
       }
     }
+
     if (cartItems.length === 0) {
+      toast.error("Keranjang Anda kosong.");
       setFormError("Keranjang Anda kosong.");
       return;
     }
 
-    // Payload hanya untuk order
     const orderPayload: CreateOrderDTO = {
       items: cartItems.map((item) => ({
         product_id: Number(item.id),
@@ -182,31 +253,67 @@ const NewCheckoutPage: React.FC = () => {
       shipping_cost: selectedShipping.cost,
       shipping_method: selectedShipping.id,
       shipping_address: shippingAddress,
-      voucher_id: selectedVoucher?.id || null, // Kirim
+      voucher_id: selectedVoucher?.id || null,
     };
-
-    // Proses order → dilanjutkan ke pembayaran saat `onSuccess`
     processOrder(orderPayload);
   };
 
+  const handleSubmitOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    const requiredAddressFields: Array<keyof ShippingAddress> = [
+      "recipient",
+      "phone",
+      "street",
+      "city",
+      "province",
+      "postal_code",
+    ];
+    for (const field of requiredAddressFields) {
+      if (!shippingAddress[field]) {
+        const fieldName = field
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (char) => char.toUpperCase());
+        toast.error(`Kolom "${fieldName}" tidak boleh kosong.`);
+        setFormError(`Kolom "${fieldName}" tidak boleh kosong.`);
+        return;
+      }
+    }
+    if (cartItems.length === 0) {
+      toast.error("Keranjang Anda kosong.");
+      setFormError("Keranjang Anda kosong.");
+      return;
+    }
+    setIsConfirmDialogOpen(true);
+  };
+
   // === Render ===
-  if (cartItems.length === 0 || isLoadingVouchers) {
+  if (cartItems.length === 0 && !isLoadingVouchers) {
     return (
       <GuestLayouts>
         <div className="container mx-auto flex justify-center items-center min-h-[calc(100vh-10rem)]">
-          {isLoadingVouchers ? (
-            <PageLoader className="animate-spin h-12 w-12" />
-          ) : (
-            <div className="text-center">
-              <ShoppingCartIcon className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
-              <h1 className="text-2xl font-semibold mb-2">
-                Keranjang Anda Kosong
-              </h1>
-              <Button onClick={() => navigate({ to: "/shop" })}>
-                Kembali ke Toko
-              </Button>
-            </div>
-          )}
+          <div className="text-center">
+            <ShoppingCartIcon className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+            <h1 className="text-2xl font-semibold mb-2">
+              Keranjang Anda Kosong
+            </h1>
+            <p className="text-muted-foreground mb-4">
+              Tambahkan produk untuk melanjutkan.
+            </p>
+            <Button onClick={() => navigate({ to: "/shop" })}>
+              Kembali ke Toko
+            </Button>
+          </div>
+        </div>
+      </GuestLayouts>
+    );
+  }
+
+  if (isLoadingVouchers) {
+    return (
+      <GuestLayouts>
+        <div className="container mx-auto flex justify-center items-center min-h-[calc(100vh-10rem)]">
+          <PageLoader className="animate-spin h-12 w-12 text-primary" />
         </div>
       </GuestLayouts>
     );
@@ -214,14 +321,14 @@ const NewCheckoutPage: React.FC = () => {
 
   return (
     <GuestLayouts>
-      <div className="container mx-auto px-2 sm:px-4 py-6 overflow-y-scroll ">
+      <div className="container mx-auto px-2 sm:px-4 py-6 overflow-y-auto">
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => router.history.go(-1)}
+                onClick={() => navigate({ to: -1 })}
                 className="text-muted-foreground hover:text-foreground"
               >
                 <ChevronLeft size={16} className="mr-1.5" /> Kembali
@@ -265,7 +372,7 @@ const NewCheckoutPage: React.FC = () => {
               onVoucherChange={handleVoucherChange}
             />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 sticky top-6">
             <OrderSummaryCard
               cartItems={cartItems}
               subtotal={subtotal}
@@ -276,6 +383,30 @@ const NewCheckoutPage: React.FC = () => {
               formError={formError}
             />
           </div>
+          <AlertDialog
+            open={isConfirmDialogOpen}
+            onOpenChange={setIsConfirmDialogOpen}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Konfirmasi Pesanan</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Apakah Anda yakin ingin melanjutkan pesanan ini? Pastikan
+                  semua detail sudah benar.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel
+                  onClick={() => toast.error("Pesanan dibatalkan.")}
+                >
+                  Batal
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleConfirmOrderAndSubmit}>
+                  Lanjutkan Pesanan
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </form>
       </div>
     </GuestLayouts>

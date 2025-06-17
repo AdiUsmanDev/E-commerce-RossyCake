@@ -1,4 +1,3 @@
-// src/services/rawMaterial.service.tsimport apiClient from "../api/apiClient";
 import apiClient from "../api/apiClient";
 import { ApiResponse } from "@/types/api.types";
 import {
@@ -15,9 +14,6 @@ export const getAllRawMaterials = async (): Promise<RawMaterial[]> => {
   return response.data.data;
 };
 
-/**
- * Mengambil detail satu bahan baku berdasarkan ID.
- */
 export const getRawMaterialById = async (id: number): Promise<RawMaterial> => {
   const response = await apiClient.get<ApiResponse<RawMaterial>>(
     `${prefix}/${id}`
@@ -25,9 +21,6 @@ export const getRawMaterialById = async (id: number): Promise<RawMaterial> => {
   return response.data.data;
 };
 
-/**
- * Membuat bahan baku baru.
- */
 export const createRawMaterial = async (
   payload: CreateRawMaterialPayload
 ): Promise<RawMaterial> => {
@@ -38,9 +31,6 @@ export const createRawMaterial = async (
   return response.data.data;
 };
 
-/**
- * Memperbarui data bahan baku berdasarkan ID.
- */
 export const updateRawMaterial = async (
   id: number,
   payload: UpdateRawMaterialPayload
@@ -52,22 +42,26 @@ export const updateRawMaterial = async (
   return response.data.data;
 };
 
-/**
- * Menghapus bahan baku berdasarkan ID.
- */
 export const deleteRawMaterial = async (id: number): Promise<void> => {
   await apiClient.delete(`${prefix}/${id}`);
 };
 
-/**
- * Menyesuaikan stok bahan baku (menambah atau mengurangi).
- */
 export const adjustStock = async (
   id: number,
   payload: AdjustStockPayload
 ): Promise<RawMaterial> => {
   const response = await apiClient.patch<ApiResponse<RawMaterial>>(
     `${prefix}/${id}/adjust-stock`,
+    payload
+  );
+  return response.data.data;
+};
+
+export const processBarcode = async (
+  payload: UpdateRawMaterialPayload
+): Promise<RawMaterial> => {
+  const response = await apiClient.post<ApiResponse<RawMaterial>>(
+    prefix + "/process-barcode",
     payload
   );
   return response.data.data;

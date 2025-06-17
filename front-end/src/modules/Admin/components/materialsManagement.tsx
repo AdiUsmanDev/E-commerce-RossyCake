@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Table,
@@ -38,182 +38,33 @@ import {
   IconTrash,
   IconAlertTriangle,
   IconServerOff,
+  IconScan,
 } from "@tabler/icons-react";
 import { LoaderCircle } from "lucide-react";
-import { Label } from "@/components/ui/label";
 
-// Import services dan tipe data yang relevan
 import {
   getAllRawMaterials,
   createRawMaterial,
   updateRawMaterial,
   deleteRawMaterial,
+  processBarcode,
 } from "../../../services/RawMaterials.service";
 import {
-  RawMaterial,
   CreateRawMaterialPayload,
+  RawMaterial,
   UpdateRawMaterialPayload,
-} from "../../../types/RawMaterials";
+} from "@/types/RawMaterials";
+import BarcodeScanner from "./BarcodeScanner";
 import RawMaterialStatusPanel from "./RawMaterialStatusPanel";
+import { getMaterialByBarcode } from "@/services/materials.service";
+import { Material } from "@/types/materiasl";
+import MaterialMasterForm from "./MaterialMasterForm";
+import TableSkeleton from "./TableSkeleton";
+import MaterialFormFields from "./MaterialFormFields";
 
-// =============================================================
-// Komponen Form yang Diperbaiki
-// =============================================================
-const MaterialFormFields = ({
-  mode,
-  initialData,
-  onSubmit,
-  onCancel,
-  isSaving,
-}: {
-  mode: "create" | "update";
-  initialData?: RawMaterial | null;
-  onSubmit: (data: CreateRawMaterialPayload | UpdateRawMaterialPayload) => void;
-  onCancel: () => void;
-  isSaving: boolean;
-}) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    stock: "",
-    unit: "",
-    reorder_level: "",
-  });
-
-  useEffect(() => {
-    if (mode === "update" && initialData) {
-      setFormData({
-        name: initialData.name || "",
-        stock: initialData.stock?.toString() || "0",
-        unit: initialData.unit || "",
-        reorder_level: initialData.reorder_level?.toString() || "0",
-      });
-    } else {
-      setFormData({ name: "", stock: "", unit: "", reorder_level: "0" });
-    }
-  }, [initialData, mode]);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const payload: CreateRawMaterialPayload | UpdateRawMaterialPayload = {
-      name: formData.name,
-      stock: parseFloat(formData.stock) || 0,
-      unit: formData.unit,
-      reorder_level: parseFloat(formData.reorder_level) || 0,
-    };
-    onSubmit(payload);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <DialogHeader>
-        <DialogTitle>
-          {mode === "update"
-            ? `Edit Bahan: ${initialData?.name}`
-            : "Tambah Bahan Baku Baru"}
-        </DialogTitle>
-        <DialogDescription>
-          Lengkapi detail bahan baku di bawah ini.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="name" className="text-right">
-            Nama Bahan
-          </Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="stock" className="text-right">
-            Stok Awal
-          </Label>
-          <Input
-            id="stock"
-            name="stock"
-            type="number"
-            step="any"
-            value={formData.stock}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="unit" className="text-right">
-            Satuan
-          </Label>
-          <Input
-            id="unit"
-            name="unit"
-            value={formData.unit}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-            placeholder="kg, gr, liter, pcs"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="reorder_level" className="text-right">
-            Batas Stok Min.
-          </Label>
-          <Input
-            id="reorder_level"
-            name="reorder_level"
-            type="number"
-            step="any"
-            value={formData.reorder_level}
-            onChange={handleChange}
-            className="col-span-3"
-          />
-        </div>
-      </div>
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Batal
-          </Button>
-        </DialogClose>
-        <Button type="submit" disabled={isSaving}>
-          {isSaving && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-          {mode === "update" ? "Update Bahan" : "Simpan Bahan"}
-        </Button>
-      </DialogFooter>
-    </form>
-  );
-};
-
-// Komponen Skeleton untuk tabel
-const TableSkeleton = () => (
-  <TableBody>
-    {Array.from({ length: 8 }).map((_, index) => (
-      <TableRow key={`skeleton-material-${index}`}>
-        {Array.from({ length: 6 }).map((_, cellIndex) => (
-          <TableCell key={cellIndex}>
-            <div className="h-6 bg-muted animate-pulse rounded-md"></div>
-          </TableCell>
-        ))}
-      </TableRow>
-    ))}
-  </TableBody>
-);
-
-// Komponen utama halaman
 const MaterialManagementPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<"create" | "update">("create");
   const [editingMaterial, setEditingMaterial] = useState<RawMaterial | null>(
@@ -222,6 +73,10 @@ const MaterialManagementPage: React.FC = () => {
   const [materialToDelete, setMaterialToDelete] = useState<RawMaterial | null>(
     null
   );
+  const [isScannerDialogOpen, setIsScannerDialogOpen] = useState(false);
+  const [scannedBarcode, setScannedBarcode] = useState<string>("");
+  const [isMaterialMasterFormOpen, setIsMaterialMasterFormOpen] =
+    useState(false);
 
   const {
     data: materials = [],
@@ -238,18 +93,18 @@ const MaterialManagementPage: React.FC = () => {
       id?: number;
       payload: CreateRawMaterialPayload | UpdateRawMaterialPayload;
     }) => {
-      if (data.id)
+      if (data.id) {
         return updateRawMaterial(
           data.id,
           data.payload as UpdateRawMaterialPayload
         );
+      }
       return createRawMaterial(data.payload as CreateRawMaterialPayload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
       setIsFormOpen(false);
     },
-    onError: (err) => alert(`Gagal: ${err.message || "Terjadi kesalahan"}`),
   });
 
   const deleteMutation = useMutation({
@@ -286,9 +141,45 @@ const MaterialManagementPage: React.FC = () => {
     if (materialToDelete) deleteMutation.mutate(materialToDelete.id);
   };
 
+  const handleBarcodeActionMutation = useMutation({
+    mutationFn: async (barcode: string) => getMaterialByBarcode(barcode),
+    onSuccess: (data: Material | null) => {
+      setIsScannerDialogOpen(false);
+      if (data) {
+        const payload: UpdateRawMaterialPayload = {
+          stock: data.defaultStock,
+          barcode: data.barcode,
+          reorder_level: data.defaultStock,
+        };
+        processBarcode(payload);
+      } else {
+        setIsMaterialMasterFormOpen(true);
+      }
+    },
+
+    onError: (err, barcode) => {
+      setIsScannerDialogOpen(false);
+      setScannedBarcode(barcode);
+      setIsMaterialMasterFormOpen(true);
+    },
+  });
+
+  const handleBarcodeScanAndProcess = (barcode: string) => {
+    setScannedBarcode(barcode); // Set scanned barcode first
+    handleBarcodeActionMutation.mutate(barcode); // Then trigger the mutation with the barcode
+  };
+
+  const handleMaterialMasterFormSuccess = () => {
+    setIsMaterialMasterFormOpen(false);
+    queryClient.invalidateQueries({ queryKey: ["materials"] });
+    queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
+    alert("Material Master baru berhasil dibuat!");
+    openCreateForm();
+  };
+
   const filteredMaterials = useMemo(() => {
     return materials.filter((material) =>
-      material.name.toLowerCase().includes(searchQuery.toLowerCase())
+      material.material.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [materials, searchQuery]);
 
@@ -322,22 +213,70 @@ const MaterialManagementPage: React.FC = () => {
             className="pl-10"
           />
         </div>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openCreateForm}>
-              <IconPlus size={18} className="mr-2" /> Tambah Bahan
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-            <MaterialFormFields
-              mode={formMode}
-              initialData={editingMaterial}
-              isSaving={saveMutation.isPending}
-              onSubmit={handleFormSubmit}
-              onCancel={() => setIsFormOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-3">
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={openCreateForm}>
+                <IconPlus size={18} className="mr-2" /> Tambah Bahan
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+              <MaterialFormFields
+                mode={formMode}
+                initialData={editingMaterial}
+                isSaving={saveMutation.isPending}
+                onSubmit={handleFormSubmit}
+                onCancel={() => {
+                  setIsFormOpen(false);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={isScannerDialogOpen}
+            onOpenChange={setIsScannerDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button onClick={() => setIsScannerDialogOpen(true)}>
+                <IconScan size={18} className="mr-2" /> Pindai Barcode
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-xl">
+              <DialogHeader>
+                <DialogTitle>Pindai Barcode Produk</DialogTitle>
+                <DialogDescription>
+                  Arahkan kamera ke barcode produk untuk menambahkannya atau
+                  memperbarui stok.
+                </DialogDescription>
+              </DialogHeader>
+              <BarcodeScanner onScan={handleBarcodeScanAndProcess} />
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Tutup
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={isMaterialMasterFormOpen}
+            onOpenChange={setIsMaterialMasterFormOpen}
+          >
+            <DialogContent className="sm:max-w-lg">
+              {scannedBarcode && (
+                <MaterialMasterForm
+                  initialBarcode={scannedBarcode}
+                  onSuccess={handleMaterialMasterFormSuccess}
+                  onCancel={() => setIsMaterialMasterFormOpen(false)}
+                  isSaving={false}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="flex justify-end mb-4">
@@ -377,13 +316,13 @@ const MaterialManagementPage: React.FC = () => {
                 filteredMaterials.map((material) => (
                   <TableRow key={material.id}>
                     <TableCell className="font-medium">
-                      {material.name}
+                      {material.material.name}
                     </TableCell>
                     <TableCell className="text-right">
-                      {material.stock} {material.unit}
+                      {material.stock} {material.material.unit}
                     </TableCell>
                     <TableCell className="text-right">
-                      {material.reorder_level} {material.unit}
+                      {material.reorder_level} {material.material.unit}
                     </TableCell>
                     <TableCell className="text-center">
                       <span
@@ -441,8 +380,8 @@ const MaterialManagementPage: React.FC = () => {
             </DialogTitle>
             <DialogDescription>
               Anda yakin ingin menghapus{" "}
-              <strong>"{materialToDelete?.name}"</strong>? Tindakan ini tidak
-              dapat dibatalkan.
+              <strong>"{materialToDelete?.material.name}"</strong>? Tindakan ini
+              tidak dapat dibatalkan.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

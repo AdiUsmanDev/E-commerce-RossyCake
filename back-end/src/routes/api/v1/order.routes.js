@@ -9,6 +9,13 @@ export default (router) => {
     isAdmin,
     orderController.getAllOrders
   );
+  router.get(
+    prefix + "/admin/:code", // Gunakan endpoint yang jelas seperti /all
+    authMiddleware,
+    isAdmin,
+    orderController.getOrderAdmin
+  );
+
   router.get(prefix + "/", orderController.getOrders);
   router.post(prefix + "/", orderController.storeOrder);
   router.get(prefix + "/:code", orderController.getOrder);

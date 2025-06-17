@@ -13,12 +13,12 @@ import { AppDispatch, RootState } from "@/lib/redux/store";
 import { updateUserProfile } from "@/lib/redux/slices/authSlice";
 import { LoaderCircle } from "lucide-react";
 import { UpdateProfilePayload } from "@/services/profile.service";
+import toast from "react-hot-toast";
 
 const DisplayEditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, status, error } = useSelector((state: RootState) => state.auth);
 
-  // === STATE MANAGEMENT ===
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -26,11 +26,9 @@ const DisplayEditProfile = () => {
     email: "",
     password: "",
   });
-  // State baru untuk melacak apakah ada perubahan pada form
+
   const [hasChanges, setHasChanges] = useState(false);
 
-  // === EFFECTS ===
-  // Efek untuk mengisi form saat data 'user' dari Redux tersedia atau berubah
   useEffect(() => {
     if (user) {
       setFormData({
@@ -60,35 +58,28 @@ const DisplayEditProfile = () => {
 
   // === HANDLERS ===
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 1. Ambil id dan value dari elemen input yang sedang berubah
     const { id, value } = e.target;
 
-    // 2. Perbarui state
     setFormData((prev) => ({
-      ...prev, // Salin semua nilai state yang lama
-      [id]: value, // Perbarui nilai untuk key yang sesuai dengan 'id' input
+      ...prev,
+      [id]: value,
     }));
   };
   const handleSaveChanges = async (e: FormEvent) => {
     e.preventDefault();
-    if (!user || !hasChanges) return;
 
-    // 1. Membuat objek KOSONG untuk menampung perubahan
-    const changes: Partial<UpdateProfilePayload> = {};
+    const promise = dispatch(updateUserProfile(formData));
 
-    // 2. Memeriksa setiap field satu per satu
-    //    HANYA jika ada perbedaan, data akan dimasukkan ke objek 'changes'
-    if (formData.name !== user.name) changes.name = formData.name;
-    if (formData.phone !== user.phone) changes.phone = formData.phone;
-    if (formData.email !== user.email) changes.email = formData.email;
-    if (formData.password) changes.password = formData.password;
+    toast.promise(promise, {
+      loading: "Menyimpan perubahan...",
+      success: () => {
+        setIsEditing(false); 
+        return "Profil berhasil diperbarui!";
+      },
+      error: (err) => err.message || "Gagal memperbarui profil.",
+    });
 
-    // 3. Hanya jika objek 'changes' TIDAK KOSONG, data dikirim ke server
-    if (Object.keys(changes).length > 0) {
-      // Hanya objek 'changes' yang dikirim, bukan seluruh 'formData'
-      await dispatch(updateUserProfile(formData as UpdateProfilePayload));
-      // ...
-    }
+    await promise;
   };
 
   const handleCancelEdit = () => {

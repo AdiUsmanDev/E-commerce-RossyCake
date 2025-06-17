@@ -16,12 +16,11 @@ const Switch = React.forwardRef<
     ref={ref}
   >
     <SwitchPrimitives.Thumb
+      data-slot="switch-thumb"
       className={cn(
-        "pointer-events-none block h-5 w-5 overflow-visible rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+        "bg-background dark:data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0"
       )}
-    >
-      <img src="/svg/flight.svg" alt="flight" className="rotate-90" />
-    </SwitchPrimitives.Thumb>
+    />
   </SwitchPrimitives.Root>
 ));
 

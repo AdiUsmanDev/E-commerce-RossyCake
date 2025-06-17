@@ -1,5 +1,3 @@
-// src/lib/redux/slices/authSlice.ts
-
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   AuthResponse,
@@ -20,6 +18,8 @@ interface AuthState {
   token: string | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  // Menambahkan 'role' ke dalam state untuk konsistensi
+  role: "admin" | "customer" | null;
 }
 
 // Inisialisasi state awal
@@ -29,10 +29,10 @@ const initialState: AuthState = {
     typeof window !== "undefined" ? localStorage.getItem("authToken") : null,
   status: "idle",
   error: null,
+  role: null, // Mulai dengan role null
 };
 
 // --- Async Thunks ---
-// Definisi async thunk Anda sudah baik
 export const loginUser = createAsyncThunk<AuthResponse, LoginPayload>(
   "auth/login",
   async (payload, { rejectWithValue }) => {
@@ -40,7 +40,7 @@ export const loginUser = createAsyncThunk<AuthResponse, LoginPayload>(
       const response = await login(payload);
       localStorage.setItem("authToken", response.token);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
@@ -52,7 +52,7 @@ export const registerUser = createAsyncThunk<User, RegisterPayload>(
     try {
       const response = await register(payload);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Registration failed"
       );
@@ -66,7 +66,7 @@ export const fetchUserProfile = createAsyncThunk<User>(
     try {
       const user = await getProfile();
       return user;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Could not fetch profile"
       );
@@ -80,7 +80,7 @@ export const updateUserProfile = createAsyncThunk<User, UpdateProfilePayload>(
     try {
       const updatedUser = await updateProfile(payload);
       return updatedUser;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Update profile failed"
       );
@@ -97,10 +97,15 @@ const authSlice = createSlice({
       state.token = null;
       state.status = "idle";
       state.error = null;
-      state.role = null; // PERBAIKAN: Pastikan role juga di-reset saat logout
+      state.role = null;
       localStorage.removeItem("authToken");
     },
     clearAuthError: (state) => {
+      state.error = null;
+    },
+    // PERBAIKAN: Tambahkan reducer 'resetAuthStatus' di sini
+    resetAuthStatus: (state) => {
+      state.status = "idle";
       state.error = null;
     },
   },
@@ -117,7 +122,6 @@ const authSlice = createSlice({
           state.status = "succeeded";
           state.user = action.payload.user;
           state.token = action.payload.token;
-          // PERBAIKAN: Set state 'role' setelah login berhasil
           state.role = action.payload.user.role;
         }
       )
@@ -136,7 +140,6 @@ const authSlice = createSlice({
         (state, action: PayloadAction<User>) => {
           state.status = "succeeded";
           state.user = action.payload;
-          // PERBAIKAN: Set state 'role' setelah fetch profile berhasil
           state.role = action.payload.role;
         }
       )
@@ -144,7 +147,7 @@ const authSlice = createSlice({
         state.status = "failed";
         state.user = null;
         state.token = null;
-        state.role = null; // PERBAIKAN: Reset role jika fetch gagal
+        state.role = null;
         state.error = (action.payload as string) || "Sesi tidak valid.";
         localStorage.removeItem("authToken");
       })
@@ -159,7 +162,6 @@ const authSlice = createSlice({
         (state, action: PayloadAction<User>) => {
           state.status = "succeeded";
           state.user = action.payload;
-          // PERBAIKAN: Update juga role jika ada perubahan
           state.role = action.payload.role;
         }
       )
@@ -168,7 +170,7 @@ const authSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // Kasus registrasi tidak perlu mengubah role, jadi bisa dibiarkan
+      // --- Kasus untuk Registrasi ---
       .addCase(registerUser.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -183,6 +185,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearAuthError } = authSlice.actions;
+// PERBAIKAN: Ekspor 'resetAuthStatus' bersama dengan action lainnya
+export const { logout, clearAuthError, resetAuthStatus } = authSlice.actions;
 
 export default authSlice.reducer;

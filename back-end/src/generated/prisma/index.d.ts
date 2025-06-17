@@ -39,6 +39,11 @@ export type order_items = $Result.DefaultSelection<Prisma.$order_itemsPayload>
  */
 export type raw_materials = $Result.DefaultSelection<Prisma.$raw_materialsPayload>
 /**
+ * Model materials
+ * 
+ */
+export type materials = $Result.DefaultSelection<Prisma.$materialsPayload>
+/**
  * Model addresses
  * 
  */
@@ -97,6 +102,17 @@ export const OrderStatus: {
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
 
+export const UnitEnum: {
+  gram: 'gram',
+  kilogram: 'kilogram',
+  pcs: 'pcs',
+  liter: 'liter',
+  mililiter: 'mililiter'
+};
+
+export type UnitEnum = (typeof UnitEnum)[keyof typeof UnitEnum]
+
+
 export const PaymentStatus: {
   PENDING: 'PENDING',
   SUCCESS: 'SUCCESS',
@@ -123,6 +139,10 @@ export const Role: typeof $Enums.Role
 export type OrderStatus = $Enums.OrderStatus
 
 export const OrderStatus: typeof $Enums.OrderStatus
+
+export type UnitEnum = $Enums.UnitEnum
+
+export const UnitEnum: typeof $Enums.UnitEnum
 
 export type PaymentStatus = $Enums.PaymentStatus
 
@@ -306,6 +326,16 @@ export class PrismaClient<
     * ```
     */
   get raw_materials(): Prisma.raw_materialsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.materials`: Exposes CRUD operations for the **materials** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Materials
+    * const materials = await prisma.materials.findMany()
+    * ```
+    */
+  get materials(): Prisma.materialsDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.addresses`: Exposes CRUD operations for the **addresses** model.
@@ -821,6 +851,7 @@ export namespace Prisma {
     orders: 'orders',
     order_items: 'order_items',
     raw_materials: 'raw_materials',
+    materials: 'materials',
     addresses: 'addresses',
     vouchers: 'vouchers',
     payments: 'payments',
@@ -846,7 +877,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "users" | "products" | "orders" | "order_items" | "raw_materials" | "addresses" | "vouchers" | "payments" | "invoices" | "feedbacks" | "expenses" | "custom_orders"
+      modelProps: "users" | "products" | "orders" | "order_items" | "raw_materials" | "materials" | "addresses" | "vouchers" | "payments" | "invoices" | "feedbacks" | "expenses" | "custom_orders"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1177,6 +1208,72 @@ export namespace Prisma {
           count: {
             args: Prisma.raw_materialsCountArgs<ExtArgs>
             result: $Utils.Optional<Raw_materialsCountAggregateOutputType> | number
+          }
+        }
+      }
+      materials: {
+        payload: Prisma.$materialsPayload<ExtArgs>
+        fields: Prisma.materialsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.materialsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.materialsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>
+          }
+          findFirst: {
+            args: Prisma.materialsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.materialsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>
+          }
+          findMany: {
+            args: Prisma.materialsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>[]
+          }
+          create: {
+            args: Prisma.materialsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>
+          }
+          createMany: {
+            args: Prisma.materialsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.materialsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>
+          }
+          update: {
+            args: Prisma.materialsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>
+          }
+          deleteMany: {
+            args: Prisma.materialsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.materialsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.materialsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$materialsPayload>
+          }
+          aggregate: {
+            args: Prisma.MaterialsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMaterials>
+          }
+          groupBy: {
+            args: Prisma.materialsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MaterialsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.materialsCountArgs<ExtArgs>
+            result: $Utils.Optional<MaterialsCountAggregateOutputType> | number
           }
         }
       }
@@ -1731,6 +1828,7 @@ export namespace Prisma {
     orders?: ordersOmit
     order_items?: order_itemsOmit
     raw_materials?: raw_materialsOmit
+    materials?: materialsOmit
     addresses?: addressesOmit
     vouchers?: vouchersOmit
     payments?: paymentsOmit
@@ -1833,16 +1931,16 @@ export namespace Prisma {
 
   export type UsersCountOutputType = {
     addresses: number
-    orders: number
-    feedbacks: number
     expenses: number
+    feedbacks: number
+    orders: number
   }
 
   export type UsersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     addresses?: boolean | UsersCountOutputTypeCountAddressesArgs
-    orders?: boolean | UsersCountOutputTypeCountOrdersArgs
-    feedbacks?: boolean | UsersCountOutputTypeCountFeedbacksArgs
     expenses?: boolean | UsersCountOutputTypeCountExpensesArgs
+    feedbacks?: boolean | UsersCountOutputTypeCountFeedbacksArgs
+    orders?: boolean | UsersCountOutputTypeCountOrdersArgs
   }
 
   // Custom InputTypes
@@ -1866,8 +1964,8 @@ export namespace Prisma {
   /**
    * UsersCountOutputType without action
    */
-  export type UsersCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ordersWhereInput
+  export type UsersCountOutputTypeCountExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: expensesWhereInput
   }
 
   /**
@@ -1880,8 +1978,8 @@ export namespace Prisma {
   /**
    * UsersCountOutputType without action
    */
-  export type UsersCountOutputTypeCountExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: expensesWhereInput
+  export type UsersCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ordersWhereInput
   }
 
 
@@ -1922,12 +2020,10 @@ export namespace Prisma {
 
   export type OrdersCountOutputType = {
     order_items: number
-    feedbacks: number
   }
 
   export type OrdersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order_items?: boolean | OrdersCountOutputTypeCountOrder_itemsArgs
-    feedbacks?: boolean | OrdersCountOutputTypeCountFeedbacksArgs
   }
 
   // Custom InputTypes
@@ -1946,13 +2042,6 @@ export namespace Prisma {
    */
   export type OrdersCountOutputTypeCountOrder_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: order_itemsWhereInput
-  }
-
-  /**
-   * OrdersCountOutputType without action
-   */
-  export type OrdersCountOutputTypeCountFeedbacksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: feedbacksWhereInput
   }
 
 
@@ -2214,9 +2303,9 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     addresses?: boolean | users$addressesArgs<ExtArgs>
-    orders?: boolean | users$ordersArgs<ExtArgs>
-    feedbacks?: boolean | users$feedbacksArgs<ExtArgs>
     expenses?: boolean | users$expensesArgs<ExtArgs>
+    feedbacks?: boolean | users$feedbacksArgs<ExtArgs>
+    orders?: boolean | users$ordersArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["users"]>
 
@@ -2236,9 +2325,9 @@ export namespace Prisma {
   export type usersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone" | "role" | "created_at" | "updated_at", ExtArgs["result"]["users"]>
   export type usersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     addresses?: boolean | users$addressesArgs<ExtArgs>
-    orders?: boolean | users$ordersArgs<ExtArgs>
-    feedbacks?: boolean | users$feedbacksArgs<ExtArgs>
     expenses?: boolean | users$expensesArgs<ExtArgs>
+    feedbacks?: boolean | users$feedbacksArgs<ExtArgs>
+    orders?: boolean | users$ordersArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -2246,9 +2335,9 @@ export namespace Prisma {
     name: "users"
     objects: {
       addresses: Prisma.$addressesPayload<ExtArgs>[]
-      orders: Prisma.$ordersPayload<ExtArgs>[]
-      feedbacks: Prisma.$feedbacksPayload<ExtArgs>[]
       expenses: Prisma.$expensesPayload<ExtArgs>[]
+      feedbacks: Prisma.$feedbacksPayload<ExtArgs>[]
+      orders: Prisma.$ordersPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2600,9 +2689,9 @@ export namespace Prisma {
   export interface Prisma__usersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     addresses<T extends users$addressesArgs<ExtArgs> = {}>(args?: Subset<T, users$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$addressesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    orders<T extends users$ordersArgs<ExtArgs> = {}>(args?: Subset<T, users$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ordersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    feedbacks<T extends users$feedbacksArgs<ExtArgs> = {}>(args?: Subset<T, users$feedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$feedbacksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     expenses<T extends users$expensesArgs<ExtArgs> = {}>(args?: Subset<T, users$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$expensesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    feedbacks<T extends users$feedbacksArgs<ExtArgs> = {}>(args?: Subset<T, users$feedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$feedbacksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    orders<T extends users$ordersArgs<ExtArgs> = {}>(args?: Subset<T, users$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ordersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3007,27 +3096,27 @@ export namespace Prisma {
   }
 
   /**
-   * users.orders
+   * users.expenses
    */
-  export type users$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type users$expensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the orders
+     * Select specific fields to fetch from the expenses
      */
-    select?: ordersSelect<ExtArgs> | null
+    select?: expensesSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the orders
+     * Omit specific fields from the expenses
      */
-    omit?: ordersOmit<ExtArgs> | null
+    omit?: expensesOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ordersInclude<ExtArgs> | null
-    where?: ordersWhereInput
-    orderBy?: ordersOrderByWithRelationInput | ordersOrderByWithRelationInput[]
-    cursor?: ordersWhereUniqueInput
+    include?: expensesInclude<ExtArgs> | null
+    where?: expensesWhereInput
+    orderBy?: expensesOrderByWithRelationInput | expensesOrderByWithRelationInput[]
+    cursor?: expensesWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: OrdersScalarFieldEnum | OrdersScalarFieldEnum[]
+    distinct?: ExpensesScalarFieldEnum | ExpensesScalarFieldEnum[]
   }
 
   /**
@@ -3055,27 +3144,27 @@ export namespace Prisma {
   }
 
   /**
-   * users.expenses
+   * users.orders
    */
-  export type users$expensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type users$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the expenses
+     * Select specific fields to fetch from the orders
      */
-    select?: expensesSelect<ExtArgs> | null
+    select?: ordersSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the expenses
+     * Omit specific fields from the orders
      */
-    omit?: expensesOmit<ExtArgs> | null
+    omit?: ordersOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: expensesInclude<ExtArgs> | null
-    where?: expensesWhereInput
-    orderBy?: expensesOrderByWithRelationInput | expensesOrderByWithRelationInput[]
-    cursor?: expensesWhereUniqueInput
+    include?: ordersInclude<ExtArgs> | null
+    where?: ordersWhereInput
+    orderBy?: ordersOrderByWithRelationInput | ordersOrderByWithRelationInput[]
+    cursor?: ordersWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: ExpensesScalarFieldEnum | ExpensesScalarFieldEnum[]
+    distinct?: OrdersScalarFieldEnum | OrdersScalarFieldEnum[]
   }
 
   /**
@@ -3128,9 +3217,9 @@ export namespace Prisma {
     price: Decimal | null
     stock: number | null
     category: string | null
-    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
+    image_url: string | null
   }
 
   export type ProductsMaxAggregateOutputType = {
@@ -3140,9 +3229,9 @@ export namespace Prisma {
     price: Decimal | null
     stock: number | null
     category: string | null
-    image_url: string | null
     created_at: Date | null
     updated_at: Date | null
+    image_url: string | null
   }
 
   export type ProductsCountAggregateOutputType = {
@@ -3152,9 +3241,9 @@ export namespace Prisma {
     price: number
     stock: number
     category: number
-    image_url: number
     created_at: number
     updated_at: number
+    image_url: number
     _all: number
   }
 
@@ -3178,9 +3267,9 @@ export namespace Prisma {
     price?: true
     stock?: true
     category?: true
-    image_url?: true
     created_at?: true
     updated_at?: true
+    image_url?: true
   }
 
   export type ProductsMaxAggregateInputType = {
@@ -3190,9 +3279,9 @@ export namespace Prisma {
     price?: true
     stock?: true
     category?: true
-    image_url?: true
     created_at?: true
     updated_at?: true
+    image_url?: true
   }
 
   export type ProductsCountAggregateInputType = {
@@ -3202,9 +3291,9 @@ export namespace Prisma {
     price?: true
     stock?: true
     category?: true
-    image_url?: true
     created_at?: true
     updated_at?: true
+    image_url?: true
     _all?: true
   }
 
@@ -3301,9 +3390,9 @@ export namespace Prisma {
     price: Decimal
     stock: number
     category: string | null
-    image_url: string | null
     created_at: Date
     updated_at: Date
+    image_url: string | null
     _count: ProductsCountAggregateOutputType | null
     _avg: ProductsAvgAggregateOutputType | null
     _sum: ProductsSumAggregateOutputType | null
@@ -3332,9 +3421,9 @@ export namespace Prisma {
     price?: boolean
     stock?: boolean
     category?: boolean
-    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
+    image_url?: boolean
     order_items?: boolean | products$order_itemsArgs<ExtArgs>
     _count?: boolean | ProductsCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["products"]>
@@ -3348,12 +3437,12 @@ export namespace Prisma {
     price?: boolean
     stock?: boolean
     category?: boolean
-    image_url?: boolean
     created_at?: boolean
     updated_at?: boolean
+    image_url?: boolean
   }
 
-  export type productsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "category" | "image_url" | "created_at" | "updated_at", ExtArgs["result"]["products"]>
+  export type productsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "category" | "created_at" | "updated_at" | "image_url", ExtArgs["result"]["products"]>
   export type productsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order_items?: boolean | products$order_itemsArgs<ExtArgs>
     _count?: boolean | ProductsCountOutputTypeDefaultArgs<ExtArgs>
@@ -3371,9 +3460,9 @@ export namespace Prisma {
       price: Prisma.Decimal
       stock: number
       category: string | null
-      image_url: string | null
       created_at: Date
       updated_at: Date
+      image_url: string | null
     }, ExtArgs["result"]["products"]>
     composites: {}
   }
@@ -3750,9 +3839,9 @@ export namespace Prisma {
     readonly price: FieldRef<"products", 'Decimal'>
     readonly stock: FieldRef<"products", 'Int'>
     readonly category: FieldRef<"products", 'String'>
-    readonly image_url: FieldRef<"products", 'String'>
     readonly created_at: FieldRef<"products", 'DateTime'>
     readonly updated_at: FieldRef<"products", 'DateTime'>
+    readonly image_url: FieldRef<"products", 'String'>
   }
     
 
@@ -4153,20 +4242,20 @@ export namespace Prisma {
   export type OrdersAvgAggregateOutputType = {
     id: number | null
     customer_id: number | null
-    sub_total: Decimal | null
-    shipping_cost: Decimal | null
-    discount_amount: Decimal | null
     total_price: Decimal | null
+    discount_amount: Decimal | null
+    shipping_cost: Decimal | null
+    sub_total: Decimal | null
     voucher_id: number | null
   }
 
   export type OrdersSumAggregateOutputType = {
     id: number | null
     customer_id: number | null
-    sub_total: Decimal | null
-    shipping_cost: Decimal | null
-    discount_amount: Decimal | null
     total_price: Decimal | null
+    discount_amount: Decimal | null
+    shipping_cost: Decimal | null
+    sub_total: Decimal | null
     voucher_id: number | null
   }
 
@@ -4174,12 +4263,12 @@ export namespace Prisma {
     id: number | null
     customer_id: number | null
     status: $Enums.OrderStatus | null
-    order_date: Date | null
-    sub_total: Decimal | null
-    shipping_cost: Decimal | null
-    discount_amount: Decimal | null
     total_price: Decimal | null
+    discount_amount: Decimal | null
+    order_date: Date | null
+    shipping_cost: Decimal | null
     shipping_method: string | null
+    sub_total: Decimal | null
     tracking_number: string | null
     voucher_id: number | null
     created_at: Date | null
@@ -4190,12 +4279,12 @@ export namespace Prisma {
     id: number | null
     customer_id: number | null
     status: $Enums.OrderStatus | null
-    order_date: Date | null
-    sub_total: Decimal | null
-    shipping_cost: Decimal | null
-    discount_amount: Decimal | null
     total_price: Decimal | null
+    discount_amount: Decimal | null
+    order_date: Date | null
+    shipping_cost: Decimal | null
     shipping_method: string | null
+    sub_total: Decimal | null
     tracking_number: string | null
     voucher_id: number | null
     created_at: Date | null
@@ -4206,13 +4295,13 @@ export namespace Prisma {
     id: number
     customer_id: number
     status: number
-    order_date: number
-    sub_total: number
-    shipping_cost: number
-    discount_amount: number
     total_price: number
+    discount_amount: number
+    order_date: number
     shipping_address: number
+    shipping_cost: number
     shipping_method: number
+    sub_total: number
     tracking_number: number
     voucher_id: number
     created_at: number
@@ -4224,20 +4313,20 @@ export namespace Prisma {
   export type OrdersAvgAggregateInputType = {
     id?: true
     customer_id?: true
-    sub_total?: true
-    shipping_cost?: true
-    discount_amount?: true
     total_price?: true
+    discount_amount?: true
+    shipping_cost?: true
+    sub_total?: true
     voucher_id?: true
   }
 
   export type OrdersSumAggregateInputType = {
     id?: true
     customer_id?: true
-    sub_total?: true
-    shipping_cost?: true
-    discount_amount?: true
     total_price?: true
+    discount_amount?: true
+    shipping_cost?: true
+    sub_total?: true
     voucher_id?: true
   }
 
@@ -4245,12 +4334,12 @@ export namespace Prisma {
     id?: true
     customer_id?: true
     status?: true
-    order_date?: true
-    sub_total?: true
-    shipping_cost?: true
-    discount_amount?: true
     total_price?: true
+    discount_amount?: true
+    order_date?: true
+    shipping_cost?: true
     shipping_method?: true
+    sub_total?: true
     tracking_number?: true
     voucher_id?: true
     created_at?: true
@@ -4261,12 +4350,12 @@ export namespace Prisma {
     id?: true
     customer_id?: true
     status?: true
-    order_date?: true
-    sub_total?: true
-    shipping_cost?: true
-    discount_amount?: true
     total_price?: true
+    discount_amount?: true
+    order_date?: true
+    shipping_cost?: true
     shipping_method?: true
+    sub_total?: true
     tracking_number?: true
     voucher_id?: true
     created_at?: true
@@ -4277,13 +4366,13 @@ export namespace Prisma {
     id?: true
     customer_id?: true
     status?: true
-    order_date?: true
-    sub_total?: true
-    shipping_cost?: true
-    discount_amount?: true
     total_price?: true
+    discount_amount?: true
+    order_date?: true
     shipping_address?: true
+    shipping_cost?: true
     shipping_method?: true
+    sub_total?: true
     tracking_number?: true
     voucher_id?: true
     created_at?: true
@@ -4381,13 +4470,13 @@ export namespace Prisma {
     id: number
     customer_id: number
     status: $Enums.OrderStatus
-    order_date: Date
-    sub_total: Decimal
-    shipping_cost: Decimal
-    discount_amount: Decimal
     total_price: Decimal
+    discount_amount: Decimal
+    order_date: Date
     shipping_address: JsonValue
+    shipping_cost: Decimal
     shipping_method: string
+    sub_total: Decimal
     tracking_number: string | null
     voucher_id: number | null
     created_at: Date
@@ -4417,23 +4506,23 @@ export namespace Prisma {
     id?: boolean
     customer_id?: boolean
     status?: boolean
-    order_date?: boolean
-    sub_total?: boolean
-    shipping_cost?: boolean
-    discount_amount?: boolean
     total_price?: boolean
+    discount_amount?: boolean
+    order_date?: boolean
     shipping_address?: boolean
+    shipping_cost?: boolean
     shipping_method?: boolean
+    sub_total?: boolean
     tracking_number?: boolean
     voucher_id?: boolean
     created_at?: boolean
     updated_at?: boolean
+    custom_order?: boolean | orders$custom_orderArgs<ExtArgs>
+    feedbacks?: boolean | orders$feedbacksArgs<ExtArgs>
+    order_items?: boolean | orders$order_itemsArgs<ExtArgs>
     customer?: boolean | usersDefaultArgs<ExtArgs>
     voucher?: boolean | orders$voucherArgs<ExtArgs>
-    order_items?: boolean | orders$order_itemsArgs<ExtArgs>
     payment?: boolean | orders$paymentArgs<ExtArgs>
-    feedbacks?: boolean | orders$feedbacksArgs<ExtArgs>
-    custom_order?: boolean | orders$custom_orderArgs<ExtArgs>
     _count?: boolean | OrdersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orders"]>
 
@@ -4443,51 +4532,51 @@ export namespace Prisma {
     id?: boolean
     customer_id?: boolean
     status?: boolean
-    order_date?: boolean
-    sub_total?: boolean
-    shipping_cost?: boolean
-    discount_amount?: boolean
     total_price?: boolean
+    discount_amount?: boolean
+    order_date?: boolean
     shipping_address?: boolean
+    shipping_cost?: boolean
     shipping_method?: boolean
+    sub_total?: boolean
     tracking_number?: boolean
     voucher_id?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type ordersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customer_id" | "status" | "order_date" | "sub_total" | "shipping_cost" | "discount_amount" | "total_price" | "shipping_address" | "shipping_method" | "tracking_number" | "voucher_id" | "created_at" | "updated_at", ExtArgs["result"]["orders"]>
+  export type ordersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customer_id" | "status" | "total_price" | "discount_amount" | "order_date" | "shipping_address" | "shipping_cost" | "shipping_method" | "sub_total" | "tracking_number" | "voucher_id" | "created_at" | "updated_at", ExtArgs["result"]["orders"]>
   export type ordersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    custom_order?: boolean | orders$custom_orderArgs<ExtArgs>
+    feedbacks?: boolean | orders$feedbacksArgs<ExtArgs>
+    order_items?: boolean | orders$order_itemsArgs<ExtArgs>
     customer?: boolean | usersDefaultArgs<ExtArgs>
     voucher?: boolean | orders$voucherArgs<ExtArgs>
-    order_items?: boolean | orders$order_itemsArgs<ExtArgs>
     payment?: boolean | orders$paymentArgs<ExtArgs>
-    feedbacks?: boolean | orders$feedbacksArgs<ExtArgs>
-    custom_order?: boolean | orders$custom_orderArgs<ExtArgs>
     _count?: boolean | OrdersCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $ordersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "orders"
     objects: {
+      custom_order: Prisma.$custom_ordersPayload<ExtArgs> | null
+      feedbacks: Prisma.$feedbacksPayload<ExtArgs> | null
+      order_items: Prisma.$order_itemsPayload<ExtArgs>[]
       customer: Prisma.$usersPayload<ExtArgs>
       voucher: Prisma.$vouchersPayload<ExtArgs> | null
-      order_items: Prisma.$order_itemsPayload<ExtArgs>[]
       payment: Prisma.$paymentsPayload<ExtArgs> | null
-      feedbacks: Prisma.$feedbacksPayload<ExtArgs>[]
-      custom_order: Prisma.$custom_ordersPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       customer_id: number
       status: $Enums.OrderStatus
-      order_date: Date
-      sub_total: Prisma.Decimal
-      shipping_cost: Prisma.Decimal
-      discount_amount: Prisma.Decimal
       total_price: Prisma.Decimal
+      discount_amount: Prisma.Decimal
+      order_date: Date
       shipping_address: Prisma.JsonValue
+      shipping_cost: Prisma.Decimal
       shipping_method: string
+      sub_total: Prisma.Decimal
       tracking_number: string | null
       voucher_id: number | null
       created_at: Date
@@ -4832,12 +4921,12 @@ export namespace Prisma {
    */
   export interface Prisma__ordersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    custom_order<T extends orders$custom_orderArgs<ExtArgs> = {}>(args?: Subset<T, orders$custom_orderArgs<ExtArgs>>): Prisma__custom_ordersClient<$Result.GetResult<Prisma.$custom_ordersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    feedbacks<T extends orders$feedbacksArgs<ExtArgs> = {}>(args?: Subset<T, orders$feedbacksArgs<ExtArgs>>): Prisma__feedbacksClient<$Result.GetResult<Prisma.$feedbacksPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    order_items<T extends orders$order_itemsArgs<ExtArgs> = {}>(args?: Subset<T, orders$order_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$order_itemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     customer<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     voucher<T extends orders$voucherArgs<ExtArgs> = {}>(args?: Subset<T, orders$voucherArgs<ExtArgs>>): Prisma__vouchersClient<$Result.GetResult<Prisma.$vouchersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    order_items<T extends orders$order_itemsArgs<ExtArgs> = {}>(args?: Subset<T, orders$order_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$order_itemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payment<T extends orders$paymentArgs<ExtArgs> = {}>(args?: Subset<T, orders$paymentArgs<ExtArgs>>): Prisma__paymentsClient<$Result.GetResult<Prisma.$paymentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    feedbacks<T extends orders$feedbacksArgs<ExtArgs> = {}>(args?: Subset<T, orders$feedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$feedbacksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    custom_order<T extends orders$custom_orderArgs<ExtArgs> = {}>(args?: Subset<T, orders$custom_orderArgs<ExtArgs>>): Prisma__custom_ordersClient<$Result.GetResult<Prisma.$custom_ordersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4870,13 +4959,13 @@ export namespace Prisma {
     readonly id: FieldRef<"orders", 'Int'>
     readonly customer_id: FieldRef<"orders", 'Int'>
     readonly status: FieldRef<"orders", 'OrderStatus'>
-    readonly order_date: FieldRef<"orders", 'DateTime'>
-    readonly sub_total: FieldRef<"orders", 'Decimal'>
-    readonly shipping_cost: FieldRef<"orders", 'Decimal'>
-    readonly discount_amount: FieldRef<"orders", 'Decimal'>
     readonly total_price: FieldRef<"orders", 'Decimal'>
+    readonly discount_amount: FieldRef<"orders", 'Decimal'>
+    readonly order_date: FieldRef<"orders", 'DateTime'>
     readonly shipping_address: FieldRef<"orders", 'Json'>
+    readonly shipping_cost: FieldRef<"orders", 'Decimal'>
     readonly shipping_method: FieldRef<"orders", 'String'>
+    readonly sub_total: FieldRef<"orders", 'Decimal'>
     readonly tracking_number: FieldRef<"orders", 'String'>
     readonly voucher_id: FieldRef<"orders", 'Int'>
     readonly created_at: FieldRef<"orders", 'DateTime'>
@@ -5224,22 +5313,41 @@ export namespace Prisma {
   }
 
   /**
-   * orders.voucher
+   * orders.custom_order
    */
-  export type orders$voucherArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type orders$custom_orderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the vouchers
+     * Select specific fields to fetch from the custom_orders
      */
-    select?: vouchersSelect<ExtArgs> | null
+    select?: custom_ordersSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the vouchers
+     * Omit specific fields from the custom_orders
      */
-    omit?: vouchersOmit<ExtArgs> | null
+    omit?: custom_ordersOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: vouchersInclude<ExtArgs> | null
-    where?: vouchersWhereInput
+    include?: custom_ordersInclude<ExtArgs> | null
+    where?: custom_ordersWhereInput
+  }
+
+  /**
+   * orders.feedbacks
+   */
+  export type orders$feedbacksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the feedbacks
+     */
+    select?: feedbacksSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the feedbacks
+     */
+    omit?: feedbacksOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: feedbacksInclude<ExtArgs> | null
+    where?: feedbacksWhereInput
   }
 
   /**
@@ -5267,6 +5375,25 @@ export namespace Prisma {
   }
 
   /**
+   * orders.voucher
+   */
+  export type orders$voucherArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vouchers
+     */
+    select?: vouchersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the vouchers
+     */
+    omit?: vouchersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vouchersInclude<ExtArgs> | null
+    where?: vouchersWhereInput
+  }
+
+  /**
    * orders.payment
    */
   export type orders$paymentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5283,49 +5410,6 @@ export namespace Prisma {
      */
     include?: paymentsInclude<ExtArgs> | null
     where?: paymentsWhereInput
-  }
-
-  /**
-   * orders.feedbacks
-   */
-  export type orders$feedbacksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the feedbacks
-     */
-    select?: feedbacksSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the feedbacks
-     */
-    omit?: feedbacksOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: feedbacksInclude<ExtArgs> | null
-    where?: feedbacksWhereInput
-    orderBy?: feedbacksOrderByWithRelationInput | feedbacksOrderByWithRelationInput[]
-    cursor?: feedbacksWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: FeedbacksScalarFieldEnum | FeedbacksScalarFieldEnum[]
-  }
-
-  /**
-   * orders.custom_order
-   */
-  export type orders$custom_orderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the custom_orders
-     */
-    select?: custom_ordersSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the custom_orders
-     */
-    omit?: custom_ordersOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: custom_ordersInclude<ExtArgs> | null
-    where?: custom_ordersWhereInput
   }
 
   /**
@@ -6346,42 +6430,41 @@ export namespace Prisma {
     id: number | null
     stock: Decimal | null
     reorder_level: Decimal | null
+    material_id: number | null
   }
 
   export type Raw_materialsSumAggregateOutputType = {
     id: number | null
     stock: Decimal | null
     reorder_level: Decimal | null
+    material_id: number | null
   }
 
   export type Raw_materialsMinAggregateOutputType = {
     id: number | null
-    name: string | null
     stock: Decimal | null
-    unit: string | null
     reorder_level: Decimal | null
     created_at: Date | null
     updated_at: Date | null
+    material_id: number | null
   }
 
   export type Raw_materialsMaxAggregateOutputType = {
     id: number | null
-    name: string | null
     stock: Decimal | null
-    unit: string | null
     reorder_level: Decimal | null
     created_at: Date | null
     updated_at: Date | null
+    material_id: number | null
   }
 
   export type Raw_materialsCountAggregateOutputType = {
     id: number
-    name: number
     stock: number
-    unit: number
     reorder_level: number
     created_at: number
     updated_at: number
+    material_id: number
     _all: number
   }
 
@@ -6390,42 +6473,41 @@ export namespace Prisma {
     id?: true
     stock?: true
     reorder_level?: true
+    material_id?: true
   }
 
   export type Raw_materialsSumAggregateInputType = {
     id?: true
     stock?: true
     reorder_level?: true
+    material_id?: true
   }
 
   export type Raw_materialsMinAggregateInputType = {
     id?: true
-    name?: true
     stock?: true
-    unit?: true
     reorder_level?: true
     created_at?: true
     updated_at?: true
+    material_id?: true
   }
 
   export type Raw_materialsMaxAggregateInputType = {
     id?: true
-    name?: true
     stock?: true
-    unit?: true
     reorder_level?: true
     created_at?: true
     updated_at?: true
+    material_id?: true
   }
 
   export type Raw_materialsCountAggregateInputType = {
     id?: true
-    name?: true
     stock?: true
-    unit?: true
     reorder_level?: true
     created_at?: true
     updated_at?: true
+    material_id?: true
     _all?: true
   }
 
@@ -6517,12 +6599,11 @@ export namespace Prisma {
 
   export type Raw_materialsGroupByOutputType = {
     id: number
-    name: string
     stock: Decimal
-    unit: string
     reorder_level: Decimal
     created_at: Date
     updated_at: Date
+    material_id: number
     _count: Raw_materialsCountAggregateOutputType | null
     _avg: Raw_materialsAvgAggregateOutputType | null
     _sum: Raw_materialsSumAggregateOutputType | null
@@ -6546,39 +6627,42 @@ export namespace Prisma {
 
   export type raw_materialsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
     stock?: boolean
-    unit?: boolean
     reorder_level?: boolean
     created_at?: boolean
     updated_at?: boolean
+    material_id?: boolean
+    material?: boolean | materialsDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["raw_materials"]>
 
 
 
   export type raw_materialsSelectScalar = {
     id?: boolean
-    name?: boolean
     stock?: boolean
-    unit?: boolean
     reorder_level?: boolean
     created_at?: boolean
     updated_at?: boolean
+    material_id?: boolean
   }
 
-  export type raw_materialsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "stock" | "unit" | "reorder_level" | "created_at" | "updated_at", ExtArgs["result"]["raw_materials"]>
+  export type raw_materialsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "stock" | "reorder_level" | "created_at" | "updated_at" | "material_id", ExtArgs["result"]["raw_materials"]>
+  export type raw_materialsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    material?: boolean | materialsDefaultArgs<ExtArgs>
+  }
 
   export type $raw_materialsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "raw_materials"
-    objects: {}
+    objects: {
+      material: Prisma.$materialsPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      name: string
       stock: Prisma.Decimal
-      unit: string
       reorder_level: Prisma.Decimal
       created_at: Date
       updated_at: Date
+      material_id: number
     }, ExtArgs["result"]["raw_materials"]>
     composites: {}
   }
@@ -6919,6 +7003,7 @@ export namespace Prisma {
    */
   export interface Prisma__raw_materialsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    material<T extends materialsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, materialsDefaultArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6949,12 +7034,11 @@ export namespace Prisma {
    */
   interface raw_materialsFieldRefs {
     readonly id: FieldRef<"raw_materials", 'Int'>
-    readonly name: FieldRef<"raw_materials", 'String'>
     readonly stock: FieldRef<"raw_materials", 'Decimal'>
-    readonly unit: FieldRef<"raw_materials", 'String'>
     readonly reorder_level: FieldRef<"raw_materials", 'Decimal'>
     readonly created_at: FieldRef<"raw_materials", 'DateTime'>
     readonly updated_at: FieldRef<"raw_materials", 'DateTime'>
+    readonly material_id: FieldRef<"raw_materials", 'Int'>
   }
     
 
@@ -6971,6 +7055,10 @@ export namespace Prisma {
      * Omit specific fields from the raw_materials
      */
     omit?: raw_materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
     /**
      * Filter, which raw_materials to fetch.
      */
@@ -6990,6 +7078,10 @@ export namespace Prisma {
      */
     omit?: raw_materialsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+    /**
      * Filter, which raw_materials to fetch.
      */
     where: raw_materialsWhereUniqueInput
@@ -7007,6 +7099,10 @@ export namespace Prisma {
      * Omit specific fields from the raw_materials
      */
     omit?: raw_materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
     /**
      * Filter, which raw_materials to fetch.
      */
@@ -7056,6 +7152,10 @@ export namespace Prisma {
      */
     omit?: raw_materialsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+    /**
      * Filter, which raw_materials to fetch.
      */
     where?: raw_materialsWhereInput
@@ -7104,6 +7204,10 @@ export namespace Prisma {
      */
     omit?: raw_materialsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+    /**
      * Filter, which raw_materials to fetch.
      */
     where?: raw_materialsWhereInput
@@ -7147,6 +7251,10 @@ export namespace Prisma {
      */
     omit?: raw_materialsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+    /**
      * The data needed to create a raw_materials.
      */
     data: XOR<raw_materialsCreateInput, raw_materialsUncheckedCreateInput>
@@ -7175,6 +7283,10 @@ export namespace Prisma {
      * Omit specific fields from the raw_materials
      */
     omit?: raw_materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
     /**
      * The data needed to update a raw_materials.
      */
@@ -7216,6 +7328,10 @@ export namespace Prisma {
      */
     omit?: raw_materialsOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+    /**
      * The filter to search for the raw_materials to update in case it exists.
      */
     where: raw_materialsWhereUniqueInput
@@ -7241,6 +7357,10 @@ export namespace Prisma {
      * Omit specific fields from the raw_materials
      */
     omit?: raw_materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
     /**
      * Filter which raw_materials to delete.
      */
@@ -7273,6 +7393,1018 @@ export namespace Prisma {
      * Omit specific fields from the raw_materials
      */
     omit?: raw_materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model materials
+   */
+
+  export type AggregateMaterials = {
+    _count: MaterialsCountAggregateOutputType | null
+    _avg: MaterialsAvgAggregateOutputType | null
+    _sum: MaterialsSumAggregateOutputType | null
+    _min: MaterialsMinAggregateOutputType | null
+    _max: MaterialsMaxAggregateOutputType | null
+  }
+
+  export type MaterialsAvgAggregateOutputType = {
+    id: number | null
+    defaultStock: Decimal | null
+  }
+
+  export type MaterialsSumAggregateOutputType = {
+    id: number | null
+    defaultStock: Decimal | null
+  }
+
+  export type MaterialsMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    unit: $Enums.UnitEnum | null
+    barcode: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    defaultStock: Decimal | null
+  }
+
+  export type MaterialsMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    unit: $Enums.UnitEnum | null
+    barcode: string | null
+    created_at: Date | null
+    updated_at: Date | null
+    defaultStock: Decimal | null
+  }
+
+  export type MaterialsCountAggregateOutputType = {
+    id: number
+    name: number
+    unit: number
+    barcode: number
+    created_at: number
+    updated_at: number
+    defaultStock: number
+    _all: number
+  }
+
+
+  export type MaterialsAvgAggregateInputType = {
+    id?: true
+    defaultStock?: true
+  }
+
+  export type MaterialsSumAggregateInputType = {
+    id?: true
+    defaultStock?: true
+  }
+
+  export type MaterialsMinAggregateInputType = {
+    id?: true
+    name?: true
+    unit?: true
+    barcode?: true
+    created_at?: true
+    updated_at?: true
+    defaultStock?: true
+  }
+
+  export type MaterialsMaxAggregateInputType = {
+    id?: true
+    name?: true
+    unit?: true
+    barcode?: true
+    created_at?: true
+    updated_at?: true
+    defaultStock?: true
+  }
+
+  export type MaterialsCountAggregateInputType = {
+    id?: true
+    name?: true
+    unit?: true
+    barcode?: true
+    created_at?: true
+    updated_at?: true
+    defaultStock?: true
+    _all?: true
+  }
+
+  export type MaterialsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which materials to aggregate.
+     */
+    where?: materialsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of materials to fetch.
+     */
+    orderBy?: materialsOrderByWithRelationInput | materialsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: materialsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` materials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` materials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned materials
+    **/
+    _count?: true | MaterialsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MaterialsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MaterialsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MaterialsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MaterialsMaxAggregateInputType
+  }
+
+  export type GetMaterialsAggregateType<T extends MaterialsAggregateArgs> = {
+        [P in keyof T & keyof AggregateMaterials]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMaterials[P]>
+      : GetScalarType<T[P], AggregateMaterials[P]>
+  }
+
+
+
+
+  export type materialsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: materialsWhereInput
+    orderBy?: materialsOrderByWithAggregationInput | materialsOrderByWithAggregationInput[]
+    by: MaterialsScalarFieldEnum[] | MaterialsScalarFieldEnum
+    having?: materialsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MaterialsCountAggregateInputType | true
+    _avg?: MaterialsAvgAggregateInputType
+    _sum?: MaterialsSumAggregateInputType
+    _min?: MaterialsMinAggregateInputType
+    _max?: MaterialsMaxAggregateInputType
+  }
+
+  export type MaterialsGroupByOutputType = {
+    id: number
+    name: string
+    unit: $Enums.UnitEnum
+    barcode: string
+    created_at: Date
+    updated_at: Date
+    defaultStock: Decimal
+    _count: MaterialsCountAggregateOutputType | null
+    _avg: MaterialsAvgAggregateOutputType | null
+    _sum: MaterialsSumAggregateOutputType | null
+    _min: MaterialsMinAggregateOutputType | null
+    _max: MaterialsMaxAggregateOutputType | null
+  }
+
+  type GetMaterialsGroupByPayload<T extends materialsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MaterialsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MaterialsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MaterialsGroupByOutputType[P]>
+            : GetScalarType<T[P], MaterialsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type materialsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    unit?: boolean
+    barcode?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    defaultStock?: boolean
+    raw_material?: boolean | materials$raw_materialArgs<ExtArgs>
+  }, ExtArgs["result"]["materials"]>
+
+
+
+  export type materialsSelectScalar = {
+    id?: boolean
+    name?: boolean
+    unit?: boolean
+    barcode?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    defaultStock?: boolean
+  }
+
+  export type materialsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "unit" | "barcode" | "created_at" | "updated_at" | "defaultStock", ExtArgs["result"]["materials"]>
+  export type materialsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    raw_material?: boolean | materials$raw_materialArgs<ExtArgs>
+  }
+
+  export type $materialsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "materials"
+    objects: {
+      raw_material: Prisma.$raw_materialsPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      unit: $Enums.UnitEnum
+      barcode: string
+      created_at: Date
+      updated_at: Date
+      defaultStock: Prisma.Decimal
+    }, ExtArgs["result"]["materials"]>
+    composites: {}
+  }
+
+  type materialsGetPayload<S extends boolean | null | undefined | materialsDefaultArgs> = $Result.GetResult<Prisma.$materialsPayload, S>
+
+  type materialsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<materialsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MaterialsCountAggregateInputType | true
+    }
+
+  export interface materialsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['materials'], meta: { name: 'materials' } }
+    /**
+     * Find zero or one Materials that matches the filter.
+     * @param {materialsFindUniqueArgs} args - Arguments to find a Materials
+     * @example
+     * // Get one Materials
+     * const materials = await prisma.materials.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends materialsFindUniqueArgs>(args: SelectSubset<T, materialsFindUniqueArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Materials that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {materialsFindUniqueOrThrowArgs} args - Arguments to find a Materials
+     * @example
+     * // Get one Materials
+     * const materials = await prisma.materials.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends materialsFindUniqueOrThrowArgs>(args: SelectSubset<T, materialsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Materials that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {materialsFindFirstArgs} args - Arguments to find a Materials
+     * @example
+     * // Get one Materials
+     * const materials = await prisma.materials.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends materialsFindFirstArgs>(args?: SelectSubset<T, materialsFindFirstArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Materials that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {materialsFindFirstOrThrowArgs} args - Arguments to find a Materials
+     * @example
+     * // Get one Materials
+     * const materials = await prisma.materials.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends materialsFindFirstOrThrowArgs>(args?: SelectSubset<T, materialsFindFirstOrThrowArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Materials that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {materialsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Materials
+     * const materials = await prisma.materials.findMany()
+     * 
+     * // Get first 10 Materials
+     * const materials = await prisma.materials.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const materialsWithIdOnly = await prisma.materials.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends materialsFindManyArgs>(args?: SelectSubset<T, materialsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Materials.
+     * @param {materialsCreateArgs} args - Arguments to create a Materials.
+     * @example
+     * // Create one Materials
+     * const Materials = await prisma.materials.create({
+     *   data: {
+     *     // ... data to create a Materials
+     *   }
+     * })
+     * 
+     */
+    create<T extends materialsCreateArgs>(args: SelectSubset<T, materialsCreateArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Materials.
+     * @param {materialsCreateManyArgs} args - Arguments to create many Materials.
+     * @example
+     * // Create many Materials
+     * const materials = await prisma.materials.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends materialsCreateManyArgs>(args?: SelectSubset<T, materialsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Materials.
+     * @param {materialsDeleteArgs} args - Arguments to delete one Materials.
+     * @example
+     * // Delete one Materials
+     * const Materials = await prisma.materials.delete({
+     *   where: {
+     *     // ... filter to delete one Materials
+     *   }
+     * })
+     * 
+     */
+    delete<T extends materialsDeleteArgs>(args: SelectSubset<T, materialsDeleteArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Materials.
+     * @param {materialsUpdateArgs} args - Arguments to update one Materials.
+     * @example
+     * // Update one Materials
+     * const materials = await prisma.materials.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends materialsUpdateArgs>(args: SelectSubset<T, materialsUpdateArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Materials.
+     * @param {materialsDeleteManyArgs} args - Arguments to filter Materials to delete.
+     * @example
+     * // Delete a few Materials
+     * const { count } = await prisma.materials.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends materialsDeleteManyArgs>(args?: SelectSubset<T, materialsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Materials.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {materialsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Materials
+     * const materials = await prisma.materials.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends materialsUpdateManyArgs>(args: SelectSubset<T, materialsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Materials.
+     * @param {materialsUpsertArgs} args - Arguments to update or create a Materials.
+     * @example
+     * // Update or create a Materials
+     * const materials = await prisma.materials.upsert({
+     *   create: {
+     *     // ... data to create a Materials
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Materials we want to update
+     *   }
+     * })
+     */
+    upsert<T extends materialsUpsertArgs>(args: SelectSubset<T, materialsUpsertArgs<ExtArgs>>): Prisma__materialsClient<$Result.GetResult<Prisma.$materialsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Materials.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {materialsCountArgs} args - Arguments to filter Materials to count.
+     * @example
+     * // Count the number of Materials
+     * const count = await prisma.materials.count({
+     *   where: {
+     *     // ... the filter for the Materials we want to count
+     *   }
+     * })
+    **/
+    count<T extends materialsCountArgs>(
+      args?: Subset<T, materialsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MaterialsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Materials.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaterialsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MaterialsAggregateArgs>(args: Subset<T, MaterialsAggregateArgs>): Prisma.PrismaPromise<GetMaterialsAggregateType<T>>
+
+    /**
+     * Group by Materials.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {materialsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends materialsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: materialsGroupByArgs['orderBy'] }
+        : { orderBy?: materialsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, materialsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMaterialsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the materials model
+   */
+  readonly fields: materialsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for materials.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__materialsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    raw_material<T extends materials$raw_materialArgs<ExtArgs> = {}>(args?: Subset<T, materials$raw_materialArgs<ExtArgs>>): Prisma__raw_materialsClient<$Result.GetResult<Prisma.$raw_materialsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the materials model
+   */
+  interface materialsFieldRefs {
+    readonly id: FieldRef<"materials", 'Int'>
+    readonly name: FieldRef<"materials", 'String'>
+    readonly unit: FieldRef<"materials", 'UnitEnum'>
+    readonly barcode: FieldRef<"materials", 'String'>
+    readonly created_at: FieldRef<"materials", 'DateTime'>
+    readonly updated_at: FieldRef<"materials", 'DateTime'>
+    readonly defaultStock: FieldRef<"materials", 'Decimal'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * materials findUnique
+   */
+  export type materialsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * Filter, which materials to fetch.
+     */
+    where: materialsWhereUniqueInput
+  }
+
+  /**
+   * materials findUniqueOrThrow
+   */
+  export type materialsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * Filter, which materials to fetch.
+     */
+    where: materialsWhereUniqueInput
+  }
+
+  /**
+   * materials findFirst
+   */
+  export type materialsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * Filter, which materials to fetch.
+     */
+    where?: materialsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of materials to fetch.
+     */
+    orderBy?: materialsOrderByWithRelationInput | materialsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for materials.
+     */
+    cursor?: materialsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` materials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` materials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of materials.
+     */
+    distinct?: MaterialsScalarFieldEnum | MaterialsScalarFieldEnum[]
+  }
+
+  /**
+   * materials findFirstOrThrow
+   */
+  export type materialsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * Filter, which materials to fetch.
+     */
+    where?: materialsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of materials to fetch.
+     */
+    orderBy?: materialsOrderByWithRelationInput | materialsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for materials.
+     */
+    cursor?: materialsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` materials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` materials.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of materials.
+     */
+    distinct?: MaterialsScalarFieldEnum | MaterialsScalarFieldEnum[]
+  }
+
+  /**
+   * materials findMany
+   */
+  export type materialsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * Filter, which materials to fetch.
+     */
+    where?: materialsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of materials to fetch.
+     */
+    orderBy?: materialsOrderByWithRelationInput | materialsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing materials.
+     */
+    cursor?: materialsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` materials from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` materials.
+     */
+    skip?: number
+    distinct?: MaterialsScalarFieldEnum | MaterialsScalarFieldEnum[]
+  }
+
+  /**
+   * materials create
+   */
+  export type materialsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a materials.
+     */
+    data: XOR<materialsCreateInput, materialsUncheckedCreateInput>
+  }
+
+  /**
+   * materials createMany
+   */
+  export type materialsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many materials.
+     */
+    data: materialsCreateManyInput | materialsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * materials update
+   */
+  export type materialsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a materials.
+     */
+    data: XOR<materialsUpdateInput, materialsUncheckedUpdateInput>
+    /**
+     * Choose, which materials to update.
+     */
+    where: materialsWhereUniqueInput
+  }
+
+  /**
+   * materials updateMany
+   */
+  export type materialsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update materials.
+     */
+    data: XOR<materialsUpdateManyMutationInput, materialsUncheckedUpdateManyInput>
+    /**
+     * Filter which materials to update
+     */
+    where?: materialsWhereInput
+    /**
+     * Limit how many materials to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * materials upsert
+   */
+  export type materialsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the materials to update in case it exists.
+     */
+    where: materialsWhereUniqueInput
+    /**
+     * In case the materials found by the `where` argument doesn't exist, create a new materials with this data.
+     */
+    create: XOR<materialsCreateInput, materialsUncheckedCreateInput>
+    /**
+     * In case the materials was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<materialsUpdateInput, materialsUncheckedUpdateInput>
+  }
+
+  /**
+   * materials delete
+   */
+  export type materialsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
+    /**
+     * Filter which materials to delete.
+     */
+    where: materialsWhereUniqueInput
+  }
+
+  /**
+   * materials deleteMany
+   */
+  export type materialsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which materials to delete
+     */
+    where?: materialsWhereInput
+    /**
+     * Limit how many materials to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * materials.raw_material
+   */
+  export type materials$raw_materialArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the raw_materials
+     */
+    select?: raw_materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the raw_materials
+     */
+    omit?: raw_materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: raw_materialsInclude<ExtArgs> | null
+    where?: raw_materialsWhereInput
+  }
+
+  /**
+   * materials without action
+   */
+  export type materialsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the materials
+     */
+    select?: materialsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the materials
+     */
+    omit?: materialsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: materialsInclude<ExtArgs> | null
   }
 
 
@@ -8336,12 +9468,12 @@ export namespace Prisma {
     discount_type: $Enums.VoucherType | null
     max_discount: Decimal | null
     min_purchase: Decimal | null
-    valid_from: Date | null
     valid_until: Date | null
     usage_limit: number | null
-    current_usage: number | null
     created_at: Date | null
+    current_usage: number | null
     updated_at: Date | null
+    valid_from: Date | null
   }
 
   export type VouchersMaxAggregateOutputType = {
@@ -8352,12 +9484,12 @@ export namespace Prisma {
     discount_type: $Enums.VoucherType | null
     max_discount: Decimal | null
     min_purchase: Decimal | null
-    valid_from: Date | null
     valid_until: Date | null
     usage_limit: number | null
-    current_usage: number | null
     created_at: Date | null
+    current_usage: number | null
     updated_at: Date | null
+    valid_from: Date | null
   }
 
   export type VouchersCountAggregateOutputType = {
@@ -8368,12 +9500,12 @@ export namespace Prisma {
     discount_type: number
     max_discount: number
     min_purchase: number
-    valid_from: number
     valid_until: number
     usage_limit: number
-    current_usage: number
     created_at: number
+    current_usage: number
     updated_at: number
+    valid_from: number
     _all: number
   }
 
@@ -8404,12 +9536,12 @@ export namespace Prisma {
     discount_type?: true
     max_discount?: true
     min_purchase?: true
-    valid_from?: true
     valid_until?: true
     usage_limit?: true
-    current_usage?: true
     created_at?: true
+    current_usage?: true
     updated_at?: true
+    valid_from?: true
   }
 
   export type VouchersMaxAggregateInputType = {
@@ -8420,12 +9552,12 @@ export namespace Prisma {
     discount_type?: true
     max_discount?: true
     min_purchase?: true
-    valid_from?: true
     valid_until?: true
     usage_limit?: true
-    current_usage?: true
     created_at?: true
+    current_usage?: true
     updated_at?: true
+    valid_from?: true
   }
 
   export type VouchersCountAggregateInputType = {
@@ -8436,12 +9568,12 @@ export namespace Prisma {
     discount_type?: true
     max_discount?: true
     min_purchase?: true
-    valid_from?: true
     valid_until?: true
     usage_limit?: true
-    current_usage?: true
     created_at?: true
+    current_usage?: true
     updated_at?: true
+    valid_from?: true
     _all?: true
   }
 
@@ -8539,12 +9671,12 @@ export namespace Prisma {
     discount_type: $Enums.VoucherType
     max_discount: Decimal | null
     min_purchase: Decimal
-    valid_from: Date
     valid_until: Date
     usage_limit: number
-    current_usage: number
     created_at: Date
+    current_usage: number
     updated_at: Date
+    valid_from: Date
     _count: VouchersCountAggregateOutputType | null
     _avg: VouchersAvgAggregateOutputType | null
     _sum: VouchersSumAggregateOutputType | null
@@ -8574,12 +9706,12 @@ export namespace Prisma {
     discount_type?: boolean
     max_discount?: boolean
     min_purchase?: boolean
-    valid_from?: boolean
     valid_until?: boolean
     usage_limit?: boolean
-    current_usage?: boolean
     created_at?: boolean
+    current_usage?: boolean
     updated_at?: boolean
+    valid_from?: boolean
     orders?: boolean | vouchers$ordersArgs<ExtArgs>
     _count?: boolean | VouchersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["vouchers"]>
@@ -8594,15 +9726,15 @@ export namespace Prisma {
     discount_type?: boolean
     max_discount?: boolean
     min_purchase?: boolean
-    valid_from?: boolean
     valid_until?: boolean
     usage_limit?: boolean
-    current_usage?: boolean
     created_at?: boolean
+    current_usage?: boolean
     updated_at?: boolean
+    valid_from?: boolean
   }
 
-  export type vouchersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "description" | "discount_value" | "discount_type" | "max_discount" | "min_purchase" | "valid_from" | "valid_until" | "usage_limit" | "current_usage" | "created_at" | "updated_at", ExtArgs["result"]["vouchers"]>
+  export type vouchersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "description" | "discount_value" | "discount_type" | "max_discount" | "min_purchase" | "valid_until" | "usage_limit" | "created_at" | "current_usage" | "updated_at" | "valid_from", ExtArgs["result"]["vouchers"]>
   export type vouchersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | vouchers$ordersArgs<ExtArgs>
     _count?: boolean | VouchersCountOutputTypeDefaultArgs<ExtArgs>
@@ -8621,12 +9753,12 @@ export namespace Prisma {
       discount_type: $Enums.VoucherType
       max_discount: Prisma.Decimal | null
       min_purchase: Prisma.Decimal
-      valid_from: Date
       valid_until: Date
       usage_limit: number
-      current_usage: number
       created_at: Date
+      current_usage: number
       updated_at: Date
+      valid_from: Date
     }, ExtArgs["result"]["vouchers"]>
     composites: {}
   }
@@ -9004,12 +10136,12 @@ export namespace Prisma {
     readonly discount_type: FieldRef<"vouchers", 'VoucherType'>
     readonly max_discount: FieldRef<"vouchers", 'Decimal'>
     readonly min_purchase: FieldRef<"vouchers", 'Decimal'>
-    readonly valid_from: FieldRef<"vouchers", 'DateTime'>
     readonly valid_until: FieldRef<"vouchers", 'DateTime'>
     readonly usage_limit: FieldRef<"vouchers", 'Int'>
-    readonly current_usage: FieldRef<"vouchers", 'Int'>
     readonly created_at: FieldRef<"vouchers", 'DateTime'>
+    readonly current_usage: FieldRef<"vouchers", 'Int'>
     readonly updated_at: FieldRef<"vouchers", 'DateTime'>
+    readonly valid_from: FieldRef<"vouchers", 'DateTime'>
   }
     
 
@@ -9422,52 +10554,52 @@ export namespace Prisma {
   export type PaymentsMinAggregateOutputType = {
     id: number | null
     order_id: number | null
-    status: $Enums.PaymentStatus | null
     amount: Decimal | null
     payment_method: string | null
-    payment_gateway: string | null
-    gateway_transaction_id: string | null
-    payment_code: string | null
-    bank: string | null
-    payment_url: string | null
+    status: $Enums.PaymentStatus | null
     created_at: Date | null
-    paid_at: Date | null
     expires_at: Date | null
+    gateway_transaction_id: string | null
+    paid_at: Date | null
+    payment_code: string | null
+    payment_gateway: string | null
+    payment_url: string | null
     updated_at: Date | null
+    bank: string | null
   }
 
   export type PaymentsMaxAggregateOutputType = {
     id: number | null
     order_id: number | null
-    status: $Enums.PaymentStatus | null
     amount: Decimal | null
     payment_method: string | null
-    payment_gateway: string | null
-    gateway_transaction_id: string | null
-    payment_code: string | null
-    bank: string | null
-    payment_url: string | null
+    status: $Enums.PaymentStatus | null
     created_at: Date | null
-    paid_at: Date | null
     expires_at: Date | null
+    gateway_transaction_id: string | null
+    paid_at: Date | null
+    payment_code: string | null
+    payment_gateway: string | null
+    payment_url: string | null
     updated_at: Date | null
+    bank: string | null
   }
 
   export type PaymentsCountAggregateOutputType = {
     id: number
     order_id: number
-    status: number
     amount: number
     payment_method: number
-    payment_gateway: number
-    gateway_transaction_id: number
-    payment_code: number
-    bank: number
-    payment_url: number
+    status: number
     created_at: number
-    paid_at: number
     expires_at: number
+    gateway_transaction_id: number
+    paid_at: number
+    payment_code: number
+    payment_gateway: number
+    payment_url: number
     updated_at: number
+    bank: number
     _all: number
   }
 
@@ -9487,52 +10619,52 @@ export namespace Prisma {
   export type PaymentsMinAggregateInputType = {
     id?: true
     order_id?: true
-    status?: true
     amount?: true
     payment_method?: true
-    payment_gateway?: true
-    gateway_transaction_id?: true
-    payment_code?: true
-    bank?: true
-    payment_url?: true
+    status?: true
     created_at?: true
-    paid_at?: true
     expires_at?: true
+    gateway_transaction_id?: true
+    paid_at?: true
+    payment_code?: true
+    payment_gateway?: true
+    payment_url?: true
     updated_at?: true
+    bank?: true
   }
 
   export type PaymentsMaxAggregateInputType = {
     id?: true
     order_id?: true
-    status?: true
     amount?: true
     payment_method?: true
-    payment_gateway?: true
-    gateway_transaction_id?: true
-    payment_code?: true
-    bank?: true
-    payment_url?: true
+    status?: true
     created_at?: true
-    paid_at?: true
     expires_at?: true
+    gateway_transaction_id?: true
+    paid_at?: true
+    payment_code?: true
+    payment_gateway?: true
+    payment_url?: true
     updated_at?: true
+    bank?: true
   }
 
   export type PaymentsCountAggregateInputType = {
     id?: true
     order_id?: true
-    status?: true
     amount?: true
     payment_method?: true
-    payment_gateway?: true
-    gateway_transaction_id?: true
-    payment_code?: true
-    bank?: true
-    payment_url?: true
+    status?: true
     created_at?: true
-    paid_at?: true
     expires_at?: true
+    gateway_transaction_id?: true
+    paid_at?: true
+    payment_code?: true
+    payment_gateway?: true
+    payment_url?: true
     updated_at?: true
+    bank?: true
     _all?: true
   }
 
@@ -9625,18 +10757,18 @@ export namespace Prisma {
   export type PaymentsGroupByOutputType = {
     id: number
     order_id: number
-    status: $Enums.PaymentStatus
     amount: Decimal
     payment_method: string | null
-    payment_gateway: string
-    gateway_transaction_id: string | null
-    payment_code: string | null
-    bank: string | null
-    payment_url: string | null
+    status: $Enums.PaymentStatus
     created_at: Date
-    paid_at: Date | null
     expires_at: Date
+    gateway_transaction_id: string | null
+    paid_at: Date | null
+    payment_code: string | null
+    payment_gateway: string
+    payment_url: string | null
     updated_at: Date
+    bank: string | null
     _count: PaymentsCountAggregateOutputType | null
     _avg: PaymentsAvgAggregateOutputType | null
     _sum: PaymentsSumAggregateOutputType | null
@@ -9661,20 +10793,20 @@ export namespace Prisma {
   export type paymentsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     order_id?: boolean
-    status?: boolean
     amount?: boolean
     payment_method?: boolean
-    payment_gateway?: boolean
-    gateway_transaction_id?: boolean
-    payment_code?: boolean
-    bank?: boolean
-    payment_url?: boolean
+    status?: boolean
     created_at?: boolean
-    paid_at?: boolean
     expires_at?: boolean
+    gateway_transaction_id?: boolean
+    paid_at?: boolean
+    payment_code?: boolean
+    payment_gateway?: boolean
+    payment_url?: boolean
     updated_at?: boolean
-    order?: boolean | ordersDefaultArgs<ExtArgs>
+    bank?: boolean
     invoice?: boolean | payments$invoiceArgs<ExtArgs>
+    order?: boolean | ordersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payments"]>
 
 
@@ -9682,47 +10814,47 @@ export namespace Prisma {
   export type paymentsSelectScalar = {
     id?: boolean
     order_id?: boolean
-    status?: boolean
     amount?: boolean
     payment_method?: boolean
-    payment_gateway?: boolean
-    gateway_transaction_id?: boolean
-    payment_code?: boolean
-    bank?: boolean
-    payment_url?: boolean
+    status?: boolean
     created_at?: boolean
-    paid_at?: boolean
     expires_at?: boolean
+    gateway_transaction_id?: boolean
+    paid_at?: boolean
+    payment_code?: boolean
+    payment_gateway?: boolean
+    payment_url?: boolean
     updated_at?: boolean
+    bank?: boolean
   }
 
-  export type paymentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "order_id" | "status" | "amount" | "payment_method" | "payment_gateway" | "gateway_transaction_id" | "payment_code" | "bank" | "payment_url" | "created_at" | "paid_at" | "expires_at" | "updated_at", ExtArgs["result"]["payments"]>
+  export type paymentsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "order_id" | "amount" | "payment_method" | "status" | "created_at" | "expires_at" | "gateway_transaction_id" | "paid_at" | "payment_code" | "payment_gateway" | "payment_url" | "updated_at" | "bank", ExtArgs["result"]["payments"]>
   export type paymentsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    order?: boolean | ordersDefaultArgs<ExtArgs>
     invoice?: boolean | payments$invoiceArgs<ExtArgs>
+    order?: boolean | ordersDefaultArgs<ExtArgs>
   }
 
   export type $paymentsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "payments"
     objects: {
-      order: Prisma.$ordersPayload<ExtArgs>
       invoice: Prisma.$invoicesPayload<ExtArgs> | null
+      order: Prisma.$ordersPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       order_id: number
-      status: $Enums.PaymentStatus
       amount: Prisma.Decimal
       payment_method: string | null
-      payment_gateway: string
-      gateway_transaction_id: string | null
-      payment_code: string | null
-      bank: string | null
-      payment_url: string | null
+      status: $Enums.PaymentStatus
       created_at: Date
-      paid_at: Date | null
       expires_at: Date
+      gateway_transaction_id: string | null
+      paid_at: Date | null
+      payment_code: string | null
+      payment_gateway: string
+      payment_url: string | null
       updated_at: Date
+      bank: string | null
     }, ExtArgs["result"]["payments"]>
     composites: {}
   }
@@ -10063,8 +11195,8 @@ export namespace Prisma {
    */
   export interface Prisma__paymentsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    order<T extends ordersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ordersDefaultArgs<ExtArgs>>): Prisma__ordersClient<$Result.GetResult<Prisma.$ordersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     invoice<T extends payments$invoiceArgs<ExtArgs> = {}>(args?: Subset<T, payments$invoiceArgs<ExtArgs>>): Prisma__invoicesClient<$Result.GetResult<Prisma.$invoicesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    order<T extends ordersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ordersDefaultArgs<ExtArgs>>): Prisma__ordersClient<$Result.GetResult<Prisma.$ordersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10096,18 +11228,18 @@ export namespace Prisma {
   interface paymentsFieldRefs {
     readonly id: FieldRef<"payments", 'Int'>
     readonly order_id: FieldRef<"payments", 'Int'>
-    readonly status: FieldRef<"payments", 'PaymentStatus'>
     readonly amount: FieldRef<"payments", 'Decimal'>
     readonly payment_method: FieldRef<"payments", 'String'>
-    readonly payment_gateway: FieldRef<"payments", 'String'>
-    readonly gateway_transaction_id: FieldRef<"payments", 'String'>
-    readonly payment_code: FieldRef<"payments", 'String'>
-    readonly bank: FieldRef<"payments", 'String'>
-    readonly payment_url: FieldRef<"payments", 'String'>
+    readonly status: FieldRef<"payments", 'PaymentStatus'>
     readonly created_at: FieldRef<"payments", 'DateTime'>
-    readonly paid_at: FieldRef<"payments", 'DateTime'>
     readonly expires_at: FieldRef<"payments", 'DateTime'>
+    readonly gateway_transaction_id: FieldRef<"payments", 'String'>
+    readonly paid_at: FieldRef<"payments", 'DateTime'>
+    readonly payment_code: FieldRef<"payments", 'String'>
+    readonly payment_gateway: FieldRef<"payments", 'String'>
+    readonly payment_url: FieldRef<"payments", 'String'>
     readonly updated_at: FieldRef<"payments", 'DateTime'>
+    readonly bank: FieldRef<"payments", 'String'>
   }
     
 
@@ -12448,82 +13580,82 @@ export namespace Prisma {
 
   export type ExpensesAvgAggregateOutputType = {
     id: number | null
-    user_id: number | null
     amount: Decimal | null
+    user_id: number | null
   }
 
   export type ExpensesSumAggregateOutputType = {
     id: number | null
-    user_id: number | null
     amount: Decimal | null
+    user_id: number | null
   }
 
   export type ExpensesMinAggregateOutputType = {
     id: number | null
-    user_id: number | null
     expense_type: string | null
     amount: Decimal | null
     expense_date: Date | null
     notes: string | null
+    user_id: number | null
   }
 
   export type ExpensesMaxAggregateOutputType = {
     id: number | null
-    user_id: number | null
     expense_type: string | null
     amount: Decimal | null
     expense_date: Date | null
     notes: string | null
+    user_id: number | null
   }
 
   export type ExpensesCountAggregateOutputType = {
     id: number
-    user_id: number
     expense_type: number
     amount: number
     expense_date: number
     notes: number
+    user_id: number
     _all: number
   }
 
 
   export type ExpensesAvgAggregateInputType = {
     id?: true
-    user_id?: true
     amount?: true
+    user_id?: true
   }
 
   export type ExpensesSumAggregateInputType = {
     id?: true
-    user_id?: true
     amount?: true
+    user_id?: true
   }
 
   export type ExpensesMinAggregateInputType = {
     id?: true
-    user_id?: true
     expense_type?: true
     amount?: true
     expense_date?: true
     notes?: true
+    user_id?: true
   }
 
   export type ExpensesMaxAggregateInputType = {
     id?: true
-    user_id?: true
     expense_type?: true
     amount?: true
     expense_date?: true
     notes?: true
+    user_id?: true
   }
 
   export type ExpensesCountAggregateInputType = {
     id?: true
-    user_id?: true
     expense_type?: true
     amount?: true
     expense_date?: true
     notes?: true
+    user_id?: true
     _all?: true
   }
 
@@ -12615,11 +13747,11 @@ export namespace Prisma {
 
   export type ExpensesGroupByOutputType = {
     id: number
-    user_id: number | null
     expense_type: string | null
     amount: Decimal | null
     expense_date: Date | null
     notes: string | null
+    user_id: number | null
     _count: ExpensesCountAggregateOutputType | null
     _avg: ExpensesAvgAggregateOutputType | null
     _sum: ExpensesSumAggregateOutputType | null
@@ -12643,11 +13775,11 @@ export namespace Prisma {
 
   export type expensesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    user_id?: boolean
     expense_type?: boolean
     amount?: boolean
     expense_date?: boolean
     notes?: boolean
+    user_id?: boolean
     user?: boolean | expenses$userArgs<ExtArgs>
   }, ExtArgs["result"]["expenses"]>
 
@@ -12655,14 +13787,14 @@ export namespace Prisma {
 
   export type expensesSelectScalar = {
     id?: boolean
-    user_id?: boolean
     expense_type?: boolean
     amount?: boolean
     expense_date?: boolean
     notes?: boolean
+    user_id?: boolean
   }
 
-  export type expensesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "expense_type" | "amount" | "expense_date" | "notes", ExtArgs["result"]["expenses"]>
+  export type expensesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "expense_type" | "amount" | "expense_date" | "notes" | "user_id", ExtArgs["result"]["expenses"]>
   export type expensesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | expenses$userArgs<ExtArgs>
   }
@@ -12674,11 +13806,11 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      user_id: number | null
       expense_type: string | null
       amount: Prisma.Decimal | null
       expense_date: Date | null
       notes: string | null
+      user_id: number | null
     }, ExtArgs["result"]["expenses"]>
     composites: {}
   }
@@ -13050,11 +14182,11 @@ export namespace Prisma {
    */
   interface expensesFieldRefs {
     readonly id: FieldRef<"expenses", 'Int'>
-    readonly user_id: FieldRef<"expenses", 'Int'>
     readonly expense_type: FieldRef<"expenses", 'String'>
     readonly amount: FieldRef<"expenses", 'Decimal'>
     readonly expense_date: FieldRef<"expenses", 'DateTime'>
     readonly notes: FieldRef<"expenses", 'String'>
+    readonly user_id: FieldRef<"expenses", 'Int'>
   }
     
 
@@ -14456,9 +15588,9 @@ export namespace Prisma {
     price: 'price',
     stock: 'stock',
     category: 'category',
-    image_url: 'image_url',
     created_at: 'created_at',
-    updated_at: 'updated_at'
+    updated_at: 'updated_at',
+    image_url: 'image_url'
   };
 
   export type ProductsScalarFieldEnum = (typeof ProductsScalarFieldEnum)[keyof typeof ProductsScalarFieldEnum]
@@ -14468,13 +15600,13 @@ export namespace Prisma {
     id: 'id',
     customer_id: 'customer_id',
     status: 'status',
-    order_date: 'order_date',
-    sub_total: 'sub_total',
-    shipping_cost: 'shipping_cost',
-    discount_amount: 'discount_amount',
     total_price: 'total_price',
+    discount_amount: 'discount_amount',
+    order_date: 'order_date',
     shipping_address: 'shipping_address',
+    shipping_cost: 'shipping_cost',
     shipping_method: 'shipping_method',
+    sub_total: 'sub_total',
     tracking_number: 'tracking_number',
     voucher_id: 'voucher_id',
     created_at: 'created_at',
@@ -14497,15 +15629,27 @@ export namespace Prisma {
 
   export const Raw_materialsScalarFieldEnum: {
     id: 'id',
-    name: 'name',
     stock: 'stock',
-    unit: 'unit',
     reorder_level: 'reorder_level',
     created_at: 'created_at',
-    updated_at: 'updated_at'
+    updated_at: 'updated_at',
+    material_id: 'material_id'
   };
 
   export type Raw_materialsScalarFieldEnum = (typeof Raw_materialsScalarFieldEnum)[keyof typeof Raw_materialsScalarFieldEnum]
+
+
+  export const MaterialsScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    unit: 'unit',
+    barcode: 'barcode',
+    created_at: 'created_at',
+    updated_at: 'updated_at',
+    defaultStock: 'defaultStock'
+  };
+
+  export type MaterialsScalarFieldEnum = (typeof MaterialsScalarFieldEnum)[keyof typeof MaterialsScalarFieldEnum]
 
 
   export const AddressesScalarFieldEnum: {
@@ -14532,12 +15676,12 @@ export namespace Prisma {
     discount_type: 'discount_type',
     max_discount: 'max_discount',
     min_purchase: 'min_purchase',
-    valid_from: 'valid_from',
     valid_until: 'valid_until',
     usage_limit: 'usage_limit',
-    current_usage: 'current_usage',
     created_at: 'created_at',
-    updated_at: 'updated_at'
+    current_usage: 'current_usage',
+    updated_at: 'updated_at',
+    valid_from: 'valid_from'
   };
 
   export type VouchersScalarFieldEnum = (typeof VouchersScalarFieldEnum)[keyof typeof VouchersScalarFieldEnum]
@@ -14546,18 +15690,18 @@ export namespace Prisma {
   export const PaymentsScalarFieldEnum: {
     id: 'id',
     order_id: 'order_id',
-    status: 'status',
     amount: 'amount',
     payment_method: 'payment_method',
-    payment_gateway: 'payment_gateway',
-    gateway_transaction_id: 'gateway_transaction_id',
-    payment_code: 'payment_code',
-    bank: 'bank',
-    payment_url: 'payment_url',
+    status: 'status',
     created_at: 'created_at',
-    paid_at: 'paid_at',
     expires_at: 'expires_at',
-    updated_at: 'updated_at'
+    gateway_transaction_id: 'gateway_transaction_id',
+    paid_at: 'paid_at',
+    payment_code: 'payment_code',
+    payment_gateway: 'payment_gateway',
+    payment_url: 'payment_url',
+    updated_at: 'updated_at',
+    bank: 'bank'
   };
 
   export type PaymentsScalarFieldEnum = (typeof PaymentsScalarFieldEnum)[keyof typeof PaymentsScalarFieldEnum]
@@ -14587,11 +15731,11 @@ export namespace Prisma {
 
   export const ExpensesScalarFieldEnum: {
     id: 'id',
-    user_id: 'user_id',
     expense_type: 'expense_type',
     amount: 'amount',
     expense_date: 'expense_date',
-    notes: 'notes'
+    notes: 'notes',
+    user_id: 'user_id'
   };
 
   export type ExpensesScalarFieldEnum = (typeof ExpensesScalarFieldEnum)[keyof typeof ExpensesScalarFieldEnum]
@@ -14676,12 +15820,12 @@ export namespace Prisma {
   export type ordersOrderByRelevanceFieldEnum = (typeof ordersOrderByRelevanceFieldEnum)[keyof typeof ordersOrderByRelevanceFieldEnum]
 
 
-  export const raw_materialsOrderByRelevanceFieldEnum: {
+  export const materialsOrderByRelevanceFieldEnum: {
     name: 'name',
-    unit: 'unit'
+    barcode: 'barcode'
   };
 
-  export type raw_materialsOrderByRelevanceFieldEnum = (typeof raw_materialsOrderByRelevanceFieldEnum)[keyof typeof raw_materialsOrderByRelevanceFieldEnum]
+  export type materialsOrderByRelevanceFieldEnum = (typeof materialsOrderByRelevanceFieldEnum)[keyof typeof materialsOrderByRelevanceFieldEnum]
 
 
   export const addressesOrderByRelevanceFieldEnum: {
@@ -14707,11 +15851,11 @@ export namespace Prisma {
 
   export const paymentsOrderByRelevanceFieldEnum: {
     payment_method: 'payment_method',
-    payment_gateway: 'payment_gateway',
     gateway_transaction_id: 'gateway_transaction_id',
     payment_code: 'payment_code',
-    bank: 'bank',
-    payment_url: 'payment_url'
+    payment_gateway: 'payment_gateway',
+    payment_url: 'payment_url',
+    bank: 'bank'
   };
 
   export type paymentsOrderByRelevanceFieldEnum = (typeof paymentsOrderByRelevanceFieldEnum)[keyof typeof paymentsOrderByRelevanceFieldEnum]
@@ -14809,6 +15953,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'UnitEnum'
+   */
+  export type EnumUnitEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UnitEnum'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -14852,9 +16003,9 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"users"> | Date | string
     updated_at?: DateTimeFilter<"users"> | Date | string
     addresses?: AddressesListRelationFilter
-    orders?: OrdersListRelationFilter
-    feedbacks?: FeedbacksListRelationFilter
     expenses?: ExpensesListRelationFilter
+    feedbacks?: FeedbacksListRelationFilter
+    orders?: OrdersListRelationFilter
   }
 
   export type usersOrderByWithRelationInput = {
@@ -14867,9 +16018,9 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     addresses?: addressesOrderByRelationAggregateInput
-    orders?: ordersOrderByRelationAggregateInput
-    feedbacks?: feedbacksOrderByRelationAggregateInput
     expenses?: expensesOrderByRelationAggregateInput
+    feedbacks?: feedbacksOrderByRelationAggregateInput
+    orders?: ordersOrderByRelationAggregateInput
     _relevance?: usersOrderByRelevanceInput
   }
 
@@ -14886,9 +16037,9 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"users"> | Date | string
     updated_at?: DateTimeFilter<"users"> | Date | string
     addresses?: AddressesListRelationFilter
-    orders?: OrdersListRelationFilter
-    feedbacks?: FeedbacksListRelationFilter
     expenses?: ExpensesListRelationFilter
+    feedbacks?: FeedbacksListRelationFilter
+    orders?: OrdersListRelationFilter
   }, "id" | "email">
 
   export type usersOrderByWithAggregationInput = {
@@ -14931,9 +16082,9 @@ export namespace Prisma {
     price?: DecimalFilter<"products"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"products"> | number
     category?: StringNullableFilter<"products"> | string | null
-    image_url?: StringNullableFilter<"products"> | string | null
     created_at?: DateTimeFilter<"products"> | Date | string
     updated_at?: DateTimeFilter<"products"> | Date | string
+    image_url?: StringNullableFilter<"products"> | string | null
     order_items?: Order_itemsListRelationFilter
   }
 
@@ -14944,9 +16095,9 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrderInput | SortOrder
-    image_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    image_url?: SortOrderInput | SortOrder
     order_items?: order_itemsOrderByRelationAggregateInput
     _relevance?: productsOrderByRelevanceInput
   }
@@ -14961,9 +16112,9 @@ export namespace Prisma {
     price?: DecimalFilter<"products"> | Decimal | DecimalJsLike | number | string
     stock?: IntFilter<"products"> | number
     category?: StringNullableFilter<"products"> | string | null
-    image_url?: StringNullableFilter<"products"> | string | null
     created_at?: DateTimeFilter<"products"> | Date | string
     updated_at?: DateTimeFilter<"products"> | Date | string
+    image_url?: StringNullableFilter<"products"> | string | null
     order_items?: Order_itemsListRelationFilter
   }, "id">
 
@@ -14974,9 +16125,9 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrderInput | SortOrder
-    image_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    image_url?: SortOrderInput | SortOrder
     _count?: productsCountOrderByAggregateInput
     _avg?: productsAvgOrderByAggregateInput
     _max?: productsMaxOrderByAggregateInput
@@ -14994,9 +16145,9 @@ export namespace Prisma {
     price?: DecimalWithAggregatesFilter<"products"> | Decimal | DecimalJsLike | number | string
     stock?: IntWithAggregatesFilter<"products"> | number
     category?: StringNullableWithAggregatesFilter<"products"> | string | null
-    image_url?: StringNullableWithAggregatesFilter<"products"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"products"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"products"> | Date | string
+    image_url?: StringNullableWithAggregatesFilter<"products"> | string | null
   }
 
   export type ordersWhereInput = {
@@ -15006,46 +16157,46 @@ export namespace Prisma {
     id?: IntFilter<"orders"> | number
     customer_id?: IntFilter<"orders"> | number
     status?: EnumOrderStatusFilter<"orders"> | $Enums.OrderStatus
-    order_date?: DateTimeFilter<"orders"> | Date | string
-    sub_total?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFilter<"orders"> | Date | string
     shipping_address?: JsonFilter<"orders">
+    shipping_cost?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFilter<"orders"> | string
+    sub_total?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tracking_number?: StringNullableFilter<"orders"> | string | null
     voucher_id?: IntNullableFilter<"orders"> | number | null
     created_at?: DateTimeFilter<"orders"> | Date | string
     updated_at?: DateTimeFilter<"orders"> | Date | string
+    custom_order?: XOR<Custom_ordersNullableScalarRelationFilter, custom_ordersWhereInput> | null
+    feedbacks?: XOR<FeedbacksNullableScalarRelationFilter, feedbacksWhereInput> | null
+    order_items?: Order_itemsListRelationFilter
     customer?: XOR<UsersScalarRelationFilter, usersWhereInput>
     voucher?: XOR<VouchersNullableScalarRelationFilter, vouchersWhereInput> | null
-    order_items?: Order_itemsListRelationFilter
     payment?: XOR<PaymentsNullableScalarRelationFilter, paymentsWhereInput> | null
-    feedbacks?: FeedbacksListRelationFilter
-    custom_order?: XOR<Custom_ordersNullableScalarRelationFilter, custom_ordersWhereInput> | null
   }
 
   export type ordersOrderByWithRelationInput = {
     id?: SortOrder
     customer_id?: SortOrder
     status?: SortOrder
-    order_date?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    order_date?: SortOrder
     shipping_address?: SortOrder
+    shipping_cost?: SortOrder
     shipping_method?: SortOrder
+    sub_total?: SortOrder
     tracking_number?: SortOrderInput | SortOrder
     voucher_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    custom_order?: custom_ordersOrderByWithRelationInput
+    feedbacks?: feedbacksOrderByWithRelationInput
+    order_items?: order_itemsOrderByRelationAggregateInput
     customer?: usersOrderByWithRelationInput
     voucher?: vouchersOrderByWithRelationInput
-    order_items?: order_itemsOrderByRelationAggregateInput
     payment?: paymentsOrderByWithRelationInput
-    feedbacks?: feedbacksOrderByRelationAggregateInput
-    custom_order?: custom_ordersOrderByWithRelationInput
     _relevance?: ordersOrderByRelevanceInput
   }
 
@@ -15056,36 +16207,36 @@ export namespace Prisma {
     NOT?: ordersWhereInput | ordersWhereInput[]
     customer_id?: IntFilter<"orders"> | number
     status?: EnumOrderStatusFilter<"orders"> | $Enums.OrderStatus
-    order_date?: DateTimeFilter<"orders"> | Date | string
-    sub_total?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFilter<"orders"> | Date | string
     shipping_address?: JsonFilter<"orders">
+    shipping_cost?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFilter<"orders"> | string
+    sub_total?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tracking_number?: StringNullableFilter<"orders"> | string | null
     voucher_id?: IntNullableFilter<"orders"> | number | null
     created_at?: DateTimeFilter<"orders"> | Date | string
     updated_at?: DateTimeFilter<"orders"> | Date | string
+    custom_order?: XOR<Custom_ordersNullableScalarRelationFilter, custom_ordersWhereInput> | null
+    feedbacks?: XOR<FeedbacksNullableScalarRelationFilter, feedbacksWhereInput> | null
+    order_items?: Order_itemsListRelationFilter
     customer?: XOR<UsersScalarRelationFilter, usersWhereInput>
     voucher?: XOR<VouchersNullableScalarRelationFilter, vouchersWhereInput> | null
-    order_items?: Order_itemsListRelationFilter
     payment?: XOR<PaymentsNullableScalarRelationFilter, paymentsWhereInput> | null
-    feedbacks?: FeedbacksListRelationFilter
-    custom_order?: XOR<Custom_ordersNullableScalarRelationFilter, custom_ordersWhereInput> | null
   }, "id">
 
   export type ordersOrderByWithAggregationInput = {
     id?: SortOrder
     customer_id?: SortOrder
     status?: SortOrder
-    order_date?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    order_date?: SortOrder
     shipping_address?: SortOrder
+    shipping_cost?: SortOrder
     shipping_method?: SortOrder
+    sub_total?: SortOrder
     tracking_number?: SortOrderInput | SortOrder
     voucher_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
@@ -15104,13 +16255,13 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"orders"> | number
     customer_id?: IntWithAggregatesFilter<"orders"> | number
     status?: EnumOrderStatusWithAggregatesFilter<"orders"> | $Enums.OrderStatus
-    order_date?: DateTimeWithAggregatesFilter<"orders"> | Date | string
-    sub_total?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
     total_price?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeWithAggregatesFilter<"orders"> | Date | string
     shipping_address?: JsonWithAggregatesFilter<"orders">
+    shipping_cost?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_method?: StringWithAggregatesFilter<"orders"> | string
+    sub_total?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tracking_number?: StringNullableWithAggregatesFilter<"orders"> | string | null
     voucher_id?: IntNullableWithAggregatesFilter<"orders"> | number | null
     created_at?: DateTimeWithAggregatesFilter<"orders"> | Date | string
@@ -15182,46 +16333,44 @@ export namespace Prisma {
     OR?: raw_materialsWhereInput[]
     NOT?: raw_materialsWhereInput | raw_materialsWhereInput[]
     id?: IntFilter<"raw_materials"> | number
-    name?: StringFilter<"raw_materials"> | string
     stock?: DecimalFilter<"raw_materials"> | Decimal | DecimalJsLike | number | string
-    unit?: StringFilter<"raw_materials"> | string
     reorder_level?: DecimalFilter<"raw_materials"> | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFilter<"raw_materials"> | Date | string
     updated_at?: DateTimeFilter<"raw_materials"> | Date | string
+    material_id?: IntFilter<"raw_materials"> | number
+    material?: XOR<MaterialsScalarRelationFilter, materialsWhereInput>
   }
 
   export type raw_materialsOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrder
     stock?: SortOrder
-    unit?: SortOrder
     reorder_level?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
-    _relevance?: raw_materialsOrderByRelevanceInput
+    material_id?: SortOrder
+    material?: materialsOrderByWithRelationInput
   }
 
   export type raw_materialsWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    name?: string
+    material_id?: number
     AND?: raw_materialsWhereInput | raw_materialsWhereInput[]
     OR?: raw_materialsWhereInput[]
     NOT?: raw_materialsWhereInput | raw_materialsWhereInput[]
     stock?: DecimalFilter<"raw_materials"> | Decimal | DecimalJsLike | number | string
-    unit?: StringFilter<"raw_materials"> | string
     reorder_level?: DecimalFilter<"raw_materials"> | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFilter<"raw_materials"> | Date | string
     updated_at?: DateTimeFilter<"raw_materials"> | Date | string
-  }, "id" | "name">
+    material?: XOR<MaterialsScalarRelationFilter, materialsWhereInput>
+  }, "id" | "material_id">
 
   export type raw_materialsOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrder
     stock?: SortOrder
-    unit?: SortOrder
     reorder_level?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    material_id?: SortOrder
     _count?: raw_materialsCountOrderByAggregateInput
     _avg?: raw_materialsAvgOrderByAggregateInput
     _max?: raw_materialsMaxOrderByAggregateInput
@@ -15234,12 +16383,79 @@ export namespace Prisma {
     OR?: raw_materialsScalarWhereWithAggregatesInput[]
     NOT?: raw_materialsScalarWhereWithAggregatesInput | raw_materialsScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"raw_materials"> | number
-    name?: StringWithAggregatesFilter<"raw_materials"> | string
     stock?: DecimalWithAggregatesFilter<"raw_materials"> | Decimal | DecimalJsLike | number | string
-    unit?: StringWithAggregatesFilter<"raw_materials"> | string
     reorder_level?: DecimalWithAggregatesFilter<"raw_materials"> | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeWithAggregatesFilter<"raw_materials"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"raw_materials"> | Date | string
+    material_id?: IntWithAggregatesFilter<"raw_materials"> | number
+  }
+
+  export type materialsWhereInput = {
+    AND?: materialsWhereInput | materialsWhereInput[]
+    OR?: materialsWhereInput[]
+    NOT?: materialsWhereInput | materialsWhereInput[]
+    id?: IntFilter<"materials"> | number
+    name?: StringFilter<"materials"> | string
+    unit?: EnumUnitEnumFilter<"materials"> | $Enums.UnitEnum
+    barcode?: StringFilter<"materials"> | string
+    created_at?: DateTimeFilter<"materials"> | Date | string
+    updated_at?: DateTimeFilter<"materials"> | Date | string
+    defaultStock?: DecimalFilter<"materials"> | Decimal | DecimalJsLike | number | string
+    raw_material?: XOR<Raw_materialsNullableScalarRelationFilter, raw_materialsWhereInput> | null
+  }
+
+  export type materialsOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    unit?: SortOrder
+    barcode?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    defaultStock?: SortOrder
+    raw_material?: raw_materialsOrderByWithRelationInput
+    _relevance?: materialsOrderByRelevanceInput
+  }
+
+  export type materialsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    name?: string
+    barcode?: string
+    AND?: materialsWhereInput | materialsWhereInput[]
+    OR?: materialsWhereInput[]
+    NOT?: materialsWhereInput | materialsWhereInput[]
+    unit?: EnumUnitEnumFilter<"materials"> | $Enums.UnitEnum
+    created_at?: DateTimeFilter<"materials"> | Date | string
+    updated_at?: DateTimeFilter<"materials"> | Date | string
+    defaultStock?: DecimalFilter<"materials"> | Decimal | DecimalJsLike | number | string
+    raw_material?: XOR<Raw_materialsNullableScalarRelationFilter, raw_materialsWhereInput> | null
+  }, "id" | "name" | "barcode">
+
+  export type materialsOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    unit?: SortOrder
+    barcode?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    defaultStock?: SortOrder
+    _count?: materialsCountOrderByAggregateInput
+    _avg?: materialsAvgOrderByAggregateInput
+    _max?: materialsMaxOrderByAggregateInput
+    _min?: materialsMinOrderByAggregateInput
+    _sum?: materialsSumOrderByAggregateInput
+  }
+
+  export type materialsScalarWhereWithAggregatesInput = {
+    AND?: materialsScalarWhereWithAggregatesInput | materialsScalarWhereWithAggregatesInput[]
+    OR?: materialsScalarWhereWithAggregatesInput[]
+    NOT?: materialsScalarWhereWithAggregatesInput | materialsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"materials"> | number
+    name?: StringWithAggregatesFilter<"materials"> | string
+    unit?: EnumUnitEnumWithAggregatesFilter<"materials"> | $Enums.UnitEnum
+    barcode?: StringWithAggregatesFilter<"materials"> | string
+    created_at?: DateTimeWithAggregatesFilter<"materials"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"materials"> | Date | string
+    defaultStock?: DecimalWithAggregatesFilter<"materials"> | Decimal | DecimalJsLike | number | string
   }
 
   export type addressesWhereInput = {
@@ -15336,12 +16552,12 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeFilter<"vouchers"> | $Enums.VoucherType
     max_discount?: DecimalNullableFilter<"vouchers"> | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalFilter<"vouchers"> | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFilter<"vouchers"> | Date | string
     valid_until?: DateTimeFilter<"vouchers"> | Date | string
     usage_limit?: IntFilter<"vouchers"> | number
-    current_usage?: IntFilter<"vouchers"> | number
     created_at?: DateTimeFilter<"vouchers"> | Date | string
+    current_usage?: IntFilter<"vouchers"> | number
     updated_at?: DateTimeFilter<"vouchers"> | Date | string
+    valid_from?: DateTimeFilter<"vouchers"> | Date | string
     orders?: OrdersListRelationFilter
   }
 
@@ -15353,12 +16569,12 @@ export namespace Prisma {
     discount_type?: SortOrder
     max_discount?: SortOrderInput | SortOrder
     min_purchase?: SortOrder
-    valid_from?: SortOrder
     valid_until?: SortOrder
     usage_limit?: SortOrder
-    current_usage?: SortOrder
     created_at?: SortOrder
+    current_usage?: SortOrder
     updated_at?: SortOrder
+    valid_from?: SortOrder
     orders?: ordersOrderByRelationAggregateInput
     _relevance?: vouchersOrderByRelevanceInput
   }
@@ -15374,12 +16590,12 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeFilter<"vouchers"> | $Enums.VoucherType
     max_discount?: DecimalNullableFilter<"vouchers"> | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalFilter<"vouchers"> | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFilter<"vouchers"> | Date | string
     valid_until?: DateTimeFilter<"vouchers"> | Date | string
     usage_limit?: IntFilter<"vouchers"> | number
-    current_usage?: IntFilter<"vouchers"> | number
     created_at?: DateTimeFilter<"vouchers"> | Date | string
+    current_usage?: IntFilter<"vouchers"> | number
     updated_at?: DateTimeFilter<"vouchers"> | Date | string
+    valid_from?: DateTimeFilter<"vouchers"> | Date | string
     orders?: OrdersListRelationFilter
   }, "id" | "code">
 
@@ -15391,12 +16607,12 @@ export namespace Prisma {
     discount_type?: SortOrder
     max_discount?: SortOrderInput | SortOrder
     min_purchase?: SortOrder
-    valid_from?: SortOrder
     valid_until?: SortOrder
     usage_limit?: SortOrder
-    current_usage?: SortOrder
     created_at?: SortOrder
+    current_usage?: SortOrder
     updated_at?: SortOrder
+    valid_from?: SortOrder
     _count?: vouchersCountOrderByAggregateInput
     _avg?: vouchersAvgOrderByAggregateInput
     _max?: vouchersMaxOrderByAggregateInput
@@ -15415,12 +16631,12 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeWithAggregatesFilter<"vouchers"> | $Enums.VoucherType
     max_discount?: DecimalNullableWithAggregatesFilter<"vouchers"> | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalWithAggregatesFilter<"vouchers"> | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeWithAggregatesFilter<"vouchers"> | Date | string
     valid_until?: DateTimeWithAggregatesFilter<"vouchers"> | Date | string
     usage_limit?: IntWithAggregatesFilter<"vouchers"> | number
-    current_usage?: IntWithAggregatesFilter<"vouchers"> | number
     created_at?: DateTimeWithAggregatesFilter<"vouchers"> | Date | string
+    current_usage?: IntWithAggregatesFilter<"vouchers"> | number
     updated_at?: DateTimeWithAggregatesFilter<"vouchers"> | Date | string
+    valid_from?: DateTimeWithAggregatesFilter<"vouchers"> | Date | string
   }
 
   export type paymentsWhereInput = {
@@ -15429,39 +16645,39 @@ export namespace Prisma {
     NOT?: paymentsWhereInput | paymentsWhereInput[]
     id?: IntFilter<"payments"> | number
     order_id?: IntFilter<"payments"> | number
-    status?: EnumPaymentStatusFilter<"payments"> | $Enums.PaymentStatus
     amount?: DecimalFilter<"payments"> | Decimal | DecimalJsLike | number | string
     payment_method?: StringNullableFilter<"payments"> | string | null
-    payment_gateway?: StringFilter<"payments"> | string
-    gateway_transaction_id?: StringNullableFilter<"payments"> | string | null
-    payment_code?: StringNullableFilter<"payments"> | string | null
-    bank?: StringNullableFilter<"payments"> | string | null
-    payment_url?: StringNullableFilter<"payments"> | string | null
+    status?: EnumPaymentStatusFilter<"payments"> | $Enums.PaymentStatus
     created_at?: DateTimeFilter<"payments"> | Date | string
-    paid_at?: DateTimeNullableFilter<"payments"> | Date | string | null
     expires_at?: DateTimeFilter<"payments"> | Date | string
+    gateway_transaction_id?: StringNullableFilter<"payments"> | string | null
+    paid_at?: DateTimeNullableFilter<"payments"> | Date | string | null
+    payment_code?: StringNullableFilter<"payments"> | string | null
+    payment_gateway?: StringFilter<"payments"> | string
+    payment_url?: StringNullableFilter<"payments"> | string | null
     updated_at?: DateTimeFilter<"payments"> | Date | string
-    order?: XOR<OrdersScalarRelationFilter, ordersWhereInput>
+    bank?: StringNullableFilter<"payments"> | string | null
     invoice?: XOR<InvoicesNullableScalarRelationFilter, invoicesWhereInput> | null
+    order?: XOR<OrdersScalarRelationFilter, ordersWhereInput>
   }
 
   export type paymentsOrderByWithRelationInput = {
     id?: SortOrder
     order_id?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     payment_method?: SortOrderInput | SortOrder
-    payment_gateway?: SortOrder
-    gateway_transaction_id?: SortOrderInput | SortOrder
-    payment_code?: SortOrderInput | SortOrder
-    bank?: SortOrderInput | SortOrder
-    payment_url?: SortOrderInput | SortOrder
+    status?: SortOrder
     created_at?: SortOrder
-    paid_at?: SortOrderInput | SortOrder
     expires_at?: SortOrder
+    gateway_transaction_id?: SortOrderInput | SortOrder
+    paid_at?: SortOrderInput | SortOrder
+    payment_code?: SortOrderInput | SortOrder
+    payment_gateway?: SortOrder
+    payment_url?: SortOrderInput | SortOrder
     updated_at?: SortOrder
-    order?: ordersOrderByWithRelationInput
+    bank?: SortOrderInput | SortOrder
     invoice?: invoicesOrderByWithRelationInput
+    order?: ordersOrderByWithRelationInput
     _relevance?: paymentsOrderByRelevanceInput
   }
 
@@ -15472,36 +16688,36 @@ export namespace Prisma {
     AND?: paymentsWhereInput | paymentsWhereInput[]
     OR?: paymentsWhereInput[]
     NOT?: paymentsWhereInput | paymentsWhereInput[]
-    status?: EnumPaymentStatusFilter<"payments"> | $Enums.PaymentStatus
     amount?: DecimalFilter<"payments"> | Decimal | DecimalJsLike | number | string
     payment_method?: StringNullableFilter<"payments"> | string | null
-    payment_gateway?: StringFilter<"payments"> | string
-    payment_code?: StringNullableFilter<"payments"> | string | null
-    bank?: StringNullableFilter<"payments"> | string | null
-    payment_url?: StringNullableFilter<"payments"> | string | null
+    status?: EnumPaymentStatusFilter<"payments"> | $Enums.PaymentStatus
     created_at?: DateTimeFilter<"payments"> | Date | string
-    paid_at?: DateTimeNullableFilter<"payments"> | Date | string | null
     expires_at?: DateTimeFilter<"payments"> | Date | string
+    paid_at?: DateTimeNullableFilter<"payments"> | Date | string | null
+    payment_code?: StringNullableFilter<"payments"> | string | null
+    payment_gateway?: StringFilter<"payments"> | string
+    payment_url?: StringNullableFilter<"payments"> | string | null
     updated_at?: DateTimeFilter<"payments"> | Date | string
-    order?: XOR<OrdersScalarRelationFilter, ordersWhereInput>
+    bank?: StringNullableFilter<"payments"> | string | null
     invoice?: XOR<InvoicesNullableScalarRelationFilter, invoicesWhereInput> | null
+    order?: XOR<OrdersScalarRelationFilter, ordersWhereInput>
   }, "id" | "order_id" | "gateway_transaction_id">
 
   export type paymentsOrderByWithAggregationInput = {
     id?: SortOrder
     order_id?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     payment_method?: SortOrderInput | SortOrder
-    payment_gateway?: SortOrder
-    gateway_transaction_id?: SortOrderInput | SortOrder
-    payment_code?: SortOrderInput | SortOrder
-    bank?: SortOrderInput | SortOrder
-    payment_url?: SortOrderInput | SortOrder
+    status?: SortOrder
     created_at?: SortOrder
-    paid_at?: SortOrderInput | SortOrder
     expires_at?: SortOrder
+    gateway_transaction_id?: SortOrderInput | SortOrder
+    paid_at?: SortOrderInput | SortOrder
+    payment_code?: SortOrderInput | SortOrder
+    payment_gateway?: SortOrder
+    payment_url?: SortOrderInput | SortOrder
     updated_at?: SortOrder
+    bank?: SortOrderInput | SortOrder
     _count?: paymentsCountOrderByAggregateInput
     _avg?: paymentsAvgOrderByAggregateInput
     _max?: paymentsMaxOrderByAggregateInput
@@ -15515,18 +16731,18 @@ export namespace Prisma {
     NOT?: paymentsScalarWhereWithAggregatesInput | paymentsScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"payments"> | number
     order_id?: IntWithAggregatesFilter<"payments"> | number
-    status?: EnumPaymentStatusWithAggregatesFilter<"payments"> | $Enums.PaymentStatus
     amount?: DecimalWithAggregatesFilter<"payments"> | Decimal | DecimalJsLike | number | string
     payment_method?: StringNullableWithAggregatesFilter<"payments"> | string | null
-    payment_gateway?: StringWithAggregatesFilter<"payments"> | string
-    gateway_transaction_id?: StringNullableWithAggregatesFilter<"payments"> | string | null
-    payment_code?: StringNullableWithAggregatesFilter<"payments"> | string | null
-    bank?: StringNullableWithAggregatesFilter<"payments"> | string | null
-    payment_url?: StringNullableWithAggregatesFilter<"payments"> | string | null
+    status?: EnumPaymentStatusWithAggregatesFilter<"payments"> | $Enums.PaymentStatus
     created_at?: DateTimeWithAggregatesFilter<"payments"> | Date | string
-    paid_at?: DateTimeNullableWithAggregatesFilter<"payments"> | Date | string | null
     expires_at?: DateTimeWithAggregatesFilter<"payments"> | Date | string
+    gateway_transaction_id?: StringNullableWithAggregatesFilter<"payments"> | string | null
+    paid_at?: DateTimeNullableWithAggregatesFilter<"payments"> | Date | string | null
+    payment_code?: StringNullableWithAggregatesFilter<"payments"> | string | null
+    payment_gateway?: StringWithAggregatesFilter<"payments"> | string
+    payment_url?: StringNullableWithAggregatesFilter<"payments"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"payments"> | Date | string
+    bank?: StringNullableWithAggregatesFilter<"payments"> | string | null
   }
 
   export type invoicesWhereInput = {
@@ -15653,21 +16869,21 @@ export namespace Prisma {
     OR?: expensesWhereInput[]
     NOT?: expensesWhereInput | expensesWhereInput[]
     id?: IntFilter<"expenses"> | number
-    user_id?: IntNullableFilter<"expenses"> | number | null
     expense_type?: StringNullableFilter<"expenses"> | string | null
     amount?: DecimalNullableFilter<"expenses"> | Decimal | DecimalJsLike | number | string | null
     expense_date?: DateTimeNullableFilter<"expenses"> | Date | string | null
     notes?: StringNullableFilter<"expenses"> | string | null
+    user_id?: IntNullableFilter<"expenses"> | number | null
     user?: XOR<UsersNullableScalarRelationFilter, usersWhereInput> | null
   }
 
   export type expensesOrderByWithRelationInput = {
     id?: SortOrder
-    user_id?: SortOrderInput | SortOrder
     expense_type?: SortOrderInput | SortOrder
     amount?: SortOrderInput | SortOrder
     expense_date?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    user_id?: SortOrderInput | SortOrder
     user?: usersOrderByWithRelationInput
     _relevance?: expensesOrderByRelevanceInput
   }
@@ -15677,21 +16893,21 @@ export namespace Prisma {
     AND?: expensesWhereInput | expensesWhereInput[]
     OR?: expensesWhereInput[]
     NOT?: expensesWhereInput | expensesWhereInput[]
-    user_id?: IntNullableFilter<"expenses"> | number | null
     expense_type?: StringNullableFilter<"expenses"> | string | null
     amount?: DecimalNullableFilter<"expenses"> | Decimal | DecimalJsLike | number | string | null
     expense_date?: DateTimeNullableFilter<"expenses"> | Date | string | null
     notes?: StringNullableFilter<"expenses"> | string | null
+    user_id?: IntNullableFilter<"expenses"> | number | null
     user?: XOR<UsersNullableScalarRelationFilter, usersWhereInput> | null
   }, "id">
 
   export type expensesOrderByWithAggregationInput = {
     id?: SortOrder
-    user_id?: SortOrderInput | SortOrder
     expense_type?: SortOrderInput | SortOrder
     amount?: SortOrderInput | SortOrder
     expense_date?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    user_id?: SortOrderInput | SortOrder
     _count?: expensesCountOrderByAggregateInput
     _avg?: expensesAvgOrderByAggregateInput
     _max?: expensesMaxOrderByAggregateInput
@@ -15704,11 +16920,11 @@ export namespace Prisma {
     OR?: expensesScalarWhereWithAggregatesInput[]
     NOT?: expensesScalarWhereWithAggregatesInput | expensesScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"expenses"> | number
-    user_id?: IntNullableWithAggregatesFilter<"expenses"> | number | null
     expense_type?: StringNullableWithAggregatesFilter<"expenses"> | string | null
     amount?: DecimalNullableWithAggregatesFilter<"expenses"> | Decimal | DecimalJsLike | number | string | null
     expense_date?: DateTimeNullableWithAggregatesFilter<"expenses"> | Date | string | null
     notes?: StringNullableWithAggregatesFilter<"expenses"> | string | null
+    user_id?: IntNullableWithAggregatesFilter<"expenses"> | number | null
   }
 
   export type custom_ordersWhereInput = {
@@ -15778,9 +16994,9 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     addresses?: addressesCreateNestedManyWithoutUserInput
-    orders?: ordersCreateNestedManyWithoutCustomerInput
-    feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
     expenses?: expensesCreateNestedManyWithoutUserInput
+    feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
+    orders?: ordersCreateNestedManyWithoutCustomerInput
   }
 
   export type usersUncheckedCreateInput = {
@@ -15793,9 +17009,9 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     addresses?: addressesUncheckedCreateNestedManyWithoutUserInput
-    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
     expenses?: expensesUncheckedCreateNestedManyWithoutUserInput
+    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
+    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type usersUpdateInput = {
@@ -15807,9 +17023,9 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     addresses?: addressesUpdateManyWithoutUserNestedInput
-    orders?: ordersUpdateManyWithoutCustomerNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
     expenses?: expensesUpdateManyWithoutUserNestedInput
+    feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
+    orders?: ordersUpdateManyWithoutCustomerNestedInput
   }
 
   export type usersUncheckedUpdateInput = {
@@ -15822,9 +17038,9 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     addresses?: addressesUncheckedUpdateManyWithoutUserNestedInput
-    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
     expenses?: expensesUncheckedUpdateManyWithoutUserNestedInput
+    feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
+    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type usersCreateManyInput = {
@@ -15865,9 +17081,9 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
-    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    image_url?: string | null
     order_items?: order_itemsCreateNestedManyWithoutProductInput
   }
 
@@ -15878,9 +17094,9 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
-    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    image_url?: string | null
     order_items?: order_itemsUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -15890,9 +17106,9 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     order_items?: order_itemsUpdateManyWithoutProductNestedInput
   }
 
@@ -15903,9 +17119,9 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     order_items?: order_itemsUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -15916,9 +17132,9 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
-    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    image_url?: string | null
   }
 
   export type productsUpdateManyMutationInput = {
@@ -15927,9 +17143,9 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type productsUncheckedUpdateManyInput = {
@@ -15939,104 +17155,104 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ordersCreateInput = {
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsCreateNestedManyWithoutOrderInput
     customer: usersCreateNestedOneWithoutOrdersInput
     voucher?: vouchersCreateNestedOneWithoutOrdersInput
-    order_items?: order_itemsCreateNestedManyWithoutOrderInput
     payment?: paymentsCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
   }
 
   export type ordersUncheckedCreateInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     voucher_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
+    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksUncheckedCreateNestedOneWithoutOrderInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
     payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
   }
 
   export type ordersUpdateInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
     customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
     voucher?: vouchersUpdateOneWithoutOrdersNestedInput
-    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
     payment?: paymentsUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
   }
 
   export type ordersUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUncheckedUpdateOneWithoutOrderNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
     payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
   }
 
   export type ordersCreateManyInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     voucher_id?: number | null
     created_at?: Date | string
@@ -16045,13 +17261,13 @@ export namespace Prisma {
 
   export type ordersUpdateManyMutationInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16061,13 +17277,13 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16126,57 +17342,50 @@ export namespace Prisma {
   }
 
   export type raw_materialsCreateInput = {
-    name: string
     stock: Decimal | DecimalJsLike | number | string
-    unit: string
     reorder_level?: Decimal | DecimalJsLike | number | string
     created_at?: Date | string
     updated_at?: Date | string
+    material: materialsCreateNestedOneWithoutRaw_materialInput
   }
 
   export type raw_materialsUncheckedCreateInput = {
     id?: number
-    name: string
     stock: Decimal | DecimalJsLike | number | string
-    unit: string
     reorder_level?: Decimal | DecimalJsLike | number | string
     created_at?: Date | string
     updated_at?: Date | string
+    material_id: number
   }
 
   export type raw_materialsUpdateInput = {
-    name?: StringFieldUpdateOperationsInput | string
     stock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    unit?: StringFieldUpdateOperationsInput | string
     reorder_level?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    material?: materialsUpdateOneRequiredWithoutRaw_materialNestedInput
   }
 
   export type raw_materialsUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    name?: StringFieldUpdateOperationsInput | string
     stock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    unit?: StringFieldUpdateOperationsInput | string
     reorder_level?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    material_id?: IntFieldUpdateOperationsInput | number
   }
 
   export type raw_materialsCreateManyInput = {
     id?: number
-    name: string
     stock: Decimal | DecimalJsLike | number | string
-    unit: string
     reorder_level?: Decimal | DecimalJsLike | number | string
     created_at?: Date | string
     updated_at?: Date | string
+    material_id: number
   }
 
   export type raw_materialsUpdateManyMutationInput = {
-    name?: StringFieldUpdateOperationsInput | string
     stock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    unit?: StringFieldUpdateOperationsInput | string
     reorder_level?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16184,12 +17393,82 @@ export namespace Prisma {
 
   export type raw_materialsUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    name?: StringFieldUpdateOperationsInput | string
     stock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    unit?: StringFieldUpdateOperationsInput | string
     reorder_level?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    material_id?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type materialsCreateInput = {
+    name: string
+    unit: $Enums.UnitEnum
+    barcode: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    defaultStock: Decimal | DecimalJsLike | number | string
+    raw_material?: raw_materialsCreateNestedOneWithoutMaterialInput
+  }
+
+  export type materialsUncheckedCreateInput = {
+    id?: number
+    name: string
+    unit: $Enums.UnitEnum
+    barcode: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    defaultStock: Decimal | DecimalJsLike | number | string
+    raw_material?: raw_materialsUncheckedCreateNestedOneWithoutMaterialInput
+  }
+
+  export type materialsUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    unit?: EnumUnitEnumFieldUpdateOperationsInput | $Enums.UnitEnum
+    barcode?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultStock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    raw_material?: raw_materialsUpdateOneWithoutMaterialNestedInput
+  }
+
+  export type materialsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    unit?: EnumUnitEnumFieldUpdateOperationsInput | $Enums.UnitEnum
+    barcode?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultStock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    raw_material?: raw_materialsUncheckedUpdateOneWithoutMaterialNestedInput
+  }
+
+  export type materialsCreateManyInput = {
+    id?: number
+    name: string
+    unit: $Enums.UnitEnum
+    barcode: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    defaultStock: Decimal | DecimalJsLike | number | string
+  }
+
+  export type materialsUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    unit?: EnumUnitEnumFieldUpdateOperationsInput | $Enums.UnitEnum
+    barcode?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultStock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+  }
+
+  export type materialsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    unit?: EnumUnitEnumFieldUpdateOperationsInput | $Enums.UnitEnum
+    barcode?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultStock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type addressesCreateInput = {
@@ -16286,12 +17565,12 @@ export namespace Prisma {
     discount_type: $Enums.VoucherType
     max_discount?: Decimal | DecimalJsLike | number | string | null
     min_purchase?: Decimal | DecimalJsLike | number | string
-    valid_from?: Date | string
     valid_until: Date | string
     usage_limit: number
-    current_usage?: number
     created_at?: Date | string
+    current_usage?: number
     updated_at?: Date | string
+    valid_from?: Date | string
     orders?: ordersCreateNestedManyWithoutVoucherInput
   }
 
@@ -16303,12 +17582,12 @@ export namespace Prisma {
     discount_type: $Enums.VoucherType
     max_discount?: Decimal | DecimalJsLike | number | string | null
     min_purchase?: Decimal | DecimalJsLike | number | string
-    valid_from?: Date | string
     valid_until: Date | string
     usage_limit: number
-    current_usage?: number
     created_at?: Date | string
+    current_usage?: number
     updated_at?: Date | string
+    valid_from?: Date | string
     orders?: ordersUncheckedCreateNestedManyWithoutVoucherInput
   }
 
@@ -16319,12 +17598,12 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
     max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
     valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
     usage_limit?: IntFieldUpdateOperationsInput | number
-    current_usage?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_usage?: IntFieldUpdateOperationsInput | number
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: ordersUpdateManyWithoutVoucherNestedInput
   }
 
@@ -16336,12 +17615,12 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
     max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
     valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
     usage_limit?: IntFieldUpdateOperationsInput | number
-    current_usage?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_usage?: IntFieldUpdateOperationsInput | number
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: ordersUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
@@ -16353,12 +17632,12 @@ export namespace Prisma {
     discount_type: $Enums.VoucherType
     max_discount?: Decimal | DecimalJsLike | number | string | null
     min_purchase?: Decimal | DecimalJsLike | number | string
-    valid_from?: Date | string
     valid_until: Date | string
     usage_limit: number
-    current_usage?: number
     created_at?: Date | string
+    current_usage?: number
     updated_at?: Date | string
+    valid_from?: Date | string
   }
 
   export type vouchersUpdateManyMutationInput = {
@@ -16368,12 +17647,12 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
     max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
     valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
     usage_limit?: IntFieldUpdateOperationsInput | number
-    current_usage?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_usage?: IntFieldUpdateOperationsInput | number
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type vouchersUncheckedUpdateManyInput = {
@@ -16384,131 +17663,131 @@ export namespace Prisma {
     discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
     max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
     valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
     usage_limit?: IntFieldUpdateOperationsInput | number
-    current_usage?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_usage?: IntFieldUpdateOperationsInput | number
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type paymentsCreateInput = {
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
-    order: ordersCreateNestedOneWithoutPaymentInput
+    bank?: string | null
     invoice?: invoicesCreateNestedOneWithoutPaymentInput
+    order: ordersCreateNestedOneWithoutPaymentInput
   }
 
   export type paymentsUncheckedCreateInput = {
     id?: number
     order_id: number
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
+    bank?: string | null
     invoice?: invoicesUncheckedCreateNestedOneWithoutPaymentInput
   }
 
   export type paymentsUpdateInput = {
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    order?: ordersUpdateOneRequiredWithoutPaymentNestedInput
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     invoice?: invoicesUpdateOneWithoutPaymentNestedInput
+    order?: ordersUpdateOneRequiredWithoutPaymentNestedInput
   }
 
   export type paymentsUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     order_id?: IntFieldUpdateOperationsInput | number
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     invoice?: invoicesUncheckedUpdateOneWithoutPaymentNestedInput
   }
 
   export type paymentsCreateManyInput = {
     id?: number
     order_id: number
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
+    bank?: string | null
   }
 
   export type paymentsUpdateManyMutationInput = {
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type paymentsUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     order_id?: IntFieldUpdateOperationsInput | number
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type invoicesCreateInput = {
@@ -16624,11 +17903,11 @@ export namespace Prisma {
 
   export type expensesUncheckedCreateInput = {
     id?: number
-    user_id?: number | null
     expense_type?: string | null
     amount?: Decimal | DecimalJsLike | number | string | null
     expense_date?: Date | string | null
     notes?: string | null
+    user_id?: number | null
   }
 
   export type expensesUpdateInput = {
@@ -16641,20 +17920,20 @@ export namespace Prisma {
 
   export type expensesUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    user_id?: NullableIntFieldUpdateOperationsInput | number | null
     expense_type?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    user_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type expensesCreateManyInput = {
     id?: number
-    user_id?: number | null
     expense_type?: string | null
     amount?: Decimal | DecimalJsLike | number | string | null
     expense_date?: Date | string | null
     notes?: string | null
+    user_id?: number | null
   }
 
   export type expensesUpdateManyMutationInput = {
@@ -16666,11 +17945,11 @@ export namespace Prisma {
 
   export type expensesUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    user_id?: NullableIntFieldUpdateOperationsInput | number | null
     expense_type?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    user_id?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type custom_ordersCreateInput = {
@@ -16790,10 +18069,10 @@ export namespace Prisma {
     none?: addressesWhereInput
   }
 
-  export type OrdersListRelationFilter = {
-    every?: ordersWhereInput
-    some?: ordersWhereInput
-    none?: ordersWhereInput
+  export type ExpensesListRelationFilter = {
+    every?: expensesWhereInput
+    some?: expensesWhereInput
+    none?: expensesWhereInput
   }
 
   export type FeedbacksListRelationFilter = {
@@ -16802,10 +18081,10 @@ export namespace Prisma {
     none?: feedbacksWhereInput
   }
 
-  export type ExpensesListRelationFilter = {
-    every?: expensesWhereInput
-    some?: expensesWhereInput
-    none?: expensesWhereInput
+  export type OrdersListRelationFilter = {
+    every?: ordersWhereInput
+    some?: ordersWhereInput
+    none?: ordersWhereInput
   }
 
   export type SortOrderInput = {
@@ -16817,7 +18096,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ordersOrderByRelationAggregateInput = {
+  export type expensesOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16825,7 +18104,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type expensesOrderByRelationAggregateInput = {
+  export type ordersOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16986,9 +18265,9 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrder
-    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    image_url?: SortOrder
   }
 
   export type productsAvgOrderByAggregateInput = {
@@ -17004,9 +18283,9 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrder
-    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    image_url?: SortOrder
   }
 
   export type productsMinOrderByAggregateInput = {
@@ -17016,9 +18295,9 @@ export namespace Prisma {
     price?: SortOrder
     stock?: SortOrder
     category?: SortOrder
-    image_url?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    image_url?: SortOrder
   }
 
   export type productsSumOrderByAggregateInput = {
@@ -17084,6 +18363,16 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type Custom_ordersNullableScalarRelationFilter = {
+    is?: custom_ordersWhereInput | null
+    isNot?: custom_ordersWhereInput | null
+  }
+
+  export type FeedbacksNullableScalarRelationFilter = {
+    is?: feedbacksWhereInput | null
+    isNot?: feedbacksWhereInput | null
+  }
+
   export type UsersScalarRelationFilter = {
     is?: usersWhereInput
     isNot?: usersWhereInput
@@ -17099,11 +18388,6 @@ export namespace Prisma {
     isNot?: paymentsWhereInput | null
   }
 
-  export type Custom_ordersNullableScalarRelationFilter = {
-    is?: custom_ordersWhereInput | null
-    isNot?: custom_ordersWhereInput | null
-  }
-
   export type ordersOrderByRelevanceInput = {
     fields: ordersOrderByRelevanceFieldEnum | ordersOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -17114,13 +18398,13 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     status?: SortOrder
-    order_date?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    order_date?: SortOrder
     shipping_address?: SortOrder
+    shipping_cost?: SortOrder
     shipping_method?: SortOrder
+    sub_total?: SortOrder
     tracking_number?: SortOrder
     voucher_id?: SortOrder
     created_at?: SortOrder
@@ -17130,10 +18414,10 @@ export namespace Prisma {
   export type ordersAvgOrderByAggregateInput = {
     id?: SortOrder
     customer_id?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    shipping_cost?: SortOrder
+    sub_total?: SortOrder
     voucher_id?: SortOrder
   }
 
@@ -17141,12 +18425,12 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     status?: SortOrder
-    order_date?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    order_date?: SortOrder
+    shipping_cost?: SortOrder
     shipping_method?: SortOrder
+    sub_total?: SortOrder
     tracking_number?: SortOrder
     voucher_id?: SortOrder
     created_at?: SortOrder
@@ -17157,12 +18441,12 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     status?: SortOrder
-    order_date?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    order_date?: SortOrder
+    shipping_cost?: SortOrder
     shipping_method?: SortOrder
+    sub_total?: SortOrder
     tracking_number?: SortOrder
     voucher_id?: SortOrder
     created_at?: SortOrder
@@ -17172,10 +18456,10 @@ export namespace Prisma {
   export type ordersSumOrderByAggregateInput = {
     id?: SortOrder
     customer_id?: SortOrder
-    sub_total?: SortOrder
-    shipping_cost?: SortOrder
-    discount_amount?: SortOrder
     total_price?: SortOrder
+    discount_amount?: SortOrder
+    shipping_cost?: SortOrder
+    sub_total?: SortOrder
     voucher_id?: SortOrder
   }
 
@@ -17281,52 +18565,118 @@ export namespace Prisma {
     price?: SortOrder
   }
 
-  export type raw_materialsOrderByRelevanceInput = {
-    fields: raw_materialsOrderByRelevanceFieldEnum | raw_materialsOrderByRelevanceFieldEnum[]
-    sort: SortOrder
-    search: string
+  export type MaterialsScalarRelationFilter = {
+    is?: materialsWhereInput
+    isNot?: materialsWhereInput
   }
 
   export type raw_materialsCountOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
     stock?: SortOrder
-    unit?: SortOrder
     reorder_level?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    material_id?: SortOrder
   }
 
   export type raw_materialsAvgOrderByAggregateInput = {
     id?: SortOrder
     stock?: SortOrder
     reorder_level?: SortOrder
+    material_id?: SortOrder
   }
 
   export type raw_materialsMaxOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
     stock?: SortOrder
-    unit?: SortOrder
     reorder_level?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    material_id?: SortOrder
   }
 
   export type raw_materialsMinOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
     stock?: SortOrder
-    unit?: SortOrder
     reorder_level?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    material_id?: SortOrder
   }
 
   export type raw_materialsSumOrderByAggregateInput = {
     id?: SortOrder
     stock?: SortOrder
     reorder_level?: SortOrder
+    material_id?: SortOrder
+  }
+
+  export type EnumUnitEnumFilter<$PrismaModel = never> = {
+    equals?: $Enums.UnitEnum | EnumUnitEnumFieldRefInput<$PrismaModel>
+    in?: $Enums.UnitEnum[]
+    notIn?: $Enums.UnitEnum[]
+    not?: NestedEnumUnitEnumFilter<$PrismaModel> | $Enums.UnitEnum
+  }
+
+  export type Raw_materialsNullableScalarRelationFilter = {
+    is?: raw_materialsWhereInput | null
+    isNot?: raw_materialsWhereInput | null
+  }
+
+  export type materialsOrderByRelevanceInput = {
+    fields: materialsOrderByRelevanceFieldEnum | materialsOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type materialsCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    unit?: SortOrder
+    barcode?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    defaultStock?: SortOrder
+  }
+
+  export type materialsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    defaultStock?: SortOrder
+  }
+
+  export type materialsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    unit?: SortOrder
+    barcode?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    defaultStock?: SortOrder
+  }
+
+  export type materialsMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    unit?: SortOrder
+    barcode?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    defaultStock?: SortOrder
+  }
+
+  export type materialsSumOrderByAggregateInput = {
+    id?: SortOrder
+    defaultStock?: SortOrder
+  }
+
+  export type EnumUnitEnumWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UnitEnum | EnumUnitEnumFieldRefInput<$PrismaModel>
+    in?: $Enums.UnitEnum[]
+    notIn?: $Enums.UnitEnum[]
+    not?: NestedEnumUnitEnumWithAggregatesFilter<$PrismaModel> | $Enums.UnitEnum
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUnitEnumFilter<$PrismaModel>
+    _max?: NestedEnumUnitEnumFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -17429,12 +18779,12 @@ export namespace Prisma {
     discount_type?: SortOrder
     max_discount?: SortOrder
     min_purchase?: SortOrder
-    valid_from?: SortOrder
     valid_until?: SortOrder
     usage_limit?: SortOrder
-    current_usage?: SortOrder
     created_at?: SortOrder
+    current_usage?: SortOrder
     updated_at?: SortOrder
+    valid_from?: SortOrder
   }
 
   export type vouchersAvgOrderByAggregateInput = {
@@ -17454,12 +18804,12 @@ export namespace Prisma {
     discount_type?: SortOrder
     max_discount?: SortOrder
     min_purchase?: SortOrder
-    valid_from?: SortOrder
     valid_until?: SortOrder
     usage_limit?: SortOrder
-    current_usage?: SortOrder
     created_at?: SortOrder
+    current_usage?: SortOrder
     updated_at?: SortOrder
+    valid_from?: SortOrder
   }
 
   export type vouchersMinOrderByAggregateInput = {
@@ -17470,12 +18820,12 @@ export namespace Prisma {
     discount_type?: SortOrder
     max_discount?: SortOrder
     min_purchase?: SortOrder
-    valid_from?: SortOrder
     valid_until?: SortOrder
     usage_limit?: SortOrder
-    current_usage?: SortOrder
     created_at?: SortOrder
+    current_usage?: SortOrder
     updated_at?: SortOrder
+    valid_from?: SortOrder
   }
 
   export type vouchersSumOrderByAggregateInput = {
@@ -17545,18 +18895,18 @@ export namespace Prisma {
   export type paymentsCountOrderByAggregateInput = {
     id?: SortOrder
     order_id?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     payment_method?: SortOrder
-    payment_gateway?: SortOrder
-    gateway_transaction_id?: SortOrder
-    payment_code?: SortOrder
-    bank?: SortOrder
-    payment_url?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
-    paid_at?: SortOrder
     expires_at?: SortOrder
+    gateway_transaction_id?: SortOrder
+    paid_at?: SortOrder
+    payment_code?: SortOrder
+    payment_gateway?: SortOrder
+    payment_url?: SortOrder
     updated_at?: SortOrder
+    bank?: SortOrder
   }
 
   export type paymentsAvgOrderByAggregateInput = {
@@ -17568,35 +18918,35 @@ export namespace Prisma {
   export type paymentsMaxOrderByAggregateInput = {
     id?: SortOrder
     order_id?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     payment_method?: SortOrder
-    payment_gateway?: SortOrder
-    gateway_transaction_id?: SortOrder
-    payment_code?: SortOrder
-    bank?: SortOrder
-    payment_url?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
-    paid_at?: SortOrder
     expires_at?: SortOrder
+    gateway_transaction_id?: SortOrder
+    paid_at?: SortOrder
+    payment_code?: SortOrder
+    payment_gateway?: SortOrder
+    payment_url?: SortOrder
     updated_at?: SortOrder
+    bank?: SortOrder
   }
 
   export type paymentsMinOrderByAggregateInput = {
     id?: SortOrder
     order_id?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     payment_method?: SortOrder
-    payment_gateway?: SortOrder
-    gateway_transaction_id?: SortOrder
-    payment_code?: SortOrder
-    bank?: SortOrder
-    payment_url?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
-    paid_at?: SortOrder
     expires_at?: SortOrder
+    gateway_transaction_id?: SortOrder
+    paid_at?: SortOrder
+    payment_code?: SortOrder
+    payment_gateway?: SortOrder
+    payment_url?: SortOrder
     updated_at?: SortOrder
+    bank?: SortOrder
   }
 
   export type paymentsSumOrderByAggregateInput = {
@@ -17731,41 +19081,41 @@ export namespace Prisma {
 
   export type expensesCountOrderByAggregateInput = {
     id?: SortOrder
-    user_id?: SortOrder
     expense_type?: SortOrder
     amount?: SortOrder
     expense_date?: SortOrder
     notes?: SortOrder
+    user_id?: SortOrder
   }
 
   export type expensesAvgOrderByAggregateInput = {
     id?: SortOrder
-    user_id?: SortOrder
     amount?: SortOrder
+    user_id?: SortOrder
   }
 
   export type expensesMaxOrderByAggregateInput = {
     id?: SortOrder
-    user_id?: SortOrder
     expense_type?: SortOrder
     amount?: SortOrder
     expense_date?: SortOrder
     notes?: SortOrder
+    user_id?: SortOrder
   }
 
   export type expensesMinOrderByAggregateInput = {
     id?: SortOrder
-    user_id?: SortOrder
     expense_type?: SortOrder
     amount?: SortOrder
     expense_date?: SortOrder
     notes?: SortOrder
+    user_id?: SortOrder
   }
 
   export type expensesSumOrderByAggregateInput = {
     id?: SortOrder
-    user_id?: SortOrder
     amount?: SortOrder
+    user_id?: SortOrder
   }
 
   export type OrdersNullableScalarRelationFilter = {
@@ -17820,11 +19170,11 @@ export namespace Prisma {
     connect?: addressesWhereUniqueInput | addressesWhereUniqueInput[]
   }
 
-  export type ordersCreateNestedManyWithoutCustomerInput = {
-    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
-    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
-    createMany?: ordersCreateManyCustomerInputEnvelope
-    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+  export type expensesCreateNestedManyWithoutUserInput = {
+    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
+    createMany?: expensesCreateManyUserInputEnvelope
+    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
   }
 
   export type feedbacksCreateNestedManyWithoutCustomerInput = {
@@ -17834,11 +19184,11 @@ export namespace Prisma {
     connect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
   }
 
-  export type expensesCreateNestedManyWithoutUserInput = {
-    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
-    createMany?: expensesCreateManyUserInputEnvelope
-    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+  export type ordersCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
+    createMany?: ordersCreateManyCustomerInputEnvelope
+    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
   }
 
   export type addressesUncheckedCreateNestedManyWithoutUserInput = {
@@ -17848,11 +19198,11 @@ export namespace Prisma {
     connect?: addressesWhereUniqueInput | addressesWhereUniqueInput[]
   }
 
-  export type ordersUncheckedCreateNestedManyWithoutCustomerInput = {
-    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
-    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
-    createMany?: ordersCreateManyCustomerInputEnvelope
-    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+  export type expensesUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
+    createMany?: expensesCreateManyUserInputEnvelope
+    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
   }
 
   export type feedbacksUncheckedCreateNestedManyWithoutCustomerInput = {
@@ -17862,11 +19212,11 @@ export namespace Prisma {
     connect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
   }
 
-  export type expensesUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
-    createMany?: expensesCreateManyUserInputEnvelope
-    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+  export type ordersUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
+    createMany?: ordersCreateManyCustomerInputEnvelope
+    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -17899,18 +19249,18 @@ export namespace Prisma {
     deleteMany?: addressesScalarWhereInput | addressesScalarWhereInput[]
   }
 
-  export type ordersUpdateManyWithoutCustomerNestedInput = {
-    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
-    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
-    upsert?: ordersUpsertWithWhereUniqueWithoutCustomerInput | ordersUpsertWithWhereUniqueWithoutCustomerInput[]
-    createMany?: ordersCreateManyCustomerInputEnvelope
-    set?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    disconnect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    delete?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    update?: ordersUpdateWithWhereUniqueWithoutCustomerInput | ordersUpdateWithWhereUniqueWithoutCustomerInput[]
-    updateMany?: ordersUpdateManyWithWhereWithoutCustomerInput | ordersUpdateManyWithWhereWithoutCustomerInput[]
-    deleteMany?: ordersScalarWhereInput | ordersScalarWhereInput[]
+  export type expensesUpdateManyWithoutUserNestedInput = {
+    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
+    upsert?: expensesUpsertWithWhereUniqueWithoutUserInput | expensesUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: expensesCreateManyUserInputEnvelope
+    set?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    disconnect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    delete?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    update?: expensesUpdateWithWhereUniqueWithoutUserInput | expensesUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: expensesUpdateManyWithWhereWithoutUserInput | expensesUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: expensesScalarWhereInput | expensesScalarWhereInput[]
   }
 
   export type feedbacksUpdateManyWithoutCustomerNestedInput = {
@@ -17927,18 +19277,18 @@ export namespace Prisma {
     deleteMany?: feedbacksScalarWhereInput | feedbacksScalarWhereInput[]
   }
 
-  export type expensesUpdateManyWithoutUserNestedInput = {
-    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
-    upsert?: expensesUpsertWithWhereUniqueWithoutUserInput | expensesUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: expensesCreateManyUserInputEnvelope
-    set?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    disconnect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    delete?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    update?: expensesUpdateWithWhereUniqueWithoutUserInput | expensesUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: expensesUpdateManyWithWhereWithoutUserInput | expensesUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: expensesScalarWhereInput | expensesScalarWhereInput[]
+  export type ordersUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
+    upsert?: ordersUpsertWithWhereUniqueWithoutCustomerInput | ordersUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: ordersCreateManyCustomerInputEnvelope
+    set?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    disconnect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    delete?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    update?: ordersUpdateWithWhereUniqueWithoutCustomerInput | ordersUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: ordersUpdateManyWithWhereWithoutCustomerInput | ordersUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: ordersScalarWhereInput | ordersScalarWhereInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -17963,18 +19313,18 @@ export namespace Prisma {
     deleteMany?: addressesScalarWhereInput | addressesScalarWhereInput[]
   }
 
-  export type ordersUncheckedUpdateManyWithoutCustomerNestedInput = {
-    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
-    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
-    upsert?: ordersUpsertWithWhereUniqueWithoutCustomerInput | ordersUpsertWithWhereUniqueWithoutCustomerInput[]
-    createMany?: ordersCreateManyCustomerInputEnvelope
-    set?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    disconnect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    delete?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
-    update?: ordersUpdateWithWhereUniqueWithoutCustomerInput | ordersUpdateWithWhereUniqueWithoutCustomerInput[]
-    updateMany?: ordersUpdateManyWithWhereWithoutCustomerInput | ordersUpdateManyWithWhereWithoutCustomerInput[]
-    deleteMany?: ordersScalarWhereInput | ordersScalarWhereInput[]
+  export type expensesUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
+    upsert?: expensesUpsertWithWhereUniqueWithoutUserInput | expensesUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: expensesCreateManyUserInputEnvelope
+    set?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    disconnect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    delete?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
+    update?: expensesUpdateWithWhereUniqueWithoutUserInput | expensesUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: expensesUpdateManyWithWhereWithoutUserInput | expensesUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: expensesScalarWhereInput | expensesScalarWhereInput[]
   }
 
   export type feedbacksUncheckedUpdateManyWithoutCustomerNestedInput = {
@@ -17991,18 +19341,18 @@ export namespace Prisma {
     deleteMany?: feedbacksScalarWhereInput | feedbacksScalarWhereInput[]
   }
 
-  export type expensesUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput> | expensesCreateWithoutUserInput[] | expensesUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: expensesCreateOrConnectWithoutUserInput | expensesCreateOrConnectWithoutUserInput[]
-    upsert?: expensesUpsertWithWhereUniqueWithoutUserInput | expensesUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: expensesCreateManyUserInputEnvelope
-    set?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    disconnect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    delete?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    connect?: expensesWhereUniqueInput | expensesWhereUniqueInput[]
-    update?: expensesUpdateWithWhereUniqueWithoutUserInput | expensesUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: expensesUpdateManyWithWhereWithoutUserInput | expensesUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: expensesScalarWhereInput | expensesScalarWhereInput[]
+  export type ordersUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput> | ordersCreateWithoutCustomerInput[] | ordersUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: ordersCreateOrConnectWithoutCustomerInput | ordersCreateOrConnectWithoutCustomerInput[]
+    upsert?: ordersUpsertWithWhereUniqueWithoutCustomerInput | ordersUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: ordersCreateManyCustomerInputEnvelope
+    set?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    disconnect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    delete?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    connect?: ordersWhereUniqueInput | ordersWhereUniqueInput[]
+    update?: ordersUpdateWithWhereUniqueWithoutCustomerInput | ordersUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: ordersUpdateManyWithWhereWithoutCustomerInput | ordersUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: ordersScalarWhereInput | ordersScalarWhereInput[]
   }
 
   export type order_itemsCreateNestedManyWithoutProductInput = {
@@ -18055,6 +19405,25 @@ export namespace Prisma {
     deleteMany?: order_itemsScalarWhereInput | order_itemsScalarWhereInput[]
   }
 
+  export type custom_ordersCreateNestedOneWithoutOrdersInput = {
+    create?: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: custom_ordersCreateOrConnectWithoutOrdersInput
+    connect?: custom_ordersWhereUniqueInput
+  }
+
+  export type feedbacksCreateNestedOneWithoutOrderInput = {
+    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
+    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput
+    connect?: feedbacksWhereUniqueInput
+  }
+
+  export type order_itemsCreateNestedManyWithoutOrderInput = {
+    create?: XOR<order_itemsCreateWithoutOrderInput, order_itemsUncheckedCreateWithoutOrderInput> | order_itemsCreateWithoutOrderInput[] | order_itemsUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: order_itemsCreateOrConnectWithoutOrderInput | order_itemsCreateOrConnectWithoutOrderInput[]
+    createMany?: order_itemsCreateManyOrderInputEnvelope
+    connect?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
+  }
+
   export type usersCreateNestedOneWithoutOrdersInput = {
     create?: XOR<usersCreateWithoutOrdersInput, usersUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: usersCreateOrConnectWithoutOrdersInput
@@ -18067,30 +19436,22 @@ export namespace Prisma {
     connect?: vouchersWhereUniqueInput
   }
 
-  export type order_itemsCreateNestedManyWithoutOrderInput = {
-    create?: XOR<order_itemsCreateWithoutOrderInput, order_itemsUncheckedCreateWithoutOrderInput> | order_itemsCreateWithoutOrderInput[] | order_itemsUncheckedCreateWithoutOrderInput[]
-    connectOrCreate?: order_itemsCreateOrConnectWithoutOrderInput | order_itemsCreateOrConnectWithoutOrderInput[]
-    createMany?: order_itemsCreateManyOrderInputEnvelope
-    connect?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
-  }
-
   export type paymentsCreateNestedOneWithoutOrderInput = {
     create?: XOR<paymentsCreateWithoutOrderInput, paymentsUncheckedCreateWithoutOrderInput>
     connectOrCreate?: paymentsCreateOrConnectWithoutOrderInput
     connect?: paymentsWhereUniqueInput
   }
 
-  export type feedbacksCreateNestedManyWithoutOrderInput = {
-    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput> | feedbacksCreateWithoutOrderInput[] | feedbacksUncheckedCreateWithoutOrderInput[]
-    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput | feedbacksCreateOrConnectWithoutOrderInput[]
-    createMany?: feedbacksCreateManyOrderInputEnvelope
-    connect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-  }
-
-  export type custom_ordersCreateNestedOneWithoutOrdersInput = {
+  export type custom_ordersUncheckedCreateNestedOneWithoutOrdersInput = {
     create?: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: custom_ordersCreateOrConnectWithoutOrdersInput
     connect?: custom_ordersWhereUniqueInput
+  }
+
+  export type feedbacksUncheckedCreateNestedOneWithoutOrderInput = {
+    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
+    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput
+    connect?: feedbacksWhereUniqueInput
   }
 
   export type order_itemsUncheckedCreateNestedManyWithoutOrderInput = {
@@ -18106,21 +19467,42 @@ export namespace Prisma {
     connect?: paymentsWhereUniqueInput
   }
 
-  export type feedbacksUncheckedCreateNestedManyWithoutOrderInput = {
-    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput> | feedbacksCreateWithoutOrderInput[] | feedbacksUncheckedCreateWithoutOrderInput[]
-    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput | feedbacksCreateOrConnectWithoutOrderInput[]
-    createMany?: feedbacksCreateManyOrderInputEnvelope
-    connect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-  }
-
-  export type custom_ordersUncheckedCreateNestedOneWithoutOrdersInput = {
-    create?: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
-    connectOrCreate?: custom_ordersCreateOrConnectWithoutOrdersInput
-    connect?: custom_ordersWhereUniqueInput
-  }
-
   export type EnumOrderStatusFieldUpdateOperationsInput = {
     set?: $Enums.OrderStatus
+  }
+
+  export type custom_ordersUpdateOneWithoutOrdersNestedInput = {
+    create?: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: custom_ordersCreateOrConnectWithoutOrdersInput
+    upsert?: custom_ordersUpsertWithoutOrdersInput
+    disconnect?: custom_ordersWhereInput | boolean
+    delete?: custom_ordersWhereInput | boolean
+    connect?: custom_ordersWhereUniqueInput
+    update?: XOR<XOR<custom_ordersUpdateToOneWithWhereWithoutOrdersInput, custom_ordersUpdateWithoutOrdersInput>, custom_ordersUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type feedbacksUpdateOneWithoutOrderNestedInput = {
+    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
+    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput
+    upsert?: feedbacksUpsertWithoutOrderInput
+    disconnect?: feedbacksWhereInput | boolean
+    delete?: feedbacksWhereInput | boolean
+    connect?: feedbacksWhereUniqueInput
+    update?: XOR<XOR<feedbacksUpdateToOneWithWhereWithoutOrderInput, feedbacksUpdateWithoutOrderInput>, feedbacksUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type order_itemsUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<order_itemsCreateWithoutOrderInput, order_itemsUncheckedCreateWithoutOrderInput> | order_itemsCreateWithoutOrderInput[] | order_itemsUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: order_itemsCreateOrConnectWithoutOrderInput | order_itemsCreateOrConnectWithoutOrderInput[]
+    upsert?: order_itemsUpsertWithWhereUniqueWithoutOrderInput | order_itemsUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: order_itemsCreateManyOrderInputEnvelope
+    set?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
+    disconnect?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
+    delete?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
+    connect?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
+    update?: order_itemsUpdateWithWhereUniqueWithoutOrderInput | order_itemsUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: order_itemsUpdateManyWithWhereWithoutOrderInput | order_itemsUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: order_itemsScalarWhereInput | order_itemsScalarWhereInput[]
   }
 
   export type usersUpdateOneRequiredWithoutOrdersNestedInput = {
@@ -18141,20 +19523,6 @@ export namespace Prisma {
     update?: XOR<XOR<vouchersUpdateToOneWithWhereWithoutOrdersInput, vouchersUpdateWithoutOrdersInput>, vouchersUncheckedUpdateWithoutOrdersInput>
   }
 
-  export type order_itemsUpdateManyWithoutOrderNestedInput = {
-    create?: XOR<order_itemsCreateWithoutOrderInput, order_itemsUncheckedCreateWithoutOrderInput> | order_itemsCreateWithoutOrderInput[] | order_itemsUncheckedCreateWithoutOrderInput[]
-    connectOrCreate?: order_itemsCreateOrConnectWithoutOrderInput | order_itemsCreateOrConnectWithoutOrderInput[]
-    upsert?: order_itemsUpsertWithWhereUniqueWithoutOrderInput | order_itemsUpsertWithWhereUniqueWithoutOrderInput[]
-    createMany?: order_itemsCreateManyOrderInputEnvelope
-    set?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
-    disconnect?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
-    delete?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
-    connect?: order_itemsWhereUniqueInput | order_itemsWhereUniqueInput[]
-    update?: order_itemsUpdateWithWhereUniqueWithoutOrderInput | order_itemsUpdateWithWhereUniqueWithoutOrderInput[]
-    updateMany?: order_itemsUpdateManyWithWhereWithoutOrderInput | order_itemsUpdateManyWithWhereWithoutOrderInput[]
-    deleteMany?: order_itemsScalarWhereInput | order_itemsScalarWhereInput[]
-  }
-
   export type paymentsUpdateOneWithoutOrderNestedInput = {
     create?: XOR<paymentsCreateWithoutOrderInput, paymentsUncheckedCreateWithoutOrderInput>
     connectOrCreate?: paymentsCreateOrConnectWithoutOrderInput
@@ -18165,21 +19533,15 @@ export namespace Prisma {
     update?: XOR<XOR<paymentsUpdateToOneWithWhereWithoutOrderInput, paymentsUpdateWithoutOrderInput>, paymentsUncheckedUpdateWithoutOrderInput>
   }
 
-  export type feedbacksUpdateManyWithoutOrderNestedInput = {
-    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput> | feedbacksCreateWithoutOrderInput[] | feedbacksUncheckedCreateWithoutOrderInput[]
-    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput | feedbacksCreateOrConnectWithoutOrderInput[]
-    upsert?: feedbacksUpsertWithWhereUniqueWithoutOrderInput | feedbacksUpsertWithWhereUniqueWithoutOrderInput[]
-    createMany?: feedbacksCreateManyOrderInputEnvelope
-    set?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    disconnect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    delete?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    connect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    update?: feedbacksUpdateWithWhereUniqueWithoutOrderInput | feedbacksUpdateWithWhereUniqueWithoutOrderInput[]
-    updateMany?: feedbacksUpdateManyWithWhereWithoutOrderInput | feedbacksUpdateManyWithWhereWithoutOrderInput[]
-    deleteMany?: feedbacksScalarWhereInput | feedbacksScalarWhereInput[]
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
-  export type custom_ordersUpdateOneWithoutOrdersNestedInput = {
+  export type custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput = {
     create?: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: custom_ordersCreateOrConnectWithoutOrdersInput
     upsert?: custom_ordersUpsertWithoutOrdersInput
@@ -18189,12 +19551,14 @@ export namespace Prisma {
     update?: XOR<XOR<custom_ordersUpdateToOneWithWhereWithoutOrdersInput, custom_ordersUpdateWithoutOrdersInput>, custom_ordersUncheckedUpdateWithoutOrdersInput>
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type feedbacksUncheckedUpdateOneWithoutOrderNestedInput = {
+    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
+    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput
+    upsert?: feedbacksUpsertWithoutOrderInput
+    disconnect?: feedbacksWhereInput | boolean
+    delete?: feedbacksWhereInput | boolean
+    connect?: feedbacksWhereUniqueInput
+    update?: XOR<XOR<feedbacksUpdateToOneWithWhereWithoutOrderInput, feedbacksUpdateWithoutOrderInput>, feedbacksUncheckedUpdateWithoutOrderInput>
   }
 
   export type order_itemsUncheckedUpdateManyWithoutOrderNestedInput = {
@@ -18219,30 +19583,6 @@ export namespace Prisma {
     delete?: paymentsWhereInput | boolean
     connect?: paymentsWhereUniqueInput
     update?: XOR<XOR<paymentsUpdateToOneWithWhereWithoutOrderInput, paymentsUpdateWithoutOrderInput>, paymentsUncheckedUpdateWithoutOrderInput>
-  }
-
-  export type feedbacksUncheckedUpdateManyWithoutOrderNestedInput = {
-    create?: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput> | feedbacksCreateWithoutOrderInput[] | feedbacksUncheckedCreateWithoutOrderInput[]
-    connectOrCreate?: feedbacksCreateOrConnectWithoutOrderInput | feedbacksCreateOrConnectWithoutOrderInput[]
-    upsert?: feedbacksUpsertWithWhereUniqueWithoutOrderInput | feedbacksUpsertWithWhereUniqueWithoutOrderInput[]
-    createMany?: feedbacksCreateManyOrderInputEnvelope
-    set?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    disconnect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    delete?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    connect?: feedbacksWhereUniqueInput | feedbacksWhereUniqueInput[]
-    update?: feedbacksUpdateWithWhereUniqueWithoutOrderInput | feedbacksUpdateWithWhereUniqueWithoutOrderInput[]
-    updateMany?: feedbacksUpdateManyWithWhereWithoutOrderInput | feedbacksUpdateManyWithWhereWithoutOrderInput[]
-    deleteMany?: feedbacksScalarWhereInput | feedbacksScalarWhereInput[]
-  }
-
-  export type custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput = {
-    create?: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
-    connectOrCreate?: custom_ordersCreateOrConnectWithoutOrdersInput
-    upsert?: custom_ordersUpsertWithoutOrdersInput
-    disconnect?: custom_ordersWhereInput | boolean
-    delete?: custom_ordersWhereInput | boolean
-    connect?: custom_ordersWhereUniqueInput
-    update?: XOR<XOR<custom_ordersUpdateToOneWithWhereWithoutOrdersInput, custom_ordersUpdateWithoutOrdersInput>, custom_ordersUncheckedUpdateWithoutOrdersInput>
   }
 
   export type ordersCreateNestedOneWithoutOrder_itemsInput = {
@@ -18271,6 +19611,56 @@ export namespace Prisma {
     upsert?: productsUpsertWithoutOrder_itemsInput
     connect?: productsWhereUniqueInput
     update?: XOR<XOR<productsUpdateToOneWithWhereWithoutOrder_itemsInput, productsUpdateWithoutOrder_itemsInput>, productsUncheckedUpdateWithoutOrder_itemsInput>
+  }
+
+  export type materialsCreateNestedOneWithoutRaw_materialInput = {
+    create?: XOR<materialsCreateWithoutRaw_materialInput, materialsUncheckedCreateWithoutRaw_materialInput>
+    connectOrCreate?: materialsCreateOrConnectWithoutRaw_materialInput
+    connect?: materialsWhereUniqueInput
+  }
+
+  export type materialsUpdateOneRequiredWithoutRaw_materialNestedInput = {
+    create?: XOR<materialsCreateWithoutRaw_materialInput, materialsUncheckedCreateWithoutRaw_materialInput>
+    connectOrCreate?: materialsCreateOrConnectWithoutRaw_materialInput
+    upsert?: materialsUpsertWithoutRaw_materialInput
+    connect?: materialsWhereUniqueInput
+    update?: XOR<XOR<materialsUpdateToOneWithWhereWithoutRaw_materialInput, materialsUpdateWithoutRaw_materialInput>, materialsUncheckedUpdateWithoutRaw_materialInput>
+  }
+
+  export type raw_materialsCreateNestedOneWithoutMaterialInput = {
+    create?: XOR<raw_materialsCreateWithoutMaterialInput, raw_materialsUncheckedCreateWithoutMaterialInput>
+    connectOrCreate?: raw_materialsCreateOrConnectWithoutMaterialInput
+    connect?: raw_materialsWhereUniqueInput
+  }
+
+  export type raw_materialsUncheckedCreateNestedOneWithoutMaterialInput = {
+    create?: XOR<raw_materialsCreateWithoutMaterialInput, raw_materialsUncheckedCreateWithoutMaterialInput>
+    connectOrCreate?: raw_materialsCreateOrConnectWithoutMaterialInput
+    connect?: raw_materialsWhereUniqueInput
+  }
+
+  export type EnumUnitEnumFieldUpdateOperationsInput = {
+    set?: $Enums.UnitEnum
+  }
+
+  export type raw_materialsUpdateOneWithoutMaterialNestedInput = {
+    create?: XOR<raw_materialsCreateWithoutMaterialInput, raw_materialsUncheckedCreateWithoutMaterialInput>
+    connectOrCreate?: raw_materialsCreateOrConnectWithoutMaterialInput
+    upsert?: raw_materialsUpsertWithoutMaterialInput
+    disconnect?: raw_materialsWhereInput | boolean
+    delete?: raw_materialsWhereInput | boolean
+    connect?: raw_materialsWhereUniqueInput
+    update?: XOR<XOR<raw_materialsUpdateToOneWithWhereWithoutMaterialInput, raw_materialsUpdateWithoutMaterialInput>, raw_materialsUncheckedUpdateWithoutMaterialInput>
+  }
+
+  export type raw_materialsUncheckedUpdateOneWithoutMaterialNestedInput = {
+    create?: XOR<raw_materialsCreateWithoutMaterialInput, raw_materialsUncheckedCreateWithoutMaterialInput>
+    connectOrCreate?: raw_materialsCreateOrConnectWithoutMaterialInput
+    upsert?: raw_materialsUpsertWithoutMaterialInput
+    disconnect?: raw_materialsWhereInput | boolean
+    delete?: raw_materialsWhereInput | boolean
+    connect?: raw_materialsWhereUniqueInput
+    update?: XOR<XOR<raw_materialsUpdateToOneWithWhereWithoutMaterialInput, raw_materialsUpdateWithoutMaterialInput>, raw_materialsUncheckedUpdateWithoutMaterialInput>
   }
 
   export type usersCreateNestedOneWithoutAddressesInput = {
@@ -18345,16 +19735,16 @@ export namespace Prisma {
     deleteMany?: ordersScalarWhereInput | ordersScalarWhereInput[]
   }
 
-  export type ordersCreateNestedOneWithoutPaymentInput = {
-    create?: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
-    connectOrCreate?: ordersCreateOrConnectWithoutPaymentInput
-    connect?: ordersWhereUniqueInput
-  }
-
   export type invoicesCreateNestedOneWithoutPaymentInput = {
     create?: XOR<invoicesCreateWithoutPaymentInput, invoicesUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: invoicesCreateOrConnectWithoutPaymentInput
     connect?: invoicesWhereUniqueInput
+  }
+
+  export type ordersCreateNestedOneWithoutPaymentInput = {
+    create?: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
+    connectOrCreate?: ordersCreateOrConnectWithoutPaymentInput
+    connect?: ordersWhereUniqueInput
   }
 
   export type invoicesUncheckedCreateNestedOneWithoutPaymentInput = {
@@ -18371,14 +19761,6 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
-  export type ordersUpdateOneRequiredWithoutPaymentNestedInput = {
-    create?: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
-    connectOrCreate?: ordersCreateOrConnectWithoutPaymentInput
-    upsert?: ordersUpsertWithoutPaymentInput
-    connect?: ordersWhereUniqueInput
-    update?: XOR<XOR<ordersUpdateToOneWithWhereWithoutPaymentInput, ordersUpdateWithoutPaymentInput>, ordersUncheckedUpdateWithoutPaymentInput>
-  }
-
   export type invoicesUpdateOneWithoutPaymentNestedInput = {
     create?: XOR<invoicesCreateWithoutPaymentInput, invoicesUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: invoicesCreateOrConnectWithoutPaymentInput
@@ -18387,6 +19769,14 @@ export namespace Prisma {
     delete?: invoicesWhereInput | boolean
     connect?: invoicesWhereUniqueInput
     update?: XOR<XOR<invoicesUpdateToOneWithWhereWithoutPaymentInput, invoicesUpdateWithoutPaymentInput>, invoicesUncheckedUpdateWithoutPaymentInput>
+  }
+
+  export type ordersUpdateOneRequiredWithoutPaymentNestedInput = {
+    create?: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
+    connectOrCreate?: ordersCreateOrConnectWithoutPaymentInput
+    upsert?: ordersUpsertWithoutPaymentInput
+    connect?: ordersWhereUniqueInput
+    update?: XOR<XOR<ordersUpdateToOneWithWhereWithoutPaymentInput, ordersUpdateWithoutPaymentInput>, ordersUncheckedUpdateWithoutPaymentInput>
   }
 
   export type invoicesUncheckedUpdateOneWithoutPaymentNestedInput = {
@@ -18724,6 +20114,23 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumUnitEnumFilter<$PrismaModel = never> = {
+    equals?: $Enums.UnitEnum | EnumUnitEnumFieldRefInput<$PrismaModel>
+    in?: $Enums.UnitEnum[]
+    notIn?: $Enums.UnitEnum[]
+    not?: NestedEnumUnitEnumFilter<$PrismaModel> | $Enums.UnitEnum
+  }
+
+  export type NestedEnumUnitEnumWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UnitEnum | EnumUnitEnumFieldRefInput<$PrismaModel>
+    in?: $Enums.UnitEnum[]
+    notIn?: $Enums.UnitEnum[]
+    not?: NestedEnumUnitEnumWithAggregatesFilter<$PrismaModel> | $Enums.UnitEnum
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUnitEnumFilter<$PrismaModel>
+    _max?: NestedEnumUnitEnumFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -18856,52 +20263,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ordersCreateWithoutCustomerInput = {
-    status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
-    total_price: Decimal | DecimalJsLike | number | string
-    shipping_address: JsonNullValueInput | InputJsonValue
-    shipping_method: string
-    tracking_number?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    voucher?: vouchersCreateNestedOneWithoutOrdersInput
-    order_items?: order_itemsCreateNestedManyWithoutOrderInput
-    payment?: paymentsCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+  export type expensesCreateWithoutUserInput = {
+    expense_type?: string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    expense_date?: Date | string | null
+    notes?: string | null
   }
 
-  export type ordersUncheckedCreateWithoutCustomerInput = {
+  export type expensesUncheckedCreateWithoutUserInput = {
     id?: number
-    status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
-    total_price: Decimal | DecimalJsLike | number | string
-    shipping_address: JsonNullValueInput | InputJsonValue
-    shipping_method: string
-    tracking_number?: string | null
-    voucher_id?: number | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
-    payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
+    expense_type?: string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    expense_date?: Date | string | null
+    notes?: string | null
   }
 
-  export type ordersCreateOrConnectWithoutCustomerInput = {
-    where: ordersWhereUniqueInput
-    create: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput>
+  export type expensesCreateOrConnectWithoutUserInput = {
+    where: expensesWhereUniqueInput
+    create: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput>
   }
 
-  export type ordersCreateManyCustomerInputEnvelope = {
-    data: ordersCreateManyCustomerInput | ordersCreateManyCustomerInput[]
+  export type expensesCreateManyUserInputEnvelope = {
+    data: expensesCreateManyUserInput | expensesCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -18930,28 +20313,52 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type expensesCreateWithoutUserInput = {
-    expense_type?: string | null
-    amount?: Decimal | DecimalJsLike | number | string | null
-    expense_date?: Date | string | null
-    notes?: string | null
+  export type ordersCreateWithoutCustomerInput = {
+    status?: $Enums.OrderStatus
+    total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
+    tracking_number?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsCreateNestedManyWithoutOrderInput
+    voucher?: vouchersCreateNestedOneWithoutOrdersInput
+    payment?: paymentsCreateNestedOneWithoutOrderInput
   }
 
-  export type expensesUncheckedCreateWithoutUserInput = {
+  export type ordersUncheckedCreateWithoutCustomerInput = {
     id?: number
-    expense_type?: string | null
-    amount?: Decimal | DecimalJsLike | number | string | null
-    expense_date?: Date | string | null
-    notes?: string | null
+    status?: $Enums.OrderStatus
+    total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
+    tracking_number?: string | null
+    voucher_id?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksUncheckedCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
+    payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
   }
 
-  export type expensesCreateOrConnectWithoutUserInput = {
-    where: expensesWhereUniqueInput
-    create: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput>
+  export type ordersCreateOrConnectWithoutCustomerInput = {
+    where: ordersWhereUniqueInput
+    create: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput>
   }
 
-  export type expensesCreateManyUserInputEnvelope = {
-    data: expensesCreateManyUserInput | expensesCreateManyUserInput[]
+  export type ordersCreateManyCustomerInputEnvelope = {
+    data: ordersCreateManyCustomerInput | ordersCreateManyCustomerInput[]
     skipDuplicates?: boolean
   }
 
@@ -18987,40 +20394,32 @@ export namespace Prisma {
     is_default?: BoolFilter<"addresses"> | boolean
   }
 
-  export type ordersUpsertWithWhereUniqueWithoutCustomerInput = {
-    where: ordersWhereUniqueInput
-    update: XOR<ordersUpdateWithoutCustomerInput, ordersUncheckedUpdateWithoutCustomerInput>
-    create: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput>
+  export type expensesUpsertWithWhereUniqueWithoutUserInput = {
+    where: expensesWhereUniqueInput
+    update: XOR<expensesUpdateWithoutUserInput, expensesUncheckedUpdateWithoutUserInput>
+    create: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput>
   }
 
-  export type ordersUpdateWithWhereUniqueWithoutCustomerInput = {
-    where: ordersWhereUniqueInput
-    data: XOR<ordersUpdateWithoutCustomerInput, ordersUncheckedUpdateWithoutCustomerInput>
+  export type expensesUpdateWithWhereUniqueWithoutUserInput = {
+    where: expensesWhereUniqueInput
+    data: XOR<expensesUpdateWithoutUserInput, expensesUncheckedUpdateWithoutUserInput>
   }
 
-  export type ordersUpdateManyWithWhereWithoutCustomerInput = {
-    where: ordersScalarWhereInput
-    data: XOR<ordersUpdateManyMutationInput, ordersUncheckedUpdateManyWithoutCustomerInput>
+  export type expensesUpdateManyWithWhereWithoutUserInput = {
+    where: expensesScalarWhereInput
+    data: XOR<expensesUpdateManyMutationInput, expensesUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type ordersScalarWhereInput = {
-    AND?: ordersScalarWhereInput | ordersScalarWhereInput[]
-    OR?: ordersScalarWhereInput[]
-    NOT?: ordersScalarWhereInput | ordersScalarWhereInput[]
-    id?: IntFilter<"orders"> | number
-    customer_id?: IntFilter<"orders"> | number
-    status?: EnumOrderStatusFilter<"orders"> | $Enums.OrderStatus
-    order_date?: DateTimeFilter<"orders"> | Date | string
-    sub_total?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    total_price?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
-    shipping_address?: JsonFilter<"orders">
-    shipping_method?: StringFilter<"orders"> | string
-    tracking_number?: StringNullableFilter<"orders"> | string | null
-    voucher_id?: IntNullableFilter<"orders"> | number | null
-    created_at?: DateTimeFilter<"orders"> | Date | string
-    updated_at?: DateTimeFilter<"orders"> | Date | string
+  export type expensesScalarWhereInput = {
+    AND?: expensesScalarWhereInput | expensesScalarWhereInput[]
+    OR?: expensesScalarWhereInput[]
+    NOT?: expensesScalarWhereInput | expensesScalarWhereInput[]
+    id?: IntFilter<"expenses"> | number
+    expense_type?: StringNullableFilter<"expenses"> | string | null
+    amount?: DecimalNullableFilter<"expenses"> | Decimal | DecimalJsLike | number | string | null
+    expense_date?: DateTimeNullableFilter<"expenses"> | Date | string | null
+    notes?: StringNullableFilter<"expenses"> | string | null
+    user_id?: IntNullableFilter<"expenses"> | number | null
   }
 
   export type feedbacksUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -19051,32 +20450,40 @@ export namespace Prisma {
     submitted_at?: DateTimeFilter<"feedbacks"> | Date | string
   }
 
-  export type expensesUpsertWithWhereUniqueWithoutUserInput = {
-    where: expensesWhereUniqueInput
-    update: XOR<expensesUpdateWithoutUserInput, expensesUncheckedUpdateWithoutUserInput>
-    create: XOR<expensesCreateWithoutUserInput, expensesUncheckedCreateWithoutUserInput>
+  export type ordersUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: ordersWhereUniqueInput
+    update: XOR<ordersUpdateWithoutCustomerInput, ordersUncheckedUpdateWithoutCustomerInput>
+    create: XOR<ordersCreateWithoutCustomerInput, ordersUncheckedCreateWithoutCustomerInput>
   }
 
-  export type expensesUpdateWithWhereUniqueWithoutUserInput = {
-    where: expensesWhereUniqueInput
-    data: XOR<expensesUpdateWithoutUserInput, expensesUncheckedUpdateWithoutUserInput>
+  export type ordersUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: ordersWhereUniqueInput
+    data: XOR<ordersUpdateWithoutCustomerInput, ordersUncheckedUpdateWithoutCustomerInput>
   }
 
-  export type expensesUpdateManyWithWhereWithoutUserInput = {
-    where: expensesScalarWhereInput
-    data: XOR<expensesUpdateManyMutationInput, expensesUncheckedUpdateManyWithoutUserInput>
+  export type ordersUpdateManyWithWhereWithoutCustomerInput = {
+    where: ordersScalarWhereInput
+    data: XOR<ordersUpdateManyMutationInput, ordersUncheckedUpdateManyWithoutCustomerInput>
   }
 
-  export type expensesScalarWhereInput = {
-    AND?: expensesScalarWhereInput | expensesScalarWhereInput[]
-    OR?: expensesScalarWhereInput[]
-    NOT?: expensesScalarWhereInput | expensesScalarWhereInput[]
-    id?: IntFilter<"expenses"> | number
-    user_id?: IntNullableFilter<"expenses"> | number | null
-    expense_type?: StringNullableFilter<"expenses"> | string | null
-    amount?: DecimalNullableFilter<"expenses"> | Decimal | DecimalJsLike | number | string | null
-    expense_date?: DateTimeNullableFilter<"expenses"> | Date | string | null
-    notes?: StringNullableFilter<"expenses"> | string | null
+  export type ordersScalarWhereInput = {
+    AND?: ordersScalarWhereInput | ordersScalarWhereInput[]
+    OR?: ordersScalarWhereInput[]
+    NOT?: ordersScalarWhereInput | ordersScalarWhereInput[]
+    id?: IntFilter<"orders"> | number
+    customer_id?: IntFilter<"orders"> | number
+    status?: EnumOrderStatusFilter<"orders"> | $Enums.OrderStatus
+    total_price?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFilter<"orders"> | Date | string
+    shipping_address?: JsonFilter<"orders">
+    shipping_cost?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    shipping_method?: StringFilter<"orders"> | string
+    sub_total?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
+    tracking_number?: StringNullableFilter<"orders"> | string | null
+    voucher_id?: IntNullableFilter<"orders"> | number | null
+    created_at?: DateTimeFilter<"orders"> | Date | string
+    updated_at?: DateTimeFilter<"orders"> | Date | string
   }
 
   export type order_itemsCreateWithoutProductInput = {
@@ -19129,72 +20536,42 @@ export namespace Prisma {
     price?: DecimalFilter<"order_items"> | Decimal | DecimalJsLike | number | string
   }
 
-  export type usersCreateWithoutOrdersInput = {
-    name: string
-    email: string
-    password: string
-    phone?: string | null
-    role?: $Enums.Role
-    created_at?: Date | string
-    updated_at?: Date | string
-    addresses?: addressesCreateNestedManyWithoutUserInput
-    feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
-    expenses?: expensesCreateNestedManyWithoutUserInput
+  export type custom_ordersCreateWithoutOrdersInput = {
+    request_description?: string | null
+    due_date?: Date | string | null
+    notes?: string | null
   }
 
-  export type usersUncheckedCreateWithoutOrdersInput = {
+  export type custom_ordersUncheckedCreateWithoutOrdersInput = {
     id?: number
-    name: string
-    email: string
-    password: string
-    phone?: string | null
-    role?: $Enums.Role
-    created_at?: Date | string
-    updated_at?: Date | string
-    addresses?: addressesUncheckedCreateNestedManyWithoutUserInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
-    expenses?: expensesUncheckedCreateNestedManyWithoutUserInput
+    request_description?: string | null
+    due_date?: Date | string | null
+    notes?: string | null
   }
 
-  export type usersCreateOrConnectWithoutOrdersInput = {
-    where: usersWhereUniqueInput
-    create: XOR<usersCreateWithoutOrdersInput, usersUncheckedCreateWithoutOrdersInput>
+  export type custom_ordersCreateOrConnectWithoutOrdersInput = {
+    where: custom_ordersWhereUniqueInput
+    create: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
   }
 
-  export type vouchersCreateWithoutOrdersInput = {
-    code: string
-    description?: string | null
-    discount_value: Decimal | DecimalJsLike | number | string
-    discount_type: $Enums.VoucherType
-    max_discount?: Decimal | DecimalJsLike | number | string | null
-    min_purchase?: Decimal | DecimalJsLike | number | string
-    valid_from?: Date | string
-    valid_until: Date | string
-    usage_limit: number
-    current_usage?: number
-    created_at?: Date | string
-    updated_at?: Date | string
+  export type feedbacksCreateWithoutOrderInput = {
+    message?: string | null
+    rating: number
+    submitted_at?: Date | string
+    customer: usersCreateNestedOneWithoutFeedbacksInput
   }
 
-  export type vouchersUncheckedCreateWithoutOrdersInput = {
+  export type feedbacksUncheckedCreateWithoutOrderInput = {
     id?: number
-    code: string
-    description?: string | null
-    discount_value: Decimal | DecimalJsLike | number | string
-    discount_type: $Enums.VoucherType
-    max_discount?: Decimal | DecimalJsLike | number | string | null
-    min_purchase?: Decimal | DecimalJsLike | number | string
-    valid_from?: Date | string
-    valid_until: Date | string
-    usage_limit: number
-    current_usage?: number
-    created_at?: Date | string
-    updated_at?: Date | string
+    customer_id: number
+    message?: string | null
+    rating: number
+    submitted_at?: Date | string
   }
 
-  export type vouchersCreateOrConnectWithoutOrdersInput = {
-    where: vouchersWhereUniqueInput
-    create: XOR<vouchersCreateWithoutOrdersInput, vouchersUncheckedCreateWithoutOrdersInput>
+  export type feedbacksCreateOrConnectWithoutOrderInput = {
+    where: feedbacksWhereUniqueInput
+    create: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
   }
 
   export type order_itemsCreateWithoutOrderInput = {
@@ -19220,241 +20597,110 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type usersCreateWithoutOrdersInput = {
+    name: string
+    email: string
+    password: string
+    phone?: string | null
+    role?: $Enums.Role
+    created_at?: Date | string
+    updated_at?: Date | string
+    addresses?: addressesCreateNestedManyWithoutUserInput
+    expenses?: expensesCreateNestedManyWithoutUserInput
+    feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
+  }
+
+  export type usersUncheckedCreateWithoutOrdersInput = {
+    id?: number
+    name: string
+    email: string
+    password: string
+    phone?: string | null
+    role?: $Enums.Role
+    created_at?: Date | string
+    updated_at?: Date | string
+    addresses?: addressesUncheckedCreateNestedManyWithoutUserInput
+    expenses?: expensesUncheckedCreateNestedManyWithoutUserInput
+    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type usersCreateOrConnectWithoutOrdersInput = {
+    where: usersWhereUniqueInput
+    create: XOR<usersCreateWithoutOrdersInput, usersUncheckedCreateWithoutOrdersInput>
+  }
+
+  export type vouchersCreateWithoutOrdersInput = {
+    code: string
+    description?: string | null
+    discount_value: Decimal | DecimalJsLike | number | string
+    discount_type: $Enums.VoucherType
+    max_discount?: Decimal | DecimalJsLike | number | string | null
+    min_purchase?: Decimal | DecimalJsLike | number | string
+    valid_until: Date | string
+    usage_limit: number
+    created_at?: Date | string
+    current_usage?: number
+    updated_at?: Date | string
+    valid_from?: Date | string
+  }
+
+  export type vouchersUncheckedCreateWithoutOrdersInput = {
+    id?: number
+    code: string
+    description?: string | null
+    discount_value: Decimal | DecimalJsLike | number | string
+    discount_type: $Enums.VoucherType
+    max_discount?: Decimal | DecimalJsLike | number | string | null
+    min_purchase?: Decimal | DecimalJsLike | number | string
+    valid_until: Date | string
+    usage_limit: number
+    created_at?: Date | string
+    current_usage?: number
+    updated_at?: Date | string
+    valid_from?: Date | string
+  }
+
+  export type vouchersCreateOrConnectWithoutOrdersInput = {
+    where: vouchersWhereUniqueInput
+    create: XOR<vouchersCreateWithoutOrdersInput, vouchersUncheckedCreateWithoutOrdersInput>
+  }
+
   export type paymentsCreateWithoutOrderInput = {
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
+    bank?: string | null
     invoice?: invoicesCreateNestedOneWithoutPaymentInput
   }
 
   export type paymentsUncheckedCreateWithoutOrderInput = {
     id?: number
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
+    bank?: string | null
     invoice?: invoicesUncheckedCreateNestedOneWithoutPaymentInput
   }
 
   export type paymentsCreateOrConnectWithoutOrderInput = {
     where: paymentsWhereUniqueInput
     create: XOR<paymentsCreateWithoutOrderInput, paymentsUncheckedCreateWithoutOrderInput>
-  }
-
-  export type feedbacksCreateWithoutOrderInput = {
-    message?: string | null
-    rating: number
-    submitted_at?: Date | string
-    customer: usersCreateNestedOneWithoutFeedbacksInput
-  }
-
-  export type feedbacksUncheckedCreateWithoutOrderInput = {
-    id?: number
-    customer_id: number
-    message?: string | null
-    rating: number
-    submitted_at?: Date | string
-  }
-
-  export type feedbacksCreateOrConnectWithoutOrderInput = {
-    where: feedbacksWhereUniqueInput
-    create: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
-  }
-
-  export type feedbacksCreateManyOrderInputEnvelope = {
-    data: feedbacksCreateManyOrderInput | feedbacksCreateManyOrderInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type custom_ordersCreateWithoutOrdersInput = {
-    request_description?: string | null
-    due_date?: Date | string | null
-    notes?: string | null
-  }
-
-  export type custom_ordersUncheckedCreateWithoutOrdersInput = {
-    id?: number
-    request_description?: string | null
-    due_date?: Date | string | null
-    notes?: string | null
-  }
-
-  export type custom_ordersCreateOrConnectWithoutOrdersInput = {
-    where: custom_ordersWhereUniqueInput
-    create: XOR<custom_ordersCreateWithoutOrdersInput, custom_ordersUncheckedCreateWithoutOrdersInput>
-  }
-
-  export type usersUpsertWithoutOrdersInput = {
-    update: XOR<usersUpdateWithoutOrdersInput, usersUncheckedUpdateWithoutOrdersInput>
-    create: XOR<usersCreateWithoutOrdersInput, usersUncheckedCreateWithoutOrdersInput>
-    where?: usersWhereInput
-  }
-
-  export type usersUpdateToOneWithWhereWithoutOrdersInput = {
-    where?: usersWhereInput
-    data: XOR<usersUpdateWithoutOrdersInput, usersUncheckedUpdateWithoutOrdersInput>
-  }
-
-  export type usersUpdateWithoutOrdersInput = {
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    addresses?: addressesUpdateManyWithoutUserNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
-    expenses?: expensesUpdateManyWithoutUserNestedInput
-  }
-
-  export type usersUncheckedUpdateWithoutOrdersInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    addresses?: addressesUncheckedUpdateManyWithoutUserNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
-    expenses?: expensesUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type vouchersUpsertWithoutOrdersInput = {
-    update: XOR<vouchersUpdateWithoutOrdersInput, vouchersUncheckedUpdateWithoutOrdersInput>
-    create: XOR<vouchersCreateWithoutOrdersInput, vouchersUncheckedCreateWithoutOrdersInput>
-    where?: vouchersWhereInput
-  }
-
-  export type vouchersUpdateToOneWithWhereWithoutOrdersInput = {
-    where?: vouchersWhereInput
-    data: XOR<vouchersUpdateWithoutOrdersInput, vouchersUncheckedUpdateWithoutOrdersInput>
-  }
-
-  export type vouchersUpdateWithoutOrdersInput = {
-    code?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    discount_value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
-    max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
-    valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
-    usage_limit?: IntFieldUpdateOperationsInput | number
-    current_usage?: IntFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type vouchersUncheckedUpdateWithoutOrdersInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    code?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    discount_value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
-    max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
-    valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
-    usage_limit?: IntFieldUpdateOperationsInput | number
-    current_usage?: IntFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type order_itemsUpsertWithWhereUniqueWithoutOrderInput = {
-    where: order_itemsWhereUniqueInput
-    update: XOR<order_itemsUpdateWithoutOrderInput, order_itemsUncheckedUpdateWithoutOrderInput>
-    create: XOR<order_itemsCreateWithoutOrderInput, order_itemsUncheckedCreateWithoutOrderInput>
-  }
-
-  export type order_itemsUpdateWithWhereUniqueWithoutOrderInput = {
-    where: order_itemsWhereUniqueInput
-    data: XOR<order_itemsUpdateWithoutOrderInput, order_itemsUncheckedUpdateWithoutOrderInput>
-  }
-
-  export type order_itemsUpdateManyWithWhereWithoutOrderInput = {
-    where: order_itemsScalarWhereInput
-    data: XOR<order_itemsUpdateManyMutationInput, order_itemsUncheckedUpdateManyWithoutOrderInput>
-  }
-
-  export type paymentsUpsertWithoutOrderInput = {
-    update: XOR<paymentsUpdateWithoutOrderInput, paymentsUncheckedUpdateWithoutOrderInput>
-    create: XOR<paymentsCreateWithoutOrderInput, paymentsUncheckedCreateWithoutOrderInput>
-    where?: paymentsWhereInput
-  }
-
-  export type paymentsUpdateToOneWithWhereWithoutOrderInput = {
-    where?: paymentsWhereInput
-    data: XOR<paymentsUpdateWithoutOrderInput, paymentsUncheckedUpdateWithoutOrderInput>
-  }
-
-  export type paymentsUpdateWithoutOrderInput = {
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    invoice?: invoicesUpdateOneWithoutPaymentNestedInput
-  }
-
-  export type paymentsUncheckedUpdateWithoutOrderInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    invoice?: invoicesUncheckedUpdateOneWithoutPaymentNestedInput
-  }
-
-  export type feedbacksUpsertWithWhereUniqueWithoutOrderInput = {
-    where: feedbacksWhereUniqueInput
-    update: XOR<feedbacksUpdateWithoutOrderInput, feedbacksUncheckedUpdateWithoutOrderInput>
-    create: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
-  }
-
-  export type feedbacksUpdateWithWhereUniqueWithoutOrderInput = {
-    where: feedbacksWhereUniqueInput
-    data: XOR<feedbacksUpdateWithoutOrderInput, feedbacksUncheckedUpdateWithoutOrderInput>
-  }
-
-  export type feedbacksUpdateManyWithWhereWithoutOrderInput = {
-    where: feedbacksScalarWhereInput
-    data: XOR<feedbacksUpdateManyMutationInput, feedbacksUncheckedUpdateManyWithoutOrderInput>
   }
 
   export type custom_ordersUpsertWithoutOrdersInput = {
@@ -19481,43 +20727,209 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type feedbacksUpsertWithoutOrderInput = {
+    update: XOR<feedbacksUpdateWithoutOrderInput, feedbacksUncheckedUpdateWithoutOrderInput>
+    create: XOR<feedbacksCreateWithoutOrderInput, feedbacksUncheckedCreateWithoutOrderInput>
+    where?: feedbacksWhereInput
+  }
+
+  export type feedbacksUpdateToOneWithWhereWithoutOrderInput = {
+    where?: feedbacksWhereInput
+    data: XOR<feedbacksUpdateWithoutOrderInput, feedbacksUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type feedbacksUpdateWithoutOrderInput = {
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    submitted_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: usersUpdateOneRequiredWithoutFeedbacksNestedInput
+  }
+
+  export type feedbacksUncheckedUpdateWithoutOrderInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customer_id?: IntFieldUpdateOperationsInput | number
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    submitted_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type order_itemsUpsertWithWhereUniqueWithoutOrderInput = {
+    where: order_itemsWhereUniqueInput
+    update: XOR<order_itemsUpdateWithoutOrderInput, order_itemsUncheckedUpdateWithoutOrderInput>
+    create: XOR<order_itemsCreateWithoutOrderInput, order_itemsUncheckedCreateWithoutOrderInput>
+  }
+
+  export type order_itemsUpdateWithWhereUniqueWithoutOrderInput = {
+    where: order_itemsWhereUniqueInput
+    data: XOR<order_itemsUpdateWithoutOrderInput, order_itemsUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type order_itemsUpdateManyWithWhereWithoutOrderInput = {
+    where: order_itemsScalarWhereInput
+    data: XOR<order_itemsUpdateManyMutationInput, order_itemsUncheckedUpdateManyWithoutOrderInput>
+  }
+
+  export type usersUpsertWithoutOrdersInput = {
+    update: XOR<usersUpdateWithoutOrdersInput, usersUncheckedUpdateWithoutOrdersInput>
+    create: XOR<usersCreateWithoutOrdersInput, usersUncheckedCreateWithoutOrdersInput>
+    where?: usersWhereInput
+  }
+
+  export type usersUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: usersWhereInput
+    data: XOR<usersUpdateWithoutOrdersInput, usersUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type usersUpdateWithoutOrdersInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    addresses?: addressesUpdateManyWithoutUserNestedInput
+    expenses?: expensesUpdateManyWithoutUserNestedInput
+    feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type usersUncheckedUpdateWithoutOrdersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    addresses?: addressesUncheckedUpdateManyWithoutUserNestedInput
+    expenses?: expensesUncheckedUpdateManyWithoutUserNestedInput
+    feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type vouchersUpsertWithoutOrdersInput = {
+    update: XOR<vouchersUpdateWithoutOrdersInput, vouchersUncheckedUpdateWithoutOrdersInput>
+    create: XOR<vouchersCreateWithoutOrdersInput, vouchersUncheckedCreateWithoutOrdersInput>
+    where?: vouchersWhereInput
+  }
+
+  export type vouchersUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: vouchersWhereInput
+    data: XOR<vouchersUpdateWithoutOrdersInput, vouchersUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type vouchersUpdateWithoutOrdersInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    discount_value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
+    max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
+    usage_limit?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_usage?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type vouchersUncheckedUpdateWithoutOrdersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    discount_value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_type?: EnumVoucherTypeFieldUpdateOperationsInput | $Enums.VoucherType
+    max_discount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    min_purchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    valid_until?: DateTimeFieldUpdateOperationsInput | Date | string
+    usage_limit?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_usage?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    valid_from?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type paymentsUpsertWithoutOrderInput = {
+    update: XOR<paymentsUpdateWithoutOrderInput, paymentsUncheckedUpdateWithoutOrderInput>
+    create: XOR<paymentsCreateWithoutOrderInput, paymentsUncheckedCreateWithoutOrderInput>
+    where?: paymentsWhereInput
+  }
+
+  export type paymentsUpdateToOneWithWhereWithoutOrderInput = {
+    where?: paymentsWhereInput
+    data: XOR<paymentsUpdateWithoutOrderInput, paymentsUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type paymentsUpdateWithoutOrderInput = {
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    payment_method?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
+    invoice?: invoicesUpdateOneWithoutPaymentNestedInput
+  }
+
+  export type paymentsUncheckedUpdateWithoutOrderInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    payment_method?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
+    invoice?: invoicesUncheckedUpdateOneWithoutPaymentNestedInput
+  }
+
   export type ordersCreateWithoutOrder_itemsInput = {
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksCreateNestedOneWithoutOrderInput
     customer: usersCreateNestedOneWithoutOrdersInput
     voucher?: vouchersCreateNestedOneWithoutOrdersInput
     payment?: paymentsCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
   }
 
   export type ordersUncheckedCreateWithoutOrder_itemsInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     voucher_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
-    payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutOrderInput
     custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksUncheckedCreateNestedOneWithoutOrderInput
+    payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
   }
 
   export type ordersCreateOrConnectWithoutOrder_itemsInput = {
@@ -19531,9 +20943,9 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
-    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    image_url?: string | null
   }
 
   export type productsUncheckedCreateWithoutOrder_itemsInput = {
@@ -19543,9 +20955,9 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
     stock: number
     category?: string | null
-    image_url?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    image_url?: string | null
   }
 
   export type productsCreateOrConnectWithoutOrder_itemsInput = {
@@ -19566,41 +20978,41 @@ export namespace Prisma {
 
   export type ordersUpdateWithoutOrder_itemsInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUpdateOneWithoutOrderNestedInput
     customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
     voucher?: vouchersUpdateOneWithoutOrdersNestedInput
     payment?: paymentsUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
   }
 
   export type ordersUncheckedUpdateWithoutOrder_itemsInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutOrderNestedInput
     custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUncheckedUpdateOneWithoutOrderNestedInput
+    payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
   }
 
   export type productsUpsertWithoutOrder_itemsInput = {
@@ -19620,9 +21032,9 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    image_url?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type productsUncheckedUpdateWithoutOrder_itemsInput = {
@@ -19632,7 +21044,107 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     stock?: IntFieldUpdateOperationsInput | number
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     image_url?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type materialsCreateWithoutRaw_materialInput = {
+    name: string
+    unit: $Enums.UnitEnum
+    barcode: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    defaultStock: Decimal | DecimalJsLike | number | string
+  }
+
+  export type materialsUncheckedCreateWithoutRaw_materialInput = {
+    id?: number
+    name: string
+    unit: $Enums.UnitEnum
+    barcode: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    defaultStock: Decimal | DecimalJsLike | number | string
+  }
+
+  export type materialsCreateOrConnectWithoutRaw_materialInput = {
+    where: materialsWhereUniqueInput
+    create: XOR<materialsCreateWithoutRaw_materialInput, materialsUncheckedCreateWithoutRaw_materialInput>
+  }
+
+  export type materialsUpsertWithoutRaw_materialInput = {
+    update: XOR<materialsUpdateWithoutRaw_materialInput, materialsUncheckedUpdateWithoutRaw_materialInput>
+    create: XOR<materialsCreateWithoutRaw_materialInput, materialsUncheckedCreateWithoutRaw_materialInput>
+    where?: materialsWhereInput
+  }
+
+  export type materialsUpdateToOneWithWhereWithoutRaw_materialInput = {
+    where?: materialsWhereInput
+    data: XOR<materialsUpdateWithoutRaw_materialInput, materialsUncheckedUpdateWithoutRaw_materialInput>
+  }
+
+  export type materialsUpdateWithoutRaw_materialInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    unit?: EnumUnitEnumFieldUpdateOperationsInput | $Enums.UnitEnum
+    barcode?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultStock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+  }
+
+  export type materialsUncheckedUpdateWithoutRaw_materialInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    unit?: EnumUnitEnumFieldUpdateOperationsInput | $Enums.UnitEnum
+    barcode?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultStock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+  }
+
+  export type raw_materialsCreateWithoutMaterialInput = {
+    stock: Decimal | DecimalJsLike | number | string
+    reorder_level?: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type raw_materialsUncheckedCreateWithoutMaterialInput = {
+    id?: number
+    stock: Decimal | DecimalJsLike | number | string
+    reorder_level?: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type raw_materialsCreateOrConnectWithoutMaterialInput = {
+    where: raw_materialsWhereUniqueInput
+    create: XOR<raw_materialsCreateWithoutMaterialInput, raw_materialsUncheckedCreateWithoutMaterialInput>
+  }
+
+  export type raw_materialsUpsertWithoutMaterialInput = {
+    update: XOR<raw_materialsUpdateWithoutMaterialInput, raw_materialsUncheckedUpdateWithoutMaterialInput>
+    create: XOR<raw_materialsCreateWithoutMaterialInput, raw_materialsUncheckedCreateWithoutMaterialInput>
+    where?: raw_materialsWhereInput
+  }
+
+  export type raw_materialsUpdateToOneWithWhereWithoutMaterialInput = {
+    where?: raw_materialsWhereInput
+    data: XOR<raw_materialsUpdateWithoutMaterialInput, raw_materialsUncheckedUpdateWithoutMaterialInput>
+  }
+
+  export type raw_materialsUpdateWithoutMaterialInput = {
+    stock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reorder_level?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type raw_materialsUncheckedUpdateWithoutMaterialInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    stock?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    reorder_level?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19645,9 +21157,9 @@ export namespace Prisma {
     role?: $Enums.Role
     created_at?: Date | string
     updated_at?: Date | string
-    orders?: ordersCreateNestedManyWithoutCustomerInput
-    feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
     expenses?: expensesCreateNestedManyWithoutUserInput
+    feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
+    orders?: ordersCreateNestedManyWithoutCustomerInput
   }
 
   export type usersUncheckedCreateWithoutAddressesInput = {
@@ -19659,9 +21171,9 @@ export namespace Prisma {
     role?: $Enums.Role
     created_at?: Date | string
     updated_at?: Date | string
-    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
     expenses?: expensesUncheckedCreateNestedManyWithoutUserInput
+    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
+    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type usersCreateOrConnectWithoutAddressesInput = {
@@ -19688,9 +21200,9 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    orders?: ordersUpdateManyWithoutCustomerNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
     expenses?: expensesUpdateManyWithoutUserNestedInput
+    feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
+    orders?: ordersUpdateManyWithoutCustomerNestedInput
   }
 
   export type usersUncheckedUpdateWithoutAddressesInput = {
@@ -19702,48 +21214,48 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
     expenses?: expensesUncheckedUpdateManyWithoutUserNestedInput
+    feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
+    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type ordersCreateWithoutVoucherInput = {
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
-    customer: usersCreateNestedOneWithoutOrdersInput
-    order_items?: order_itemsCreateNestedManyWithoutOrderInput
-    payment?: paymentsCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksCreateNestedManyWithoutOrderInput
     custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsCreateNestedManyWithoutOrderInput
+    customer: usersCreateNestedOneWithoutOrdersInput
+    payment?: paymentsCreateNestedOneWithoutOrderInput
   }
 
   export type ordersUncheckedCreateWithoutVoucherInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksUncheckedCreateNestedOneWithoutOrderInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
     payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
   }
 
   export type ordersCreateOrConnectWithoutVoucherInput = {
@@ -19772,50 +21284,6 @@ export namespace Prisma {
     data: XOR<ordersUpdateManyMutationInput, ordersUncheckedUpdateManyWithoutVoucherInput>
   }
 
-  export type ordersCreateWithoutPaymentInput = {
-    status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
-    total_price: Decimal | DecimalJsLike | number | string
-    shipping_address: JsonNullValueInput | InputJsonValue
-    shipping_method: string
-    tracking_number?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    customer: usersCreateNestedOneWithoutOrdersInput
-    voucher?: vouchersCreateNestedOneWithoutOrdersInput
-    order_items?: order_itemsCreateNestedManyWithoutOrderInput
-    feedbacks?: feedbacksCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
-  }
-
-  export type ordersUncheckedCreateWithoutPaymentInput = {
-    id?: number
-    customer_id: number
-    status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
-    total_price: Decimal | DecimalJsLike | number | string
-    shipping_address: JsonNullValueInput | InputJsonValue
-    shipping_method: string
-    tracking_number?: string | null
-    voucher_id?: number | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutOrderInput
-    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
-  }
-
-  export type ordersCreateOrConnectWithoutPaymentInput = {
-    where: ordersWhereUniqueInput
-    create: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
-  }
-
   export type invoicesCreateWithoutPaymentInput = {
     generated_date?: Date | string
     file_url: string
@@ -19832,54 +21300,48 @@ export namespace Prisma {
     create: XOR<invoicesCreateWithoutPaymentInput, invoicesUncheckedCreateWithoutPaymentInput>
   }
 
-  export type ordersUpsertWithoutPaymentInput = {
-    update: XOR<ordersUpdateWithoutPaymentInput, ordersUncheckedUpdateWithoutPaymentInput>
+  export type ordersCreateWithoutPaymentInput = {
+    status?: $Enums.OrderStatus
+    total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
+    tracking_number?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsCreateNestedManyWithoutOrderInput
+    customer: usersCreateNestedOneWithoutOrdersInput
+    voucher?: vouchersCreateNestedOneWithoutOrdersInput
+  }
+
+  export type ordersUncheckedCreateWithoutPaymentInput = {
+    id?: number
+    customer_id: number
+    status?: $Enums.OrderStatus
+    total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
+    tracking_number?: string | null
+    voucher_id?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
+    feedbacks?: feedbacksUncheckedCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type ordersCreateOrConnectWithoutPaymentInput = {
+    where: ordersWhereUniqueInput
     create: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
-    where?: ordersWhereInput
-  }
-
-  export type ordersUpdateToOneWithWhereWithoutPaymentInput = {
-    where?: ordersWhereInput
-    data: XOR<ordersUpdateWithoutPaymentInput, ordersUncheckedUpdateWithoutPaymentInput>
-  }
-
-  export type ordersUpdateWithoutPaymentInput = {
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_address?: JsonNullValueInput | InputJsonValue
-    shipping_method?: StringFieldUpdateOperationsInput | string
-    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
-    voucher?: vouchersUpdateOneWithoutOrdersNestedInput
-    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
-  }
-
-  export type ordersUncheckedUpdateWithoutPaymentInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    customer_id?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_address?: JsonNullValueInput | InputJsonValue
-    shipping_method?: StringFieldUpdateOperationsInput | string
-    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
-    voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
   }
 
   export type invoicesUpsertWithoutPaymentInput = {
@@ -19904,37 +21366,87 @@ export namespace Prisma {
     file_url?: StringFieldUpdateOperationsInput | string
   }
 
+  export type ordersUpsertWithoutPaymentInput = {
+    update: XOR<ordersUpdateWithoutPaymentInput, ordersUncheckedUpdateWithoutPaymentInput>
+    create: XOR<ordersCreateWithoutPaymentInput, ordersUncheckedCreateWithoutPaymentInput>
+    where?: ordersWhereInput
+  }
+
+  export type ordersUpdateToOneWithWhereWithoutPaymentInput = {
+    where?: ordersWhereInput
+    data: XOR<ordersUpdateWithoutPaymentInput, ordersUncheckedUpdateWithoutPaymentInput>
+  }
+
+  export type ordersUpdateWithoutPaymentInput = {
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
+    customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
+    voucher?: vouchersUpdateOneWithoutOrdersNestedInput
+  }
+
+  export type ordersUncheckedUpdateWithoutPaymentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customer_id?: IntFieldUpdateOperationsInput | number
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUncheckedUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
   export type paymentsCreateWithoutInvoiceInput = {
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
+    bank?: string | null
     order: ordersCreateNestedOneWithoutPaymentInput
   }
 
   export type paymentsUncheckedCreateWithoutInvoiceInput = {
     id?: number
     order_id: number
-    status?: $Enums.PaymentStatus
     amount: Decimal | DecimalJsLike | number | string
     payment_method?: string | null
-    payment_gateway?: string
-    gateway_transaction_id?: string | null
-    payment_code?: string | null
-    bank?: string | null
-    payment_url?: string | null
+    status?: $Enums.PaymentStatus
     created_at?: Date | string
-    paid_at?: Date | string | null
     expires_at: Date | string
+    gateway_transaction_id?: string | null
+    paid_at?: Date | string | null
+    payment_code?: string | null
+    payment_gateway?: string
+    payment_url?: string | null
     updated_at?: Date | string
+    bank?: string | null
   }
 
   export type paymentsCreateOrConnectWithoutInvoiceInput = {
@@ -19954,36 +21466,36 @@ export namespace Prisma {
   }
 
   export type paymentsUpdateWithoutInvoiceInput = {
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
     order?: ordersUpdateOneRequiredWithoutPaymentNestedInput
   }
 
   export type paymentsUncheckedUpdateWithoutInvoiceInput = {
     id?: IntFieldUpdateOperationsInput | number
     order_id?: IntFieldUpdateOperationsInput | number
-    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     payment_method?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_gateway?: StringFieldUpdateOperationsInput | string
-    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank?: NullableStringFieldUpdateOperationsInput | string | null
-    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    gateway_transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    paid_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    payment_code?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_gateway?: StringFieldUpdateOperationsInput | string
+    payment_url?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bank?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type usersCreateWithoutFeedbacksInput = {
@@ -19995,8 +21507,8 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     addresses?: addressesCreateNestedManyWithoutUserInput
-    orders?: ordersCreateNestedManyWithoutCustomerInput
     expenses?: expensesCreateNestedManyWithoutUserInput
+    orders?: ordersCreateNestedManyWithoutCustomerInput
   }
 
   export type usersUncheckedCreateWithoutFeedbacksInput = {
@@ -20009,8 +21521,8 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     addresses?: addressesUncheckedCreateNestedManyWithoutUserInput
-    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
     expenses?: expensesUncheckedCreateNestedManyWithoutUserInput
+    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type usersCreateOrConnectWithoutFeedbacksInput = {
@@ -20020,41 +21532,41 @@ export namespace Prisma {
 
   export type ordersCreateWithoutFeedbacksInput = {
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
+    order_items?: order_itemsCreateNestedManyWithoutOrderInput
     customer: usersCreateNestedOneWithoutOrdersInput
     voucher?: vouchersCreateNestedOneWithoutOrdersInput
-    order_items?: order_itemsCreateNestedManyWithoutOrderInput
     payment?: paymentsCreateNestedOneWithoutOrderInput
-    custom_order?: custom_ordersCreateNestedOneWithoutOrdersInput
   }
 
   export type ordersUncheckedCreateWithoutFeedbacksInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     voucher_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
+    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
     payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
-    custom_order?: custom_ordersUncheckedCreateNestedOneWithoutOrdersInput
   }
 
   export type ordersCreateOrConnectWithoutFeedbacksInput = {
@@ -20082,8 +21594,8 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     addresses?: addressesUpdateManyWithoutUserNestedInput
-    orders?: ordersUpdateManyWithoutCustomerNestedInput
     expenses?: expensesUpdateManyWithoutUserNestedInput
+    orders?: ordersUpdateManyWithoutCustomerNestedInput
   }
 
   export type usersUncheckedUpdateWithoutFeedbacksInput = {
@@ -20096,8 +21608,8 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     addresses?: addressesUncheckedUpdateManyWithoutUserNestedInput
-    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
     expenses?: expensesUncheckedUpdateManyWithoutUserNestedInput
+    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type ordersUpsertWithoutFeedbacksInput = {
@@ -20113,41 +21625,41 @@ export namespace Prisma {
 
   export type ordersUpdateWithoutFeedbacksInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
     customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
     voucher?: vouchersUpdateOneWithoutOrdersNestedInput
-    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
     payment?: paymentsUpdateOneWithoutOrderNestedInput
-    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
   }
 
   export type ordersUncheckedUpdateWithoutFeedbacksInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
     payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
-    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
   }
 
   export type usersCreateWithoutExpensesInput = {
@@ -20159,8 +21671,8 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     addresses?: addressesCreateNestedManyWithoutUserInput
-    orders?: ordersCreateNestedManyWithoutCustomerInput
     feedbacks?: feedbacksCreateNestedManyWithoutCustomerInput
+    orders?: ordersCreateNestedManyWithoutCustomerInput
   }
 
   export type usersUncheckedCreateWithoutExpensesInput = {
@@ -20173,8 +21685,8 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     addresses?: addressesUncheckedCreateNestedManyWithoutUserInput
-    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
     feedbacks?: feedbacksUncheckedCreateNestedManyWithoutCustomerInput
+    orders?: ordersUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type usersCreateOrConnectWithoutExpensesInput = {
@@ -20202,8 +21714,8 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     addresses?: addressesUpdateManyWithoutUserNestedInput
-    orders?: ordersUpdateManyWithoutCustomerNestedInput
     feedbacks?: feedbacksUpdateManyWithoutCustomerNestedInput
+    orders?: ordersUpdateManyWithoutCustomerNestedInput
   }
 
   export type usersUncheckedUpdateWithoutExpensesInput = {
@@ -20216,47 +21728,47 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     addresses?: addressesUncheckedUpdateManyWithoutUserNestedInput
-    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
     feedbacks?: feedbacksUncheckedUpdateManyWithoutCustomerNestedInput
+    orders?: ordersUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type ordersCreateWithoutCustom_orderInput = {
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    feedbacks?: feedbacksCreateNestedOneWithoutOrderInput
+    order_items?: order_itemsCreateNestedManyWithoutOrderInput
     customer: usersCreateNestedOneWithoutOrdersInput
     voucher?: vouchersCreateNestedOneWithoutOrdersInput
-    order_items?: order_itemsCreateNestedManyWithoutOrderInput
     payment?: paymentsCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksCreateNestedManyWithoutOrderInput
   }
 
   export type ordersUncheckedCreateWithoutCustom_orderInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     voucher_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
+    feedbacks?: feedbacksUncheckedCreateNestedOneWithoutOrderInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutOrderInput
     payment?: paymentsUncheckedCreateNestedOneWithoutOrderInput
-    feedbacks?: feedbacksUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type ordersCreateOrConnectWithoutCustom_orderInput = {
@@ -20277,41 +21789,41 @@ export namespace Prisma {
 
   export type ordersUpdateWithoutCustom_orderInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    feedbacks?: feedbacksUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
     customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
     voucher?: vouchersUpdateOneWithoutOrdersNestedInput
-    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
     payment?: paymentsUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutOrderNestedInput
   }
 
   export type ordersUncheckedUpdateWithoutCustom_orderInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    feedbacks?: feedbacksUncheckedUpdateOneWithoutOrderNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
     payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type addressesCreateManyUserInput = {
@@ -20326,20 +21838,12 @@ export namespace Prisma {
     is_default?: boolean
   }
 
-  export type ordersCreateManyCustomerInput = {
+  export type expensesCreateManyUserInput = {
     id?: number
-    status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
-    total_price: Decimal | DecimalJsLike | number | string
-    shipping_address: JsonNullValueInput | InputJsonValue
-    shipping_method: string
-    tracking_number?: string | null
-    voucher_id?: number | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    expense_type?: string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    expense_date?: Date | string | null
+    notes?: string | null
   }
 
   export type feedbacksCreateManyCustomerInput = {
@@ -20350,12 +21854,20 @@ export namespace Prisma {
     submitted_at?: Date | string
   }
 
-  export type expensesCreateManyUserInput = {
+  export type ordersCreateManyCustomerInput = {
     id?: number
-    expense_type?: string | null
-    amount?: Decimal | DecimalJsLike | number | string | null
-    expense_date?: Date | string | null
-    notes?: string | null
+    status?: $Enums.OrderStatus
+    total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
+    shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
+    shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
+    tracking_number?: string | null
+    voucher_id?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type addressesUpdateWithoutUserInput = {
@@ -20393,59 +21905,27 @@ export namespace Prisma {
     is_default?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type ordersUpdateWithoutCustomerInput = {
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_address?: JsonNullValueInput | InputJsonValue
-    shipping_method?: StringFieldUpdateOperationsInput | string
-    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    voucher?: vouchersUpdateOneWithoutOrdersNestedInput
-    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
-    payment?: paymentsUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+  export type expensesUpdateWithoutUserInput = {
+    expense_type?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type ordersUncheckedUpdateWithoutCustomerInput = {
+  export type expensesUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_address?: JsonNullValueInput | InputJsonValue
-    shipping_method?: StringFieldUpdateOperationsInput | string
-    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
-    voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
-    payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
+    expense_type?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type ordersUncheckedUpdateManyWithoutCustomerInput = {
+  export type expensesUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_address?: JsonNullValueInput | InputJsonValue
-    shipping_method?: StringFieldUpdateOperationsInput | string
-    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
-    voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expense_type?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type feedbacksUpdateWithoutCustomerInput = {
@@ -20471,27 +21951,59 @@ export namespace Prisma {
     submitted_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type expensesUpdateWithoutUserInput = {
-    expense_type?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  export type ordersUpdateWithoutCustomerInput = {
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
+    voucher?: vouchersUpdateOneWithoutOrdersNestedInput
+    payment?: paymentsUpdateOneWithoutOrderNestedInput
   }
 
-  export type expensesUncheckedUpdateWithoutUserInput = {
+  export type ordersUncheckedUpdateWithoutCustomerInput = {
     id?: IntFieldUpdateOperationsInput | number
-    expense_type?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUncheckedUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
+    payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
   }
 
-  export type expensesUncheckedUpdateManyWithoutUserInput = {
+  export type ordersUncheckedUpdateManyWithoutCustomerInput = {
     id?: IntFieldUpdateOperationsInput | number
-    expense_type?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    expense_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
+    voucher_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type order_itemsCreateManyProductInput = {
@@ -20528,14 +22040,6 @@ export namespace Prisma {
     price: Decimal | DecimalJsLike | number | string
   }
 
-  export type feedbacksCreateManyOrderInput = {
-    id?: number
-    customer_id: number
-    message?: string | null
-    rating: number
-    submitted_at?: Date | string
-  }
-
   export type order_itemsUpdateWithoutOrderInput = {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -20556,40 +22060,17 @@ export namespace Prisma {
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
-  export type feedbacksUpdateWithoutOrderInput = {
-    message?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: IntFieldUpdateOperationsInput | number
-    submitted_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    customer?: usersUpdateOneRequiredWithoutFeedbacksNestedInput
-  }
-
-  export type feedbacksUncheckedUpdateWithoutOrderInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    customer_id?: IntFieldUpdateOperationsInput | number
-    message?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: IntFieldUpdateOperationsInput | number
-    submitted_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type feedbacksUncheckedUpdateManyWithoutOrderInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    customer_id?: IntFieldUpdateOperationsInput | number
-    message?: NullableStringFieldUpdateOperationsInput | string | null
-    rating?: IntFieldUpdateOperationsInput | number
-    submitted_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type ordersCreateManyVoucherInput = {
     id?: number
     customer_id: number
     status?: $Enums.OrderStatus
-    order_date?: Date | string
-    sub_total: Decimal | DecimalJsLike | number | string
-    shipping_cost: Decimal | DecimalJsLike | number | string
-    discount_amount?: Decimal | DecimalJsLike | number | string
     total_price: Decimal | DecimalJsLike | number | string
+    discount_amount?: Decimal | DecimalJsLike | number | string
+    order_date?: Date | string
     shipping_address: JsonNullValueInput | InputJsonValue
+    shipping_cost: Decimal | DecimalJsLike | number | string
     shipping_method: string
+    sub_total: Decimal | DecimalJsLike | number | string
     tracking_number?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -20597,54 +22078,54 @@ export namespace Prisma {
 
   export type ordersUpdateWithoutVoucherInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
-    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
-    payment?: paymentsUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUpdateManyWithoutOrderNestedInput
     custom_order?: custom_ordersUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUpdateOneWithoutOrderNestedInput
+    order_items?: order_itemsUpdateManyWithoutOrderNestedInput
+    customer?: usersUpdateOneRequiredWithoutOrdersNestedInput
+    payment?: paymentsUpdateOneWithoutOrderNestedInput
   }
 
   export type ordersUncheckedUpdateWithoutVoucherInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
+    feedbacks?: feedbacksUncheckedUpdateOneWithoutOrderNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutOrderNestedInput
     payment?: paymentsUncheckedUpdateOneWithoutOrderNestedInput
-    feedbacks?: feedbacksUncheckedUpdateManyWithoutOrderNestedInput
-    custom_order?: custom_ordersUncheckedUpdateOneWithoutOrdersNestedInput
   }
 
   export type ordersUncheckedUpdateManyWithoutVoucherInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total_price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    discount_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    order_date?: DateTimeFieldUpdateOperationsInput | Date | string
     shipping_address?: JsonNullValueInput | InputJsonValue
+    shipping_cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_method?: StringFieldUpdateOperationsInput | string
+    sub_total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tracking_number?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
