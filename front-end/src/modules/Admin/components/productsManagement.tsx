@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast"; // 1. Impor toast
 
 // Mengimpor komponen UI dari shadcn/ui
 import {
@@ -30,7 +32,6 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 // Mengimpor ikon dari @tabler/icons-react
@@ -42,10 +43,10 @@ import {
   IconAlertTriangle,
   IconServerOff,
 } from "@tabler/icons-react";
+import { LoaderCircle } from "lucide-react";
 
-// Komponen Form terpisah (seperti yang Anda miliki)
+// Komponen dan tipe data
 import { ProductFormFields } from "./ProductFormFields";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreateProductPayload,
   Product,
@@ -57,9 +58,8 @@ import {
   getProducts,
   updateProduct,
 } from "@/services/product.service";
-import { LoaderCircle } from "lucide-react";
 
-// Komponen Skeleton untuk tabel
+// Komponen Skeleton untuk tabel (tidak berubah)
 const TableSkeleton = () => (
   <TableBody>
     {Array.from({ length: 8 }).map((_, index) => (
@@ -90,108 +90,120 @@ const TableSkeleton = () => (
   </TableBody>
 );
 
+// 2. Enum untuk mengelola dialog secara terpusat
+enum DialogType {
+  None,
+  Form,
+  DeleteConfirmation,
+}
+
 const ProductsPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // State untuk dialog
-  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [formMode, setFormMode] = useState<"create" | "update">("create");
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  // 3. State dialog yang lebih efisien
+  const [activeDialog, setActiveDialog] = useState<DialogType>(DialogType.None);
+  const [activeProduct, setActiveProduct] = useState<Product | null>(null);
 
-  // 1. Fetching data produk dengan useQuery
+  const queryKey = ["adminProducts"];
+
   const {
     data: products = [],
     isLoading,
     isError,
     error,
   } = useQuery<Product[]>({
-    queryKey: ["adminProducts"],
+    queryKey,
     queryFn: getProducts,
   });
 
-  // 2. Mutation untuk Create & Update produk
+  // 4. Mutasi Create & Update dengan notifikasi toast
   const { mutate: saveProduct, isPending: isSaving } = useMutation({
     mutationFn: (data: {
       id?: number;
       payload: CreateProductPayload | UpdateProductPayload;
     }) => {
-      if (data.id) {
-        return updateProduct(data.id, data.payload as UpdateProductPayload);
-      }
-      return createProduct(data.payload as CreateProductPayload);
+      return data.id
+        ? updateProduct(data.id, data.payload as UpdateProductPayload)
+        : createProduct(data.payload as CreateProductPayload);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      setIsFormOpen(false);
-      setEditingProduct(null);
+    onSuccess: (_, variables) => {
+      const action = variables.id ? "diperbarui" : "ditambahkan";
+      toast.success(`Produk berhasil ${action}!`);
+      queryClient.invalidateQueries({ queryKey });
+      setActiveDialog(DialogType.None); // Menutup dialog setelah sukses
+    },
+    onError: (err, variables) => {
+      const action = variables.id ? "memperbarui" : "menambahkan";
+      toast.error(`Gagal ${action} produk: ${(err as Error).message}`);
     },
   });
 
-  // 3. Mutation untuk Delete produk
+  // 5. Mutasi Delete dengan notifikasi toast
   const { mutate: removeProduct, isPending: isDeleting } = useMutation({
     mutationFn: (productId: number) => deleteProduct(productId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      setProductToDelete(null);
+      toast.success("Produk berhasil dihapus.");
+      queryClient.invalidateQueries({ queryKey });
+      setActiveDialog(DialogType.None); // Menutup dialog setelah sukses
     },
     onError: (err) => {
-      alert(`Gagal menghapus produk: ${(err as Error).message}`);
-      setProductToDelete(null);
+      toast.error(`Gagal menghapus produk: ${(err as Error).message}`);
     },
   });
 
   // --- LOGIKA UTAMA ---
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value.toLowerCase());
-  };
 
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
-    return products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchQuery) ||
-        product.id.toString().toLowerCase().includes(searchQuery)
-    );
-  }, [products, searchQuery]);
+  const filteredProducts = useMemo(
+    () =>
+      products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.id
+            .toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      ),
+    [products, searchQuery]
+  );
 
   const openCreateForm = () => {
-    setEditingProduct(null);
-    setFormMode("create");
-    setIsFormOpen(true);
+    setActiveProduct(null);
+    setActiveDialog(DialogType.Form);
   };
 
   const openEditForm = (product: Product) => {
-    setEditingProduct(product);
-    setFormMode("update");
-    setIsFormOpen(true);
+    setActiveProduct(product);
+    setActiveDialog(DialogType.Form);
+  };
+
+  const openDeleteDialog = (product: Product) => {
+    setActiveProduct(product);
+    setActiveDialog(DialogType.DeleteConfirmation);
   };
 
   const handleFormSubmit = (
     formData: CreateProductPayload | UpdateProductPayload
   ) => {
-    if (formMode === "update" && editingProduct) {
-      saveProduct({ id: editingProduct.id, payload: formData });
-    } else {
-      saveProduct({ payload: formData });
-    }
+    saveProduct({ id: activeProduct?.id, payload: formData });
   };
 
   const confirmDeleteProduct = () => {
-    if (!productToDelete) return;
-    removeProduct(productToDelete.id);
+    if (activeProduct) {
+      removeProduct(activeProduct.id);
+    }
   };
 
   const totalProductValue = useMemo(() => {
-    if (!filteredProducts) return 0;
-    return filteredProducts.reduce((sum, product) => {
+    if (!products) return 0;
+    return products.reduce((sum, product) => {
       return sum + (product.price || 0) * (product.stock || 0);
     }, 0);
-  }, [filteredProducts]);
+  }, [products]);
 
   return (
     <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
+      {/* Header dan Breadcrumb */}
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
           Manajemen Produk
@@ -209,6 +221,7 @@ const ProductsPage: React.FC = () => {
         </Breadcrumb>
       </div>
 
+      {/* Kontrol Pencarian dan Tambah */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
         <div className="relative flex items-center w-full md:max-w-sm">
           <IconSearch className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500" />
@@ -216,30 +229,18 @@ const ProductsPage: React.FC = () => {
             type="search"
             placeholder="Cari produk (ID, Nama)..."
             value={searchQuery}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
             aria-label="Cari Produk"
           />
         </div>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openCreateForm} className="w-full md:w-auto">
-              <IconPlus size={18} className="mr-2" />
-              Tambah Produk
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-xl">
-            <ProductFormFields
-              mode={formMode}
-              initialData={editingProduct}
-              onSubmit={handleFormSubmit}
-              onCancel={() => setIsFormOpen(false)}
-              isSaving={isSaving}
-            />
-          </DialogContent>
-        </Dialog>
+        <Button onClick={openCreateForm} className="w-full md:w-auto">
+          <IconPlus size={18} className="mr-2" />
+          Tambah Produk
+        </Button>
       </div>
 
+      {/* Tabel Produk */}
       <ScrollArea className="w-full border rounded-md">
         <div className="h-[calc(100vh-420px)]">
           <Table>
@@ -313,7 +314,7 @@ const ProductsPage: React.FC = () => {
                             variant="destructive"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => setProductToDelete(product)}
+                            onClick={() => openDeleteDialog(product)}
                             title="Hapus"
                           >
                             <IconTrash size={16} />
@@ -337,6 +338,8 @@ const ProductsPage: React.FC = () => {
         </div>
         <ScrollBar orientation="vertical" />
       </ScrollArea>
+
+      {/* Total Nilai Produk */}
       <div className="flex justify-end font-semibold p-4 border-t">
         Total Estimasi Nilai Produk:{" "}
         {new Intl.NumberFormat("id-ID", {
@@ -346,37 +349,52 @@ const ProductsPage: React.FC = () => {
         }).format(totalProductValue)}
       </div>
 
+      {/* 6. Dialog Terpusat */}
       <Dialog
-        open={!!productToDelete}
-        onOpenChange={() => setProductToDelete(null)}
+        open={activeDialog !== DialogType.None}
+        onOpenChange={() => setActiveDialog(DialogType.None)}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <IconAlertTriangle className="text-red-500" />
-              Konfirmasi Hapus
-            </DialogTitle>
-            <DialogDescription>
-              Anda yakin ingin menghapus produk{" "}
-              <strong>"{productToDelete?.name}"</strong>? Tindakan ini tidak
-              dapat dibatalkan.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Batal</Button>
-            </DialogClose>
-            <Button
-              variant="destructive"
-              onClick={confirmDeleteProduct}
-              disabled={isDeleting}
-            >
-              {isDeleting && (
-                <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
-              )}
-              Ya, Hapus
-            </Button>
-          </DialogFooter>
+        <DialogContent className="sm:max-w-xl">
+          {activeDialog === DialogType.Form && (
+            <ProductFormFields
+              mode={activeProduct ? "update" : "create"}
+              initialData={activeProduct}
+              onSubmit={handleFormSubmit}
+              onCancel={() => setActiveDialog(DialogType.None)}
+              isSaving={isSaving}
+            />
+          )}
+
+          {activeDialog === DialogType.DeleteConfirmation && activeProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <IconAlertTriangle className="text-red-500" />
+                  Konfirmasi Hapus
+                </DialogTitle>
+                <DialogDescription>
+                  Anda yakin ingin menghapus produk{" "}
+                  <strong>"{activeProduct.name}"</strong>? Tindakan ini tidak
+                  dapat dibatalkan.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Batal</Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  onClick={confirmDeleteProduct}
+                  disabled={isDeleting}
+                >
+                  {isDeleting && (
+                    <LoaderCircle className="animate-spin mr-2 h-4 w-4" />
+                  )}
+                  Ya, Hapus
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

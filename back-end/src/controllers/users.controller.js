@@ -52,9 +52,8 @@ export const updateUser = async (req, res, next) => {
 export const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await UserService.deleteUser(id);
-    // Mengirim respons 204 No Content yang menandakan sukses tanpa body
-    res200("Pengguna berhasil dihapus", res);
+    const result = await UserService.deleteUser(id);
+    res200("Pengguna berhasil dihapus", result, res);
   } catch (error) {
     next(error);
   }

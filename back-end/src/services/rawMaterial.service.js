@@ -75,9 +75,7 @@ export const updateRawMaterial = async (id, data) => {
   const updatedRaw = await prisma.raw_materials.update({
     where: { id },
     data: {
-      stock: {
-        increment: data.stock,
-      },
+      stock: data.stock,
       reorder_level: data.reorder_level ?? existingRaw.reorder_level,
       updated_at: new Date(),
     },
@@ -94,24 +92,39 @@ export const deleteRawMaterial = async (id) => {
   return prisma.raw_materials.delete({ where: { id } });
 };
 
-export const adjustStock = async (id, adjustmentData) => {
-  const { adjustment } = adjustmentData;
-  // Menggunakan `increment` untuk menambah dan `decrement` untuk mengurangi secara atomik
-  const operation =
-    adjustment > 0
-      ? { increment: adjustment }
-      : { decrement: Math.abs(adjustment) };
+export const adjustStock = async (data) => {
+  const material = await prisma.materials.findUnique({
+    where: { barcode: data.barcode },
+  });
 
-  // Pastikan stok tidak menjadi negatif
-  const material = await getRawMaterialById(id);
-  if (adjustment < 0 && material.stock < Math.abs(adjustment)) {
-    throw new Error400("Penyesuaian gagal, stok tidak boleh negatif.");
+  if (!material) {
+    throw new Error400(
+      `Material dengan barcode '${data.barcode}' tidak ditemukan.`
+    );
   }
 
-  return prisma.raw_materials.update({
-    where: { id },
-    data: { stock: operation },
+  const existingRaw = await prisma.raw_materials.findUnique({
+    where: { material_id: material.id },
+    include: { material: true },
   });
+
+  if (existingRaw) {
+    const updatedRaw = await prisma.raw_materials.update({
+      where: { material_id: material.id },
+      data: {
+        stock: {
+          decrement: existingRaw.material.defaultStock,
+        },
+        reorder_level: data.reorder_level ?? existingRaw.reorder_level,
+        updated_at: new Date(),
+      },
+      include: {
+        material: true,
+      },
+    });
+
+    return updatedRaw;
+  }
 };
 
 export const processBarcode = async (data) => {
@@ -120,8 +133,6 @@ export const processBarcode = async (data) => {
   });
 
   if (!material) {
-   
-
     throw new Error400(
       `Material dengan barcode '${data.barcode}' tidak ditemukan.`
     );

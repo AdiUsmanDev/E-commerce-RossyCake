@@ -21,7 +21,7 @@ export default (router) => {
 
   // Rute khusus untuk menyesuaikan stok
   router.patch(
-    prefix + "/:id/adjust-stock",
+    prefix + "/adjust-stock",
     authMiddleware,
     isAdmin,
     rawMaterialController.adjustStock

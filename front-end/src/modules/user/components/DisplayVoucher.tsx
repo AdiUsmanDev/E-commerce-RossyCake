@@ -13,6 +13,7 @@ import { Ticket, LoaderCircle, ServerCrash, Copy } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Voucher } from "@/types/vocher.types";
 import { getAllVouchers } from "@/services/vocher.service";
+import toast from "react-hot-toast";
 
 // Helper untuk format tanggal
 const formatDate = (dateString: string | Date) => {
@@ -43,7 +44,7 @@ const VoucherCard: React.FC<{ voucher: Voucher }> = ({ voucher }) => {
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    alert(`Kode "${code}" berhasil disalin!`);
+    toast.success(`Kode "${code}" berhasil disalin!`);
   };
 
   return (

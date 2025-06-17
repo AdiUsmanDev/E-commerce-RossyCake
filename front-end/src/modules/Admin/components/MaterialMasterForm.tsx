@@ -12,10 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle } from "lucide-react";
 
-
-import { createMaterial } from "@/services/materials.service"; 
+import { createMaterial } from "@/services/materials.service";
 import { CreateMaterialPayload } from "@/types/materiasl";
-
+import toast from "react-hot-toast";
 
 const validUnits = ["kg", "gr", "liter", "pcs", "meter", "cm"];
 
@@ -60,13 +59,14 @@ const MaterialMasterForm: React.FC<MaterialMasterFormProps> = ({
       !formData.unit ||
       !formData.barcode
     ) {
-      alert("Harap lengkapi semua bidang yang wajib diisi.");
+      toast.error("Harap lengkapi semua bidang yang wajib diisi.");
       return;
     }
     if (formData.unit && !validUnits.includes(formData.unit.toLowerCase())) {
-      alert(
+      toast.error(
         `Satuan tidak valid. Satuan yang diizinkan: ${validUnits.join(", ")}`
       );
+
       return;
     }
 
@@ -74,8 +74,7 @@ const MaterialMasterForm: React.FC<MaterialMasterFormProps> = ({
       await createMaterial(formData); // Call your create material master service
       onSuccess();
     } catch (error) {
-      console.error("Failed to create material master:", error);
-      alert(
+      toast.error(
         `Gagal membuat material master: ${(error as Error).message || "Terjadi kesalahan"}`
       );
     }

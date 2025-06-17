@@ -27,6 +27,7 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (userId: number): Promise<void> => {
-  // Respons DELETE biasanya tidak memiliki body, jadi kita tidak perlu `return`
-  await apiClient.delete(`/users/${userId}`);
+  const response = await apiClient.delete(`/users/${userId}`);
+
+  return response.data.data;
 };

@@ -17,8 +17,11 @@ export default (router) => {
     usersController.createUser
   );
   router.patch(prefix + "/:id", authMiddleware, usersController.updateUser);
+
+
+  
   router.delete(
-    prefix + "/users/:id",
+    prefix + "/:id",
     authMiddleware,
     isAdmin,
     usersController.deleteUser

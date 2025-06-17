@@ -36,6 +36,7 @@ import { RootState, AppDispatch } from "@/lib/redux/store";
 import { updateUserProfile } from "@/lib/redux/slices/authSlice";
 import { UpdateProfilePayload } from "@/services/profile.service";
 import { Switch } from "@/components/ui/switch";
+import toast from "react-hot-toast";
 
 // =======================================================================
 // Komponen-komponen untuk setiap tab pengaturan
@@ -71,7 +72,7 @@ const AdminProfileSettings = () => {
     mutationFn: (payload: UpdateProfilePayload) =>
       dispatch(updateUserProfile(payload)).unwrap(),
     onSuccess: () => {
-      alert("Profil berhasil diperbarui.");
+      toast.success("Profil berhasil diperbarui.");
       queryClient.invalidateQueries({ queryKey: ["userProfile", user?.id] });
       setFormData((prev) => ({ ...prev, password: "", confirmPassword: "" }));
     },
@@ -185,7 +186,9 @@ const GeneralSettings = () => {
   const handleToggleMaintenance = (checked: boolean) => {
     setSettings((prev) => ({ ...prev, maintenanceMode: checked }));
     // Di sini akan ada panggilan API untuk menyimpan status maintenance
-    alert(`Mode Maintenance ${checked ? "diaktifkan" : "dinonaktifkan"}.`);
+    toast.success(
+      `Mode Maintenance ${checked ? "diaktifkan" : "dinonaktifkan"}.`
+    );
   };
 
   return (

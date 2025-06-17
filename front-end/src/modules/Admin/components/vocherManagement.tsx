@@ -43,6 +43,9 @@ import {
 } from "@tabler/icons-react";
 import { LoaderCircle } from "lucide-react";
 
+// 1. Impor toast dan Toaster dari react-hot-toast
+import toast, { Toaster } from "react-hot-toast";
+
 // Impor service dan tipe data yang benar
 import {
   createVoucher,
@@ -66,11 +69,11 @@ const DiscountVoucherFormFields = ({
 }: {
   mode: "create" | "update";
   initialData?: Voucher | null;
-  onSubmit: (data: CreateVoucherDTO | UpdateVoucherDTO) => void;
+  // 2. Ubah tipe onSubmit untuk mendukung async/await
+  onSubmit: (data: CreateVoucherDTO | UpdateVoucherDTO) => Promise<unknown>;
   onCancel: () => void;
   isSaving: boolean;
 }) => {
-  // Menggunakan state untuk controlled form
   const [formData, setFormData] = useState({
     code: "",
     description: "",
@@ -97,7 +100,6 @@ const DiscountVoucherFormFields = ({
           : "",
       });
     } else {
-      // Reset form untuk mode create
       setFormData({
         code: "",
         description: "",
@@ -138,13 +140,13 @@ const DiscountVoucherFormFields = ({
         valid_until: new Date(formData.valid_until).toISOString(),
       };
     } else {
-      // Untuk update, hanya kirim field yang diizinkan oleh skema validasi Joi
       payload = {
         description: formData.description,
         usage_limit: parseInt(formData.usage_limit, 10),
         valid_until: new Date(formData.valid_until).toISOString(),
       };
     }
+    // onSubmit sekarang adalah promise
     onSubmit(payload);
   };
 
@@ -162,7 +164,7 @@ const DiscountVoucherFormFields = ({
       </DialogHeader>
       <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
         {/* Field yang tidak bisa diubah saat update */}
-        <fieldset disabled={mode === "update"} className="contents">
+        <fieldset disabled={mode === "update" || isSaving} className="contents">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="code" className="text-right">
               Kode
@@ -238,46 +240,48 @@ const DiscountVoucherFormFields = ({
         </fieldset>
 
         {/* Field yang bisa diubah saat update */}
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="description" className="text-right">
-            Deskripsi
-          </Label>
-          <Textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="col-span-3"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="usage_limit" className="text-right">
-            Limit Penggunaan
-          </Label>
-          <Input
-            id="usage_limit"
-            name="usage_limit"
-            type="number"
-            value={formData.usage_limit}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="valid_until" className="text-right">
-            Berlaku Hingga
-          </Label>
-          <Input
-            id="valid_until"
-            name="valid_until"
-            type="date"
-            value={formData.valid_until}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-          />
-        </div>
+        <fieldset disabled={isSaving} className="contents">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Deskripsi
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="usage_limit" className="text-right">
+                Limit Penggunaan
+              </Label>
+              <Input
+                id="usage_limit"
+                name="usage_limit"
+                type="number"
+                value={formData.usage_limit}
+                onChange={handleChange}
+                className="col-span-3"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="valid_until" className="text-right">
+                Berlaku Hingga
+              </Label>
+              <Input
+                id="valid_until"
+                name="valid_until"
+                type="date"
+                value={formData.valid_until}
+                onChange={handleChange}
+                className="col-span-3"
+                required
+              />
+            </div>
+        </fieldset>
       </div>
       <DialogFooter>
         <DialogClose asChild>
@@ -315,6 +319,7 @@ const DiscountVoucherManagement: React.FC = () => {
     queryFn: getAllVouchers,
   });
 
+  // 3. Hapus onSuccess dan onError dari mutasi untuk ditangani di level komponen
   const saveMutation = useMutation({
     mutationFn: (data: {
       id?: number;
@@ -324,29 +329,32 @@ const DiscountVoucherManagement: React.FC = () => {
         return updateVoucher(data.id, data.payload as UpdateVoucherDTO);
       return createVoucher(data.payload as CreateVoucherDTO);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vouchers"] });
-      setIsFormOpen(false);
-    },
-    onError: (err) => {
-      alert(`Gagal menyimpan: ${(err as Error).message}`);
-    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (voucherId: number) => deleteVoucher(voucherId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vouchers"] });
-      setVoucherToDelete(null);
-    },
-    onError: (err) => {
-      alert(`Gagal menghapus: ${(err as Error).message}`);
-      setVoucherToDelete(null);
-    },
   });
 
-  const handleFormSubmit = (formData: CreateVoucherDTO | UpdateVoucherDTO) => {
-    saveMutation.mutate({ id: editingVoucher?.id, payload: formData });
+  // 4. Implementasikan toast.promise untuk operasi simpan/update
+  const handleFormSubmit = async (
+    formData: CreateVoucherDTO | UpdateVoucherDTO
+  ) => {
+    const promise = saveMutation.mutateAsync({
+      id: editingVoucher?.id,
+      payload: formData,
+    });
+
+    await toast.promise(promise, {
+      loading: "Menyimpan voucher...",
+      success: () => {
+        queryClient.invalidateQueries({ queryKey: ["vouchers"] });
+        setIsFormOpen(false);
+        return formMode === "create"
+          ? "Voucher berhasil dibuat!"
+          : "Voucher berhasil diperbarui!";
+      },
+      error: (err) => `Gagal menyimpan: ${(err as Error).message}`,
+    });
   };
 
   const openCreateForm = () => {
@@ -360,9 +368,22 @@ const DiscountVoucherManagement: React.FC = () => {
     setFormMode("update");
     setIsFormOpen(true);
   };
+  
+  // 5. Implementasikan toast.promise untuk operasi hapus
+  const confirmDelete = async () => {
+    if (!voucherToDelete) return;
 
-  const confirmDelete = () => {
-    if (voucherToDelete) deleteMutation.mutate(voucherToDelete.id);
+    const promise = deleteMutation.mutateAsync(voucherToDelete.id);
+    
+    await toast.promise(promise, {
+        loading: "Menghapus voucher...",
+        success: () => {
+            queryClient.invalidateQueries({ queryKey: ["vouchers"] });
+            setVoucherToDelete(null); // Tutup dialog konfirmasi
+            return "Voucher berhasil dihapus.";
+        },
+        error: (err) => `Gagal menghapus: ${(err as Error).message}`
+    });
   };
 
   const filteredVouchers = useMemo(() => {
@@ -383,6 +404,9 @@ const DiscountVoucherManagement: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
+      {/* 6. Tambahkan komponen Toaster di sini */}
+      <Toaster position="top-center" reverseOrder={false} />
+
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
           Manajemen Diskon & Voucher

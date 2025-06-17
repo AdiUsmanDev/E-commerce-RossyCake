@@ -73,10 +73,9 @@ export const updateUser = async (userId, updateData) => {
  */
 export const deleteUser = async (userId) => {
   try {
-    await prisma.users.delete({
+    return await prisma.users.delete({
       where: { id: parseInt(userId, 10) },
     });
-    // Tidak perlu mengembalikan apa pun jika berhasil
   } catch (error) {
     if (error.code === "P2025") {
       throw new Error404(`Pengguna dengan ID ${userId} tidak ditemukan.`);

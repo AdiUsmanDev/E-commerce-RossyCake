@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Toaster, toast } from "react-hot-toast";
 import {
   Table,
   TableBody,
@@ -44,12 +45,15 @@ import {
 import { LoaderCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { CreateUserPayload, UpdateUserPayload, User } from "@/types/user.types";
-import { createUser, deleteUser, getAllUsers, updateUser } from "@/services/users.service";
-
-// Import services dan tipe data yang benar
+import {
+  createUser,
+  deleteUser,
+  getAllUsers,
+  updateUser,
+} from "@/services/users.service";
 
 // =============================================================
-// Komponen Form yang Diperbaiki
+// User Form Component
 // =============================================================
 const UserFormFields = ({
   mode,
@@ -78,7 +82,7 @@ const UserFormFields = ({
         name: initialData.name || "",
         email: initialData.email || "",
         phone: initialData.phone || "",
-        password: "", // Password tidak diisi ulang untuk keamanan
+        password: "", // Password is not pre-filled for security
         role: initialData.role || "CUSTOMER",
       });
     } else {
@@ -111,12 +115,12 @@ const UserFormFields = ({
         role: formData.role,
       };
     } else {
-      // Untuk update, hanya kirim field yang diubah. Password opsional.
+      // For updates, only send changed fields. Password is optional.
       payload = {
         name: formData.name,
         phone: formData.phone,
         role: formData.role,
-        ...(formData.password && { password: formData.password }), // Hanya tambahkan password jika diisi
+        ...(formData.password && { password: formData.password }), // Only include password if it's filled
       };
     }
     onSubmit(payload);
@@ -127,17 +131,17 @@ const UserFormFields = ({
       <DialogHeader>
         <DialogTitle>
           {mode === "update"
-            ? `Edit Pengguna: ${initialData?.name}`
-            : "Tambah Pengguna Baru"}
+            ? `Edit User: ${initialData?.name}`
+            : "Add New User"}
         </DialogTitle>
         <DialogDescription>
-          Lengkapi detail pengguna di bawah ini. Email harus unik.
+          Complete the user details below. Email must be unique.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="name" className="text-right">
-            Nama Lengkap
+            Full Name
           </Label>
           <Input
             id="name"
@@ -165,7 +169,7 @@ const UserFormFields = ({
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="phone" className="text-right">
-            No. Telepon
+            Phone No.
           </Label>
           <Input
             id="phone"
@@ -188,14 +192,14 @@ const UserFormFields = ({
             onChange={handleChange}
             className="col-span-3"
             placeholder={
-              mode === "update" ? "Isi untuk ganti password" : "Wajib diisi"
+              mode === "update" ? "Fill to change password" : "Required"
             }
             required={mode === "create"}
           />
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="role" className="text-right">
-            Peran
+            Role
           </Label>
           <select
             id="role"
@@ -212,24 +216,26 @@ const UserFormFields = ({
       <DialogFooter>
         <DialogClose asChild>
           <Button type="button" variant="outline" onClick={onCancel}>
-            Batal
+            Cancel
           </Button>
         </DialogClose>
         <Button type="submit" disabled={isSaving}>
           {isSaving && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-          {mode === "update" ? "Update Pengguna" : "Simpan Pengguna"}
+          {mode === "update" ? "Update User" : "Save User"}
         </Button>
       </DialogFooter>
     </form>
   );
 };
 
-// Komponen Skeleton untuk tabel
+// =============================================================
+// Table Skeleton Component
+// =============================================================
 const TableSkeleton = () => (
   <TableBody>
     {Array.from({ length: 8 }).map((_, index) => (
       <TableRow key={`skeleton-user-${index}`}>
-        {Array.from({ length: 6 }).map((_, cellIndex) => (
+        {Array.from({ length: 5 }).map((_, cellIndex) => (
           <TableCell key={cellIndex}>
             <div className="h-6 bg-muted animate-pulse rounded-md"></div>
           </TableCell>
@@ -239,7 +245,9 @@ const TableSkeleton = () => (
   </TableBody>
 );
 
-// Komponen utama
+// =============================================================
+// Main Page Component
+// =============================================================
 const UserManagementPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -267,11 +275,15 @@ const UserManagementPage: React.FC = () => {
         return updateUser(data.id, data.payload as UpdateUserPayload);
       return createUser(data.payload as CreateUserPayload);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setIsFormOpen(false);
+      const action = variables.id ? "diperbarui" : "dibuat";
+      toast.success(`Pengguna berhasil ${action}!`);
     },
-    onError: (err) => alert(`Gagal: ${err.message || "Terjadi kesalahan"}`),
+    onError: (err) => {
+      toast.error(`Gagal: ${err.message || "Terjadi kesalahan"}`);
+    },
   });
 
   const deleteMutation = useMutation({
@@ -279,14 +291,16 @@ const UserManagementPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setUserToDelete(null);
+      toast.success("Pengguna berhasil dihapus!");
     },
     onError: (err) => {
-      alert(`Gagal menghapus: ${err.message}`);
+      toast.error(`Gagal menghapus: ${err.message}`);
       setUserToDelete(null);
     },
   });
 
   const filteredUsers = useMemo(() => {
+    if (!searchQuery) return users;
     return users.filter(
       (user) =>
         user.name.toLowerCase().includes(searchQuery) ||
@@ -325,6 +339,7 @@ const UserManagementPage: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
           Manajemen Pengguna
@@ -355,7 +370,7 @@ const UserManagementPage: React.FC = () => {
         </div>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openCreateForm}>
+            <Button onClick={openCreateForm} className="w-full md:w-auto">
               <IconPlus size={18} className="mr-2" /> Tambah Pengguna
             </Button>
           </DialogTrigger>
@@ -392,7 +407,7 @@ const UserManagementPage: React.FC = () => {
                   className="text-center h-48 text-destructive"
                 >
                   <IconServerOff className="mx-auto h-12 w-12 mb-2" />
-                  {(error as Error).message}
+                  {(error as Error).message || "Gagal memuat data"}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -410,13 +425,21 @@ const UserManagementPage: React.FC = () => {
                     <TableCell>{user.email}</TableCell>
                     <TableCell className="text-center">
                       <span
-                        className={`px-2 py-1 text-xs font-semibold rounded-full capitalize ${user.role === "ADMIN" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"}`}
+                        className={`px-2 py-1 text-xs font-semibold rounded-full capitalize ${
+                          user.role === "ADMIN"
+                            ? "bg-purple-100 text-purple-700"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
                       >
                         {user.role.toLowerCase()}
                       </span>
                     </TableCell>
                     <TableCell>
-                      {new Date(user.created_at).toLocaleDateString("id-ID")}
+                      {new Date(user.created_at).toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-x-2">
@@ -443,7 +466,7 @@ const UserManagementPage: React.FC = () => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center h-24">
-                    Tidak ada data pengguna.
+                    Tidak ada data pengguna yang ditemukan.
                   </TableCell>
                 </TableRow>
               )}

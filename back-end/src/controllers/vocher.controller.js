@@ -71,10 +71,12 @@ export const updateVoucher = async (req, res, next) => {
 
 export const deleteVoucher = async (req, res, next) => {
   try {
-    // Tidak ada body yang perlu divalidasi untuk DELETE
-    await voucherService.deleteVoucherById(parseInt(req.params.id));
-    // Memperbaiki response agar konsisten (data bisa null)
-    res200("Voucher berhasil dihapus", null, res);
+   
+    const result = await voucherService.deleteVoucherById(
+      parseInt(req.params.id)
+    );
+
+    res200("Voucher berhasil dihapus", result, res);
   } catch (error) {
     next(error);
   }

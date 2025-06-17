@@ -16,8 +16,13 @@ export const updateRawMaterialSchema = Joi.object({
 
 // Skema khusus untuk menyesuaikan stok
 export const adjustStockSchema = Joi.object({
-  adjustment: Joi.number().required().not(0),
-  notes: Joi.string().optional().allow("").default("Penyesuaian stok manual"),
+  stock: Joi.number().min(0).required(),
+  reorder_level: Joi.number().min(0).default(0),
+  barcode: Joi.string()
+    .required()
+    .trim()
+    .min(1)
+    .messages({ "any.required": "barcode diperlukan." }),
 });
 
 export const processBarcodeSchema = Joi.object({

@@ -47,11 +47,10 @@ export const deleteRawMaterial = async (id: number): Promise<void> => {
 };
 
 export const adjustStock = async (
-  id: number,
-  payload: AdjustStockPayload
+  payload: UpdateRawMaterialPayload
 ): Promise<RawMaterial> => {
   const response = await apiClient.patch<ApiResponse<RawMaterial>>(
-    `${prefix}/${id}/adjust-stock`,
+    `${prefix}/adjust-stock`,
     payload
   );
   return response.data.data;

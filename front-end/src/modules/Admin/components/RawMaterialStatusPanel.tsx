@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   IconArchive,
@@ -13,9 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { RawMaterial } from "@/types/RawMaterials";
 import { getAllRawMaterials } from "@/services/RawMaterials.service";
-// Impor service
 
-// Komponen untuk satu item statistik
 const StatItem: React.FC<{
   icon: React.ElementType;
   value: string | number;
@@ -35,111 +33,139 @@ const StatItem: React.FC<{
 );
 
 // Komponen utama
-const RawMaterialStatusPanel: React.FC = () => {
-  const LOW_STOCK_THRESHOLD = 10;
-
-  // Mengambil data menggunakan TanStack Query
-  const { data: materials = [], isLoading } = useQuery<RawMaterial[]>({
+const RawMaterialStatusPanel = () => {
+  const { data: materials = [], isLoading } = useQuery({
     queryKey: ["rawMaterials"],
     queryFn: getAllRawMaterials,
   });
 
-  // Kalkulasi data
+  // Kalkulasi data berdasarkan perbandingan `stock` dengan `reorder_level`
   const totalTypes = materials.length;
-  const lowStockItems = materials.filter((m) => m.stock < LOW_STOCK_THRESHOLD);
+  // Item dianggap stok rendah jika stok saat ini <= level pemesanan kembali
+  const lowStockItems = materials.filter((m) => m.stock <= m.reorder_level);
+  const criticalStockItems = materials.filter(
+    (m) => m.stock <= m.reorder_level / 2
+  );
   const lowStockCount = lowStockItems.length;
 
-  // Logika status panel
-  let statusText = "Stok Aman";
-  let StatusIcon = IconCircleCheck;
-  let statusColorClass = "text-green-400";
-  let panelBorderClass = "border-green-500/50";
-
-  if (isLoading) {
-    statusText = "Memuat...";
-    StatusIcon = IconLoader;
-    statusColorClass = "text-sky-400 animate-spin";
-    panelBorderClass = "border-sky-500/50";
-  } else if (lowStockCount > 0) {
-    if (lowStockCount <= 2 && totalTypes > 0) {
-      statusText = "Perlu Perhatian";
-      StatusIcon = IconAlertTriangle;
-      statusColorClass = "text-yellow-400";
-      panelBorderClass = "border-yellow-500/50";
-    } else {
-      statusText = "Stok Kritis";
-      StatusIcon = IconAlertOctagon;
-      statusColorClass = "text-red-400";
-      panelBorderClass = "border-red-500/50";
-    }
-  } else if (totalTypes === 0) {
-    statusText = "Data Kosong";
-    StatusIcon = IconArchive;
-    statusColorClass = "text-neutral-400";
-    panelBorderClass = "border-neutral-500/50";
-  }
+  // Logika untuk menentukan status panel secara dinamis
+  const { statusText, StatusIcon, statusColorClass, panelBorderClass } =
+    useMemo(() => {
+      if (isLoading) {
+        return {
+          statusText: "Memuat Data...",
+          StatusIcon: IconLoader,
+          statusColorClass: "text-sky-400 animate-spin",
+          panelBorderClass: "border-sky-500/50",
+        };
+      }
+      if (totalTypes === 0) {
+        return {
+          statusText: "Data Kosong",
+          StatusIcon: IconArchive,
+          statusColorClass: "text-slate-400",
+          panelBorderClass: "border-slate-600/50",
+        };
+      }
+      if (criticalStockItems.length > 0) {
+        return {
+          statusText: "Stok Kritis",
+          StatusIcon: IconAlertOctagon,
+          statusColorClass: "text-red-400",
+          panelBorderClass: "border-red-500/50",
+        };
+      }
+      if (lowStockCount > 0) {
+        return {
+          statusText: "Perlu Perhatian",
+          StatusIcon: IconAlertTriangle,
+          statusColorClass: "text-yellow-400",
+          panelBorderClass: "border-yellow-500/50",
+        };
+      }
+      return {
+        statusText: "Stok Aman",
+        StatusIcon: IconCircleCheck,
+        statusColorClass: "text-green-400",
+        panelBorderClass: "border-green-500/50",
+      };
+    }, [isLoading, totalTypes, lowStockCount, criticalStockItems.length]);
 
   return (
     <div
       className={cn(
-        "p-3 rounded-lg shadow-md w-full max-w-lg mx-auto", // Dibuat sedikit lebih kecil
-        "bg-neutral-800/80 dark:bg-neutral-900/90 backdrop-blur-sm border",
-        panelBorderClass
+        "p-4 rounded-xl shadow-lg w-full max-w-md mx-auto font-sans",
+        "bg-gradient-to-br from-slate-800 to-slate-900 backdrop-blur-lg border",
+        panelBorderClass,
+        "transition-all duration-500"
       )}
     >
-      <div className="flex items-center justify-between mb-2 pb-2 border-b border-neutral-700/50">
-        <div className="flex items-center gap-2 text-neutral-100">
-          <IconBuildingWarehouse size={20} />
-          <h3 className="font-semibold text-md">Status Bahan Baku</h3>
+      {/* Header Panel */}
+      <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
+        <div className="flex items-center gap-3 text-slate-100">
+          <IconBuildingWarehouse size={22} />
+          <h3 className="font-bold text-lg">Status Bahan Baku</h3>
         </div>
         <div
           className={cn(
-            "flex items-center gap-1.5 font-medium text-sm",
+            "flex items-center gap-2 font-semibold text-sm px-3 py-1 rounded-full bg-white/5",
             statusColorClass
           )}
         >
-          <StatusIcon size={18} strokeWidth={2} />
+          <StatusIcon size={16} strokeWidth={2.5} />
           <span>{statusText}</span>
         </div>
       </div>
 
-      {/* PERBAIKAN: Layout grid disederhanakan menjadi 2 kolom */}
-      <div className="grid grid-cols-2 gap-x-3 gap-y-2">
-        <StatItem icon={IconArchive} value={totalTypes} label="Total Jenis" />
+      {/* Statistik Utama */}
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <StatItem
+          icon={IconArchive}
+          value={isLoading ? "-" : totalTypes}
+          label="Total Jenis"
+          itemColorClass="text-slate-300"
+        />
         <StatItem
           icon={IconAlertTriangle}
-          value={lowStockCount}
+          value={isLoading ? "-" : lowStockCount}
           label="Stok Rendah"
           itemColorClass={
-            lowStockCount > 0
-              ? lowStockCount <= 2
-                ? "text-yellow-400"
-                : "text-red-400"
-              : "text-green-400"
+            isLoading
+              ? "text-slate-300"
+              : criticalStockItems.length > 0
+                ? "text-red-400"
+                : lowStockCount > 0
+                  ? "text-yellow-400"
+                  : "text-green-400"
           }
         />
       </div>
 
+      {/* Daftar Item Stok Rendah */}
       {lowStockCount > 0 && !isLoading && (
-        <div
-          className={cn(
-            "mt-2 pt-2 border-t border-neutral-700/50 text-xs",
-            statusColorClass === "text-red-400"
-              ? "text-red-400"
-              : "text-yellow-400"
-          )}
-        >
-          <p className="font-semibold">
-            Peringatan: Terdapat {lowStockCount} bahan baku dengan stok di bawah{" "}
-            {LOW_STOCK_THRESHOLD} unit.
+        <div className="mt-3 pt-3 border-t border-white/10 text-xs">
+          <p className={cn("font-semibold mb-2", statusColorClass)}>
+            Peringatan: {lowStockCount} bahan baku memerlukan perhatian.
           </p>
-          <ul className="list-disc list-inside pl-1 max-h-20 overflow-y-auto">
-            {lowStockItems.slice(0, 3).map((item) => (
-              <li key={item.id}>
-                {item.name} (Stok: {item.stock} {item.unit})
+          <ul className="space-y-1.5 text-slate-300 max-h-24 overflow-y-auto pr-2">
+            {lowStockItems.map((item) => (
+              <li
+                key={item.id}
+                className="flex justify-between items-center text-sm"
+              >
+                <span>{item.name}</span>
+                <span
+                  className={cn(
+                    "font-bold px-2 py-0.5 rounded",
+                    item.stock <= item.reorder_level / 2
+                      ? "bg-red-500/20 text-red-300"
+                      : "bg-yellow-500/20 text-yellow-300"
+                  )}
+                >
+                  Sisa: {item.stock} {item.unit}
+                </span>
               </li>
             ))}
-            {lowStockItems.length > 3 && <li>dan lainnya...</li>}
           </ul>
         </div>
       )}

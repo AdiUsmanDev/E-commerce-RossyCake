@@ -82,10 +82,7 @@ export const adjustStock = async (req, res, next) => {
       throw new Error400(error.details[0].message);
     }
 
-    const result = await rawMaterialService.adjustStock(
-      parseInt(req.params.id),
-      value // Gunakan 'value' hasil validasi, bukan req.value
-    );
+    const result = await rawMaterialService.adjustStock(value);
     res200("Stok berhasil disesuaikan", result, res);
   } catch (error) {
     next(error);
