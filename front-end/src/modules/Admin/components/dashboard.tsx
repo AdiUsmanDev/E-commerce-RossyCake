@@ -32,6 +32,7 @@ import { getAllVouchers } from "@/services/vocher.service";
 import { getAllUsers } from "@/services/users.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@radix-ui/react-select";
+import { OrderSummaryPanel } from "./OrderSummaryPanel";
 
 // Komponen Kartu Indikator (sudah baik, hanya sedikit penyesuaian)
 const IndicatorCard: React.FC<{
@@ -246,6 +247,7 @@ const DashboardOverviewPage: React.FC = () => {
 
       {/* Panel Keuangan Baru */}
       <FinanceManagementPanel orders={orders} isLoading={isLoading} />
+      <OrderSummaryPanel orders={orders} isLoading={isLoading} />
 
       {/* Kartu Indikator Lainnya */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">

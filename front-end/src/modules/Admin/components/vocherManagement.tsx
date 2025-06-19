@@ -43,8 +43,8 @@ import {
 } from "@tabler/icons-react";
 import { LoaderCircle } from "lucide-react";
 
-// 1. Impor toast dan Toaster dari react-hot-toast
-import toast, { Toaster } from "react-hot-toast";
+
+import toast from "react-hot-toast";
 
 // Impor service dan tipe data yang benar
 import {
@@ -241,46 +241,46 @@ const DiscountVoucherFormFields = ({
 
         {/* Field yang bisa diubah saat update */}
         <fieldset disabled={isSaving} className="contents">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Deskripsi
-              </Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="usage_limit" className="text-right">
-                Limit Penggunaan
-              </Label>
-              <Input
-                id="usage_limit"
-                name="usage_limit"
-                type="number"
-                value={formData.usage_limit}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="valid_until" className="text-right">
-                Berlaku Hingga
-              </Label>
-              <Input
-                id="valid_until"
-                name="valid_until"
-                type="date"
-                value={formData.valid_until}
-                onChange={handleChange}
-                className="col-span-3"
-                required
-              />
-            </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right">
+              Deskripsi
+            </Label>
+            <Textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="usage_limit" className="text-right">
+              Limit Penggunaan
+            </Label>
+            <Input
+              id="usage_limit"
+              name="usage_limit"
+              type="number"
+              value={formData.usage_limit}
+              onChange={handleChange}
+              className="col-span-3"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="valid_until" className="text-right">
+              Berlaku Hingga
+            </Label>
+            <Input
+              id="valid_until"
+              name="valid_until"
+              type="date"
+              value={formData.valid_until}
+              onChange={handleChange}
+              className="col-span-3"
+              required
+            />
+          </div>
         </fieldset>
       </div>
       <DialogFooter>
@@ -368,21 +368,21 @@ const DiscountVoucherManagement: React.FC = () => {
     setFormMode("update");
     setIsFormOpen(true);
   };
-  
+
   // 5. Implementasikan toast.promise untuk operasi hapus
   const confirmDelete = async () => {
     if (!voucherToDelete) return;
 
     const promise = deleteMutation.mutateAsync(voucherToDelete.id);
-    
+
     await toast.promise(promise, {
-        loading: "Menghapus voucher...",
-        success: () => {
-            queryClient.invalidateQueries({ queryKey: ["vouchers"] });
-            setVoucherToDelete(null); // Tutup dialog konfirmasi
-            return "Voucher berhasil dihapus.";
-        },
-        error: (err) => `Gagal menghapus: ${(err as Error).message}`
+      loading: "Menghapus voucher...",
+      success: () => {
+        queryClient.invalidateQueries({ queryKey: ["vouchers"] });
+        setVoucherToDelete(null); // Tutup dialog konfirmasi
+        return "Voucher berhasil dihapus.";
+      },
+      error: (err) => `Gagal menghapus: ${(err as Error).message}`,
     });
   };
 
@@ -404,8 +404,7 @@ const DiscountVoucherManagement: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
-      {/* 6. Tambahkan komponen Toaster di sini */}
-      <Toaster position="top-center" reverseOrder={false} />
+     
 
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">

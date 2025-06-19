@@ -1,13 +1,21 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import AuthForm from "./AuthForm";
-import { Lock, Mail, User } from "lucide-react";
+import { ArrowLeft, Lock, Mail, User } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-
+  const navigate = useNavigate();
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
+    <div className="flex relative items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4">
+      <button
+        onClick={() => navigate({ to: "/" })}
+        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        aria-label="Go back"
+      >
+        <ArrowLeft size={24} className="text-gray-600 dark:text-gray-300" />
+      </button>
       <div className="w-full max-w-md lg:w-[500px] lg:h-[500px] bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden flex items-center justify-center p-6">
         <AnimatePresence mode="wait">
           {isSignUp ? (

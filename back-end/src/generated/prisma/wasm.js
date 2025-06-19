@@ -266,6 +266,24 @@ exports.Prisma.Custom_ordersScalarFieldEnum = {
   notes: 'notes'
 };
 
+exports.Prisma.Shipping_methodScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  cost: 'cost',
+  estimated_delivery_time: 'estimated_delivery_time',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.SettingsScalarFieldEnum = {
+  id: 'id',
+  siteName: 'siteName',
+  siteTagline: 'siteTagline',
+  maintenanceMode: 'maintenanceMode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -356,6 +374,16 @@ exports.Prisma.custom_ordersOrderByRelevanceFieldEnum = {
   request_description: 'request_description',
   notes: 'notes'
 };
+
+exports.Prisma.shipping_methodOrderByRelevanceFieldEnum = {
+  name: 'name',
+  estimated_delivery_time: 'estimated_delivery_time'
+};
+
+exports.Prisma.SettingsOrderByRelevanceFieldEnum = {
+  siteName: 'siteName',
+  siteTagline: 'siteTagline'
+};
 exports.Role = exports.$Enums.Role = {
   CUSTOMER: 'CUSTOMER',
   ADMIN: 'ADMIN'
@@ -402,7 +430,9 @@ exports.Prisma.ModelName = {
   invoices: 'invoices',
   feedbacks: 'feedbacks',
   expenses: 'expenses',
-  custom_orders: 'custom_orders'
+  custom_orders: 'custom_orders',
+  shipping_method: 'shipping_method',
+  Settings: 'Settings'
 };
 
 /**

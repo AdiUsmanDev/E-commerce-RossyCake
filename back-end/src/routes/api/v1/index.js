@@ -10,6 +10,8 @@ import vocherRoutes from "./vocher.routes.js";
 import rawMaterialRoutes from "./rawMaterial.routes.js";
 import usersRoutes from "./users.routes.js";
 import materialsRoutes from "./materials.routes.js";
+import shippingRoutes from "./shipping.routes.js";
+import settingsRoutes from "./settings.routes.js";
 
 export default (app) => {
   const router = Router();
@@ -20,6 +22,7 @@ export default (app) => {
   authRoutes(router);
   vocherRoutes(router);
   productRoutes(router);
+  settingsRoutes(router);
 
   router.use(authMiddleware);
   profileRoutes(router);
@@ -28,4 +31,5 @@ export default (app) => {
   rawMaterialRoutes(router);
   usersRoutes(router);
   materialsRoutes(router);
+  shippingRoutes(router);
 };

@@ -78,6 +78,16 @@ export type expenses = $Result.DefaultSelection<Prisma.$expensesPayload>
  * 
  */
 export type custom_orders = $Result.DefaultSelection<Prisma.$custom_ordersPayload>
+/**
+ * Model shipping_method
+ * 
+ */
+export type shipping_method = $Result.DefaultSelection<Prisma.$shipping_methodPayload>
+/**
+ * Model Settings
+ * 
+ */
+export type Settings = $Result.DefaultSelection<Prisma.$SettingsPayload>
 
 /**
  * Enums
@@ -406,6 +416,26 @@ export class PrismaClient<
     * ```
     */
   get custom_orders(): Prisma.custom_ordersDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.shipping_method`: Exposes CRUD operations for the **shipping_method** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Shipping_methods
+    * const shipping_methods = await prisma.shipping_method.findMany()
+    * ```
+    */
+  get shipping_method(): Prisma.shipping_methodDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.settings`: Exposes CRUD operations for the **Settings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Settings
+    * const settings = await prisma.settings.findMany()
+    * ```
+    */
+  get settings(): Prisma.SettingsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -858,7 +888,9 @@ export namespace Prisma {
     invoices: 'invoices',
     feedbacks: 'feedbacks',
     expenses: 'expenses',
-    custom_orders: 'custom_orders'
+    custom_orders: 'custom_orders',
+    shipping_method: 'shipping_method',
+    Settings: 'Settings'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -877,7 +909,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "users" | "products" | "orders" | "order_items" | "raw_materials" | "materials" | "addresses" | "vouchers" | "payments" | "invoices" | "feedbacks" | "expenses" | "custom_orders"
+      modelProps: "users" | "products" | "orders" | "order_items" | "raw_materials" | "materials" | "addresses" | "vouchers" | "payments" | "invoices" | "feedbacks" | "expenses" | "custom_orders" | "shipping_method" | "settings"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1739,6 +1771,138 @@ export namespace Prisma {
           }
         }
       }
+      shipping_method: {
+        payload: Prisma.$shipping_methodPayload<ExtArgs>
+        fields: Prisma.shipping_methodFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.shipping_methodFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.shipping_methodFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>
+          }
+          findFirst: {
+            args: Prisma.shipping_methodFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.shipping_methodFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>
+          }
+          findMany: {
+            args: Prisma.shipping_methodFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>[]
+          }
+          create: {
+            args: Prisma.shipping_methodCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>
+          }
+          createMany: {
+            args: Prisma.shipping_methodCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.shipping_methodDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>
+          }
+          update: {
+            args: Prisma.shipping_methodUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>
+          }
+          deleteMany: {
+            args: Prisma.shipping_methodDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.shipping_methodUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.shipping_methodUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$shipping_methodPayload>
+          }
+          aggregate: {
+            args: Prisma.Shipping_methodAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateShipping_method>
+          }
+          groupBy: {
+            args: Prisma.shipping_methodGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Shipping_methodGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.shipping_methodCountArgs<ExtArgs>
+            result: $Utils.Optional<Shipping_methodCountAggregateOutputType> | number
+          }
+        }
+      }
+      Settings: {
+        payload: Prisma.$SettingsPayload<ExtArgs>
+        fields: Prisma.SettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.SettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>
+          }
+          findMany: {
+            args: Prisma.SettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>[]
+          }
+          create: {
+            args: Prisma.SettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>
+          }
+          createMany: {
+            args: Prisma.SettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.SettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>
+          }
+          update: {
+            args: Prisma.SettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.SettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.SettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSettings>
+          }
+          groupBy: {
+            args: Prisma.SettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<SettingsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1836,6 +2000,8 @@ export namespace Prisma {
     feedbacks?: feedbacksOmit
     expenses?: expensesOmit
     custom_orders?: custom_ordersOmit
+    shipping_method?: shipping_methodOmit
+    settings?: SettingsOmit
   }
 
   /* Types for Logging */
@@ -15554,6 +15720,1864 @@ export namespace Prisma {
 
 
   /**
+   * Model shipping_method
+   */
+
+  export type AggregateShipping_method = {
+    _count: Shipping_methodCountAggregateOutputType | null
+    _avg: Shipping_methodAvgAggregateOutputType | null
+    _sum: Shipping_methodSumAggregateOutputType | null
+    _min: Shipping_methodMinAggregateOutputType | null
+    _max: Shipping_methodMaxAggregateOutputType | null
+  }
+
+  export type Shipping_methodAvgAggregateOutputType = {
+    id: number | null
+    cost: Decimal | null
+  }
+
+  export type Shipping_methodSumAggregateOutputType = {
+    id: number | null
+    cost: Decimal | null
+  }
+
+  export type Shipping_methodMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    cost: Decimal | null
+    estimated_delivery_time: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Shipping_methodMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    cost: Decimal | null
+    estimated_delivery_time: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Shipping_methodCountAggregateOutputType = {
+    id: number
+    name: number
+    cost: number
+    estimated_delivery_time: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type Shipping_methodAvgAggregateInputType = {
+    id?: true
+    cost?: true
+  }
+
+  export type Shipping_methodSumAggregateInputType = {
+    id?: true
+    cost?: true
+  }
+
+  export type Shipping_methodMinAggregateInputType = {
+    id?: true
+    name?: true
+    cost?: true
+    estimated_delivery_time?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Shipping_methodMaxAggregateInputType = {
+    id?: true
+    name?: true
+    cost?: true
+    estimated_delivery_time?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Shipping_methodCountAggregateInputType = {
+    id?: true
+    name?: true
+    cost?: true
+    estimated_delivery_time?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type Shipping_methodAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which shipping_method to aggregate.
+     */
+    where?: shipping_methodWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of shipping_methods to fetch.
+     */
+    orderBy?: shipping_methodOrderByWithRelationInput | shipping_methodOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: shipping_methodWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` shipping_methods from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` shipping_methods.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned shipping_methods
+    **/
+    _count?: true | Shipping_methodCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Shipping_methodAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Shipping_methodSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Shipping_methodMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Shipping_methodMaxAggregateInputType
+  }
+
+  export type GetShipping_methodAggregateType<T extends Shipping_methodAggregateArgs> = {
+        [P in keyof T & keyof AggregateShipping_method]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateShipping_method[P]>
+      : GetScalarType<T[P], AggregateShipping_method[P]>
+  }
+
+
+
+
+  export type shipping_methodGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: shipping_methodWhereInput
+    orderBy?: shipping_methodOrderByWithAggregationInput | shipping_methodOrderByWithAggregationInput[]
+    by: Shipping_methodScalarFieldEnum[] | Shipping_methodScalarFieldEnum
+    having?: shipping_methodScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Shipping_methodCountAggregateInputType | true
+    _avg?: Shipping_methodAvgAggregateInputType
+    _sum?: Shipping_methodSumAggregateInputType
+    _min?: Shipping_methodMinAggregateInputType
+    _max?: Shipping_methodMaxAggregateInputType
+  }
+
+  export type Shipping_methodGroupByOutputType = {
+    id: number
+    name: string
+    cost: Decimal
+    estimated_delivery_time: string | null
+    created_at: Date
+    updated_at: Date
+    _count: Shipping_methodCountAggregateOutputType | null
+    _avg: Shipping_methodAvgAggregateOutputType | null
+    _sum: Shipping_methodSumAggregateOutputType | null
+    _min: Shipping_methodMinAggregateOutputType | null
+    _max: Shipping_methodMaxAggregateOutputType | null
+  }
+
+  type GetShipping_methodGroupByPayload<T extends shipping_methodGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Shipping_methodGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Shipping_methodGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Shipping_methodGroupByOutputType[P]>
+            : GetScalarType<T[P], Shipping_methodGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type shipping_methodSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    cost?: boolean
+    estimated_delivery_time?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["shipping_method"]>
+
+
+
+  export type shipping_methodSelectScalar = {
+    id?: boolean
+    name?: boolean
+    cost?: boolean
+    estimated_delivery_time?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type shipping_methodOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "cost" | "estimated_delivery_time" | "created_at" | "updated_at", ExtArgs["result"]["shipping_method"]>
+
+  export type $shipping_methodPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "shipping_method"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      cost: Prisma.Decimal
+      estimated_delivery_time: string | null
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["shipping_method"]>
+    composites: {}
+  }
+
+  type shipping_methodGetPayload<S extends boolean | null | undefined | shipping_methodDefaultArgs> = $Result.GetResult<Prisma.$shipping_methodPayload, S>
+
+  type shipping_methodCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<shipping_methodFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Shipping_methodCountAggregateInputType | true
+    }
+
+  export interface shipping_methodDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['shipping_method'], meta: { name: 'shipping_method' } }
+    /**
+     * Find zero or one Shipping_method that matches the filter.
+     * @param {shipping_methodFindUniqueArgs} args - Arguments to find a Shipping_method
+     * @example
+     * // Get one Shipping_method
+     * const shipping_method = await prisma.shipping_method.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends shipping_methodFindUniqueArgs>(args: SelectSubset<T, shipping_methodFindUniqueArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Shipping_method that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {shipping_methodFindUniqueOrThrowArgs} args - Arguments to find a Shipping_method
+     * @example
+     * // Get one Shipping_method
+     * const shipping_method = await prisma.shipping_method.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends shipping_methodFindUniqueOrThrowArgs>(args: SelectSubset<T, shipping_methodFindUniqueOrThrowArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Shipping_method that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {shipping_methodFindFirstArgs} args - Arguments to find a Shipping_method
+     * @example
+     * // Get one Shipping_method
+     * const shipping_method = await prisma.shipping_method.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends shipping_methodFindFirstArgs>(args?: SelectSubset<T, shipping_methodFindFirstArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Shipping_method that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {shipping_methodFindFirstOrThrowArgs} args - Arguments to find a Shipping_method
+     * @example
+     * // Get one Shipping_method
+     * const shipping_method = await prisma.shipping_method.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends shipping_methodFindFirstOrThrowArgs>(args?: SelectSubset<T, shipping_methodFindFirstOrThrowArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Shipping_methods that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {shipping_methodFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Shipping_methods
+     * const shipping_methods = await prisma.shipping_method.findMany()
+     * 
+     * // Get first 10 Shipping_methods
+     * const shipping_methods = await prisma.shipping_method.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const shipping_methodWithIdOnly = await prisma.shipping_method.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends shipping_methodFindManyArgs>(args?: SelectSubset<T, shipping_methodFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Shipping_method.
+     * @param {shipping_methodCreateArgs} args - Arguments to create a Shipping_method.
+     * @example
+     * // Create one Shipping_method
+     * const Shipping_method = await prisma.shipping_method.create({
+     *   data: {
+     *     // ... data to create a Shipping_method
+     *   }
+     * })
+     * 
+     */
+    create<T extends shipping_methodCreateArgs>(args: SelectSubset<T, shipping_methodCreateArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Shipping_methods.
+     * @param {shipping_methodCreateManyArgs} args - Arguments to create many Shipping_methods.
+     * @example
+     * // Create many Shipping_methods
+     * const shipping_method = await prisma.shipping_method.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends shipping_methodCreateManyArgs>(args?: SelectSubset<T, shipping_methodCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Shipping_method.
+     * @param {shipping_methodDeleteArgs} args - Arguments to delete one Shipping_method.
+     * @example
+     * // Delete one Shipping_method
+     * const Shipping_method = await prisma.shipping_method.delete({
+     *   where: {
+     *     // ... filter to delete one Shipping_method
+     *   }
+     * })
+     * 
+     */
+    delete<T extends shipping_methodDeleteArgs>(args: SelectSubset<T, shipping_methodDeleteArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Shipping_method.
+     * @param {shipping_methodUpdateArgs} args - Arguments to update one Shipping_method.
+     * @example
+     * // Update one Shipping_method
+     * const shipping_method = await prisma.shipping_method.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends shipping_methodUpdateArgs>(args: SelectSubset<T, shipping_methodUpdateArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Shipping_methods.
+     * @param {shipping_methodDeleteManyArgs} args - Arguments to filter Shipping_methods to delete.
+     * @example
+     * // Delete a few Shipping_methods
+     * const { count } = await prisma.shipping_method.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends shipping_methodDeleteManyArgs>(args?: SelectSubset<T, shipping_methodDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Shipping_methods.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {shipping_methodUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Shipping_methods
+     * const shipping_method = await prisma.shipping_method.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends shipping_methodUpdateManyArgs>(args: SelectSubset<T, shipping_methodUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Shipping_method.
+     * @param {shipping_methodUpsertArgs} args - Arguments to update or create a Shipping_method.
+     * @example
+     * // Update or create a Shipping_method
+     * const shipping_method = await prisma.shipping_method.upsert({
+     *   create: {
+     *     // ... data to create a Shipping_method
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Shipping_method we want to update
+     *   }
+     * })
+     */
+    upsert<T extends shipping_methodUpsertArgs>(args: SelectSubset<T, shipping_methodUpsertArgs<ExtArgs>>): Prisma__shipping_methodClient<$Result.GetResult<Prisma.$shipping_methodPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Shipping_methods.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {shipping_methodCountArgs} args - Arguments to filter Shipping_methods to count.
+     * @example
+     * // Count the number of Shipping_methods
+     * const count = await prisma.shipping_method.count({
+     *   where: {
+     *     // ... the filter for the Shipping_methods we want to count
+     *   }
+     * })
+    **/
+    count<T extends shipping_methodCountArgs>(
+      args?: Subset<T, shipping_methodCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Shipping_methodCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Shipping_method.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Shipping_methodAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Shipping_methodAggregateArgs>(args: Subset<T, Shipping_methodAggregateArgs>): Prisma.PrismaPromise<GetShipping_methodAggregateType<T>>
+
+    /**
+     * Group by Shipping_method.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {shipping_methodGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends shipping_methodGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: shipping_methodGroupByArgs['orderBy'] }
+        : { orderBy?: shipping_methodGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, shipping_methodGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetShipping_methodGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the shipping_method model
+   */
+  readonly fields: shipping_methodFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for shipping_method.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__shipping_methodClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the shipping_method model
+   */
+  interface shipping_methodFieldRefs {
+    readonly id: FieldRef<"shipping_method", 'Int'>
+    readonly name: FieldRef<"shipping_method", 'String'>
+    readonly cost: FieldRef<"shipping_method", 'Decimal'>
+    readonly estimated_delivery_time: FieldRef<"shipping_method", 'String'>
+    readonly created_at: FieldRef<"shipping_method", 'DateTime'>
+    readonly updated_at: FieldRef<"shipping_method", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * shipping_method findUnique
+   */
+  export type shipping_methodFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * Filter, which shipping_method to fetch.
+     */
+    where: shipping_methodWhereUniqueInput
+  }
+
+  /**
+   * shipping_method findUniqueOrThrow
+   */
+  export type shipping_methodFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * Filter, which shipping_method to fetch.
+     */
+    where: shipping_methodWhereUniqueInput
+  }
+
+  /**
+   * shipping_method findFirst
+   */
+  export type shipping_methodFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * Filter, which shipping_method to fetch.
+     */
+    where?: shipping_methodWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of shipping_methods to fetch.
+     */
+    orderBy?: shipping_methodOrderByWithRelationInput | shipping_methodOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for shipping_methods.
+     */
+    cursor?: shipping_methodWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` shipping_methods from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` shipping_methods.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of shipping_methods.
+     */
+    distinct?: Shipping_methodScalarFieldEnum | Shipping_methodScalarFieldEnum[]
+  }
+
+  /**
+   * shipping_method findFirstOrThrow
+   */
+  export type shipping_methodFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * Filter, which shipping_method to fetch.
+     */
+    where?: shipping_methodWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of shipping_methods to fetch.
+     */
+    orderBy?: shipping_methodOrderByWithRelationInput | shipping_methodOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for shipping_methods.
+     */
+    cursor?: shipping_methodWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` shipping_methods from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` shipping_methods.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of shipping_methods.
+     */
+    distinct?: Shipping_methodScalarFieldEnum | Shipping_methodScalarFieldEnum[]
+  }
+
+  /**
+   * shipping_method findMany
+   */
+  export type shipping_methodFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * Filter, which shipping_methods to fetch.
+     */
+    where?: shipping_methodWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of shipping_methods to fetch.
+     */
+    orderBy?: shipping_methodOrderByWithRelationInput | shipping_methodOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing shipping_methods.
+     */
+    cursor?: shipping_methodWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` shipping_methods from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` shipping_methods.
+     */
+    skip?: number
+    distinct?: Shipping_methodScalarFieldEnum | Shipping_methodScalarFieldEnum[]
+  }
+
+  /**
+   * shipping_method create
+   */
+  export type shipping_methodCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * The data needed to create a shipping_method.
+     */
+    data: XOR<shipping_methodCreateInput, shipping_methodUncheckedCreateInput>
+  }
+
+  /**
+   * shipping_method createMany
+   */
+  export type shipping_methodCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many shipping_methods.
+     */
+    data: shipping_methodCreateManyInput | shipping_methodCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * shipping_method update
+   */
+  export type shipping_methodUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * The data needed to update a shipping_method.
+     */
+    data: XOR<shipping_methodUpdateInput, shipping_methodUncheckedUpdateInput>
+    /**
+     * Choose, which shipping_method to update.
+     */
+    where: shipping_methodWhereUniqueInput
+  }
+
+  /**
+   * shipping_method updateMany
+   */
+  export type shipping_methodUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update shipping_methods.
+     */
+    data: XOR<shipping_methodUpdateManyMutationInput, shipping_methodUncheckedUpdateManyInput>
+    /**
+     * Filter which shipping_methods to update
+     */
+    where?: shipping_methodWhereInput
+    /**
+     * Limit how many shipping_methods to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * shipping_method upsert
+   */
+  export type shipping_methodUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * The filter to search for the shipping_method to update in case it exists.
+     */
+    where: shipping_methodWhereUniqueInput
+    /**
+     * In case the shipping_method found by the `where` argument doesn't exist, create a new shipping_method with this data.
+     */
+    create: XOR<shipping_methodCreateInput, shipping_methodUncheckedCreateInput>
+    /**
+     * In case the shipping_method was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<shipping_methodUpdateInput, shipping_methodUncheckedUpdateInput>
+  }
+
+  /**
+   * shipping_method delete
+   */
+  export type shipping_methodDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+    /**
+     * Filter which shipping_method to delete.
+     */
+    where: shipping_methodWhereUniqueInput
+  }
+
+  /**
+   * shipping_method deleteMany
+   */
+  export type shipping_methodDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which shipping_methods to delete
+     */
+    where?: shipping_methodWhereInput
+    /**
+     * Limit how many shipping_methods to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * shipping_method without action
+   */
+  export type shipping_methodDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the shipping_method
+     */
+    select?: shipping_methodSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the shipping_method
+     */
+    omit?: shipping_methodOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Settings
+   */
+
+  export type AggregateSettings = {
+    _count: SettingsCountAggregateOutputType | null
+    _avg: SettingsAvgAggregateOutputType | null
+    _sum: SettingsSumAggregateOutputType | null
+    _min: SettingsMinAggregateOutputType | null
+    _max: SettingsMaxAggregateOutputType | null
+  }
+
+  export type SettingsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type SettingsSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type SettingsMinAggregateOutputType = {
+    id: number | null
+    siteName: string | null
+    siteTagline: string | null
+    maintenanceMode: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SettingsMaxAggregateOutputType = {
+    id: number | null
+    siteName: string | null
+    siteTagline: string | null
+    maintenanceMode: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SettingsCountAggregateOutputType = {
+    id: number
+    siteName: number
+    siteTagline: number
+    maintenanceMode: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SettingsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type SettingsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type SettingsMinAggregateInputType = {
+    id?: true
+    siteName?: true
+    siteTagline?: true
+    maintenanceMode?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SettingsMaxAggregateInputType = {
+    id?: true
+    siteName?: true
+    siteTagline?: true
+    maintenanceMode?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SettingsCountAggregateInputType = {
+    id?: true
+    siteName?: true
+    siteTagline?: true
+    maintenanceMode?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Settings to aggregate.
+     */
+    where?: SettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Settings to fetch.
+     */
+    orderBy?: SettingsOrderByWithRelationInput | SettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Settings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Settings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Settings
+    **/
+    _count?: true | SettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SettingsMaxAggregateInputType
+  }
+
+  export type GetSettingsAggregateType<T extends SettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSettings[P]>
+      : GetScalarType<T[P], AggregateSettings[P]>
+  }
+
+
+
+
+  export type SettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SettingsWhereInput
+    orderBy?: SettingsOrderByWithAggregationInput | SettingsOrderByWithAggregationInput[]
+    by: SettingsScalarFieldEnum[] | SettingsScalarFieldEnum
+    having?: SettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SettingsCountAggregateInputType | true
+    _avg?: SettingsAvgAggregateInputType
+    _sum?: SettingsSumAggregateInputType
+    _min?: SettingsMinAggregateInputType
+    _max?: SettingsMaxAggregateInputType
+  }
+
+  export type SettingsGroupByOutputType = {
+    id: number
+    siteName: string
+    siteTagline: string
+    maintenanceMode: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: SettingsCountAggregateOutputType | null
+    _avg: SettingsAvgAggregateOutputType | null
+    _sum: SettingsSumAggregateOutputType | null
+    _min: SettingsMinAggregateOutputType | null
+    _max: SettingsMaxAggregateOutputType | null
+  }
+
+  type GetSettingsGroupByPayload<T extends SettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], SettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    siteName?: boolean
+    siteTagline?: boolean
+    maintenanceMode?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["settings"]>
+
+
+
+  export type SettingsSelectScalar = {
+    id?: boolean
+    siteName?: boolean
+    siteTagline?: boolean
+    maintenanceMode?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "maintenanceMode" | "createdAt" | "updatedAt", ExtArgs["result"]["settings"]>
+
+  export type $SettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Settings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      siteName: string
+      siteTagline: string
+      maintenanceMode: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["settings"]>
+    composites: {}
+  }
+
+  type SettingsGetPayload<S extends boolean | null | undefined | SettingsDefaultArgs> = $Result.GetResult<Prisma.$SettingsPayload, S>
+
+  type SettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SettingsCountAggregateInputType | true
+    }
+
+  export interface SettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Settings'], meta: { name: 'Settings' } }
+    /**
+     * Find zero or one Settings that matches the filter.
+     * @param {SettingsFindUniqueArgs} args - Arguments to find a Settings
+     * @example
+     * // Get one Settings
+     * const settings = await prisma.settings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SettingsFindUniqueArgs>(args: SelectSubset<T, SettingsFindUniqueArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Settings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SettingsFindUniqueOrThrowArgs} args - Arguments to find a Settings
+     * @example
+     * // Get one Settings
+     * const settings = await prisma.settings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, SettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Settings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsFindFirstArgs} args - Arguments to find a Settings
+     * @example
+     * // Get one Settings
+     * const settings = await prisma.settings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SettingsFindFirstArgs>(args?: SelectSubset<T, SettingsFindFirstArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Settings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsFindFirstOrThrowArgs} args - Arguments to find a Settings
+     * @example
+     * // Get one Settings
+     * const settings = await prisma.settings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, SettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Settings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Settings
+     * const settings = await prisma.settings.findMany()
+     * 
+     * // Get first 10 Settings
+     * const settings = await prisma.settings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const settingsWithIdOnly = await prisma.settings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SettingsFindManyArgs>(args?: SelectSubset<T, SettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Settings.
+     * @param {SettingsCreateArgs} args - Arguments to create a Settings.
+     * @example
+     * // Create one Settings
+     * const Settings = await prisma.settings.create({
+     *   data: {
+     *     // ... data to create a Settings
+     *   }
+     * })
+     * 
+     */
+    create<T extends SettingsCreateArgs>(args: SelectSubset<T, SettingsCreateArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Settings.
+     * @param {SettingsCreateManyArgs} args - Arguments to create many Settings.
+     * @example
+     * // Create many Settings
+     * const settings = await prisma.settings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SettingsCreateManyArgs>(args?: SelectSubset<T, SettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Settings.
+     * @param {SettingsDeleteArgs} args - Arguments to delete one Settings.
+     * @example
+     * // Delete one Settings
+     * const Settings = await prisma.settings.delete({
+     *   where: {
+     *     // ... filter to delete one Settings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SettingsDeleteArgs>(args: SelectSubset<T, SettingsDeleteArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Settings.
+     * @param {SettingsUpdateArgs} args - Arguments to update one Settings.
+     * @example
+     * // Update one Settings
+     * const settings = await prisma.settings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SettingsUpdateArgs>(args: SelectSubset<T, SettingsUpdateArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Settings.
+     * @param {SettingsDeleteManyArgs} args - Arguments to filter Settings to delete.
+     * @example
+     * // Delete a few Settings
+     * const { count } = await prisma.settings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SettingsDeleteManyArgs>(args?: SelectSubset<T, SettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Settings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Settings
+     * const settings = await prisma.settings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SettingsUpdateManyArgs>(args: SelectSubset<T, SettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Settings.
+     * @param {SettingsUpsertArgs} args - Arguments to update or create a Settings.
+     * @example
+     * // Update or create a Settings
+     * const settings = await prisma.settings.upsert({
+     *   create: {
+     *     // ... data to create a Settings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Settings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SettingsUpsertArgs>(args: SelectSubset<T, SettingsUpsertArgs<ExtArgs>>): Prisma__SettingsClient<$Result.GetResult<Prisma.$SettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Settings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsCountArgs} args - Arguments to filter Settings to count.
+     * @example
+     * // Count the number of Settings
+     * const count = await prisma.settings.count({
+     *   where: {
+     *     // ... the filter for the Settings we want to count
+     *   }
+     * })
+    **/
+    count<T extends SettingsCountArgs>(
+      args?: Subset<T, SettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Settings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SettingsAggregateArgs>(args: Subset<T, SettingsAggregateArgs>): Prisma.PrismaPromise<GetSettingsAggregateType<T>>
+
+    /**
+     * Group by Settings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SettingsGroupByArgs['orderBy'] }
+        : { orderBy?: SettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Settings model
+   */
+  readonly fields: SettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Settings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Settings model
+   */
+  interface SettingsFieldRefs {
+    readonly id: FieldRef<"Settings", 'Int'>
+    readonly siteName: FieldRef<"Settings", 'String'>
+    readonly siteTagline: FieldRef<"Settings", 'String'>
+    readonly maintenanceMode: FieldRef<"Settings", 'Boolean'>
+    readonly createdAt: FieldRef<"Settings", 'DateTime'>
+    readonly updatedAt: FieldRef<"Settings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Settings findUnique
+   */
+  export type SettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which Settings to fetch.
+     */
+    where: SettingsWhereUniqueInput
+  }
+
+  /**
+   * Settings findUniqueOrThrow
+   */
+  export type SettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which Settings to fetch.
+     */
+    where: SettingsWhereUniqueInput
+  }
+
+  /**
+   * Settings findFirst
+   */
+  export type SettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which Settings to fetch.
+     */
+    where?: SettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Settings to fetch.
+     */
+    orderBy?: SettingsOrderByWithRelationInput | SettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Settings.
+     */
+    cursor?: SettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Settings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Settings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Settings.
+     */
+    distinct?: SettingsScalarFieldEnum | SettingsScalarFieldEnum[]
+  }
+
+  /**
+   * Settings findFirstOrThrow
+   */
+  export type SettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which Settings to fetch.
+     */
+    where?: SettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Settings to fetch.
+     */
+    orderBy?: SettingsOrderByWithRelationInput | SettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Settings.
+     */
+    cursor?: SettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Settings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Settings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Settings.
+     */
+    distinct?: SettingsScalarFieldEnum | SettingsScalarFieldEnum[]
+  }
+
+  /**
+   * Settings findMany
+   */
+  export type SettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which Settings to fetch.
+     */
+    where?: SettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Settings to fetch.
+     */
+    orderBy?: SettingsOrderByWithRelationInput | SettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Settings.
+     */
+    cursor?: SettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Settings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Settings.
+     */
+    skip?: number
+    distinct?: SettingsScalarFieldEnum | SettingsScalarFieldEnum[]
+  }
+
+  /**
+   * Settings create
+   */
+  export type SettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Settings.
+     */
+    data: XOR<SettingsCreateInput, SettingsUncheckedCreateInput>
+  }
+
+  /**
+   * Settings createMany
+   */
+  export type SettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Settings.
+     */
+    data: SettingsCreateManyInput | SettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Settings update
+   */
+  export type SettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Settings.
+     */
+    data: XOR<SettingsUpdateInput, SettingsUncheckedUpdateInput>
+    /**
+     * Choose, which Settings to update.
+     */
+    where: SettingsWhereUniqueInput
+  }
+
+  /**
+   * Settings updateMany
+   */
+  export type SettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Settings.
+     */
+    data: XOR<SettingsUpdateManyMutationInput, SettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which Settings to update
+     */
+    where?: SettingsWhereInput
+    /**
+     * Limit how many Settings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Settings upsert
+   */
+  export type SettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Settings to update in case it exists.
+     */
+    where: SettingsWhereUniqueInput
+    /**
+     * In case the Settings found by the `where` argument doesn't exist, create a new Settings with this data.
+     */
+    create: XOR<SettingsCreateInput, SettingsUncheckedCreateInput>
+    /**
+     * In case the Settings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SettingsUpdateInput, SettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * Settings delete
+   */
+  export type SettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+    /**
+     * Filter which Settings to delete.
+     */
+    where: SettingsWhereUniqueInput
+  }
+
+  /**
+   * Settings deleteMany
+   */
+  export type SettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Settings to delete
+     */
+    where?: SettingsWhereInput
+    /**
+     * Limit how many Settings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Settings without action
+   */
+  export type SettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Settings
+     */
+    select?: SettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Settings
+     */
+    omit?: SettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -15752,6 +17776,30 @@ export namespace Prisma {
   export type Custom_ordersScalarFieldEnum = (typeof Custom_ordersScalarFieldEnum)[keyof typeof Custom_ordersScalarFieldEnum]
 
 
+  export const Shipping_methodScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    cost: 'cost',
+    estimated_delivery_time: 'estimated_delivery_time',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type Shipping_methodScalarFieldEnum = (typeof Shipping_methodScalarFieldEnum)[keyof typeof Shipping_methodScalarFieldEnum]
+
+
+  export const SettingsScalarFieldEnum: {
+    id: 'id',
+    siteName: 'siteName',
+    siteTagline: 'siteTagline',
+    maintenanceMode: 'maintenanceMode',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -15889,6 +17937,22 @@ export namespace Prisma {
   };
 
   export type custom_ordersOrderByRelevanceFieldEnum = (typeof custom_ordersOrderByRelevanceFieldEnum)[keyof typeof custom_ordersOrderByRelevanceFieldEnum]
+
+
+  export const shipping_methodOrderByRelevanceFieldEnum: {
+    name: 'name',
+    estimated_delivery_time: 'estimated_delivery_time'
+  };
+
+  export type shipping_methodOrderByRelevanceFieldEnum = (typeof shipping_methodOrderByRelevanceFieldEnum)[keyof typeof shipping_methodOrderByRelevanceFieldEnum]
+
+
+  export const SettingsOrderByRelevanceFieldEnum: {
+    siteName: 'siteName',
+    siteTagline: 'siteTagline'
+  };
+
+  export type SettingsOrderByRelevanceFieldEnum = (typeof SettingsOrderByRelevanceFieldEnum)[keyof typeof SettingsOrderByRelevanceFieldEnum]
 
 
   /**
@@ -16985,6 +19049,126 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter<"custom_orders"> | string | null
   }
 
+  export type shipping_methodWhereInput = {
+    AND?: shipping_methodWhereInput | shipping_methodWhereInput[]
+    OR?: shipping_methodWhereInput[]
+    NOT?: shipping_methodWhereInput | shipping_methodWhereInput[]
+    id?: IntFilter<"shipping_method"> | number
+    name?: StringFilter<"shipping_method"> | string
+    cost?: DecimalFilter<"shipping_method"> | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: StringNullableFilter<"shipping_method"> | string | null
+    created_at?: DateTimeFilter<"shipping_method"> | Date | string
+    updated_at?: DateTimeFilter<"shipping_method"> | Date | string
+  }
+
+  export type shipping_methodOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    cost?: SortOrder
+    estimated_delivery_time?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _relevance?: shipping_methodOrderByRelevanceInput
+  }
+
+  export type shipping_methodWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    name?: string
+    AND?: shipping_methodWhereInput | shipping_methodWhereInput[]
+    OR?: shipping_methodWhereInput[]
+    NOT?: shipping_methodWhereInput | shipping_methodWhereInput[]
+    cost?: DecimalFilter<"shipping_method"> | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: StringNullableFilter<"shipping_method"> | string | null
+    created_at?: DateTimeFilter<"shipping_method"> | Date | string
+    updated_at?: DateTimeFilter<"shipping_method"> | Date | string
+  }, "id" | "name">
+
+  export type shipping_methodOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    cost?: SortOrder
+    estimated_delivery_time?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: shipping_methodCountOrderByAggregateInput
+    _avg?: shipping_methodAvgOrderByAggregateInput
+    _max?: shipping_methodMaxOrderByAggregateInput
+    _min?: shipping_methodMinOrderByAggregateInput
+    _sum?: shipping_methodSumOrderByAggregateInput
+  }
+
+  export type shipping_methodScalarWhereWithAggregatesInput = {
+    AND?: shipping_methodScalarWhereWithAggregatesInput | shipping_methodScalarWhereWithAggregatesInput[]
+    OR?: shipping_methodScalarWhereWithAggregatesInput[]
+    NOT?: shipping_methodScalarWhereWithAggregatesInput | shipping_methodScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"shipping_method"> | number
+    name?: StringWithAggregatesFilter<"shipping_method"> | string
+    cost?: DecimalWithAggregatesFilter<"shipping_method"> | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: StringNullableWithAggregatesFilter<"shipping_method"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"shipping_method"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"shipping_method"> | Date | string
+  }
+
+  export type SettingsWhereInput = {
+    AND?: SettingsWhereInput | SettingsWhereInput[]
+    OR?: SettingsWhereInput[]
+    NOT?: SettingsWhereInput | SettingsWhereInput[]
+    id?: IntFilter<"Settings"> | number
+    siteName?: StringFilter<"Settings"> | string
+    siteTagline?: StringFilter<"Settings"> | string
+    maintenanceMode?: BoolFilter<"Settings"> | boolean
+    createdAt?: DateTimeFilter<"Settings"> | Date | string
+    updatedAt?: DateTimeFilter<"Settings"> | Date | string
+  }
+
+  export type SettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteTagline?: SortOrder
+    maintenanceMode?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _relevance?: SettingsOrderByRelevanceInput
+  }
+
+  export type SettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: SettingsWhereInput | SettingsWhereInput[]
+    OR?: SettingsWhereInput[]
+    NOT?: SettingsWhereInput | SettingsWhereInput[]
+    siteName?: StringFilter<"Settings"> | string
+    siteTagline?: StringFilter<"Settings"> | string
+    maintenanceMode?: BoolFilter<"Settings"> | boolean
+    createdAt?: DateTimeFilter<"Settings"> | Date | string
+    updatedAt?: DateTimeFilter<"Settings"> | Date | string
+  }, "id">
+
+  export type SettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteTagline?: SortOrder
+    maintenanceMode?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SettingsCountOrderByAggregateInput
+    _avg?: SettingsAvgOrderByAggregateInput
+    _max?: SettingsMaxOrderByAggregateInput
+    _min?: SettingsMinOrderByAggregateInput
+    _sum?: SettingsSumOrderByAggregateInput
+  }
+
+  export type SettingsScalarWhereWithAggregatesInput = {
+    AND?: SettingsScalarWhereWithAggregatesInput | SettingsScalarWhereWithAggregatesInput[]
+    OR?: SettingsScalarWhereWithAggregatesInput[]
+    NOT?: SettingsScalarWhereWithAggregatesInput | SettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Settings"> | number
+    siteName?: StringWithAggregatesFilter<"Settings"> | string
+    siteTagline?: StringWithAggregatesFilter<"Settings"> | string
+    maintenanceMode?: BoolWithAggregatesFilter<"Settings"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Settings"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Settings"> | Date | string
+  }
+
   export type usersCreateInput = {
     name: string
     email: string
@@ -18002,6 +20186,129 @@ export namespace Prisma {
     request_description?: NullableStringFieldUpdateOperationsInput | string | null
     due_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type shipping_methodCreateInput = {
+    name: string
+    cost: Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type shipping_methodUncheckedCreateInput = {
+    id?: number
+    name: string
+    cost: Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type shipping_methodUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type shipping_methodUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type shipping_methodCreateManyInput = {
+    id?: number
+    name: string
+    cost: Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type shipping_methodUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type shipping_methodUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    cost?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    estimated_delivery_time?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SettingsCreateInput = {
+    id?: number
+    siteName?: string
+    siteTagline?: string
+    maintenanceMode?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SettingsUncheckedCreateInput = {
+    id?: number
+    siteName?: string
+    siteTagline?: string
+    maintenanceMode?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SettingsUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteTagline?: StringFieldUpdateOperationsInput | string
+    maintenanceMode?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteTagline?: StringFieldUpdateOperationsInput | string
+    maintenanceMode?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SettingsCreateManyInput = {
+    id?: number
+    siteName?: string
+    siteTagline?: string
+    maintenanceMode?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SettingsUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteTagline?: StringFieldUpdateOperationsInput | string
+    maintenanceMode?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    siteName?: StringFieldUpdateOperationsInput | string
+    siteTagline?: StringFieldUpdateOperationsInput | string
+    maintenanceMode?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -19161,6 +21468,90 @@ export namespace Prisma {
   export type custom_ordersSumOrderByAggregateInput = {
     id?: SortOrder
     order_id?: SortOrder
+  }
+
+  export type shipping_methodOrderByRelevanceInput = {
+    fields: shipping_methodOrderByRelevanceFieldEnum | shipping_methodOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type shipping_methodCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    cost?: SortOrder
+    estimated_delivery_time?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type shipping_methodAvgOrderByAggregateInput = {
+    id?: SortOrder
+    cost?: SortOrder
+  }
+
+  export type shipping_methodMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    cost?: SortOrder
+    estimated_delivery_time?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type shipping_methodMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    cost?: SortOrder
+    estimated_delivery_time?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type shipping_methodSumOrderByAggregateInput = {
+    id?: SortOrder
+    cost?: SortOrder
+  }
+
+  export type SettingsOrderByRelevanceInput = {
+    fields: SettingsOrderByRelevanceFieldEnum | SettingsOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type SettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteTagline?: SortOrder
+    maintenanceMode?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type SettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteTagline?: SortOrder
+    maintenanceMode?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    siteName?: SortOrder
+    siteTagline?: SortOrder
+    maintenanceMode?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SettingsSumOrderByAggregateInput = {
+    id?: SortOrder
   }
 
   export type addressesCreateNestedManyWithoutUserInput = {

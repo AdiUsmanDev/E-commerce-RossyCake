@@ -13,7 +13,7 @@ export const createOrder = Joi.object({
     .required(), // Minimal harus ada 1 item
 
   // Field lain tetap sama
-  shipping_cost: Joi.number().positive().required(),
+  shipping_cost: Joi.number().required(),
   shipping_method: Joi.string().required(),
   shipping_address: Joi.object({
     recipient: Joi.string().required(),

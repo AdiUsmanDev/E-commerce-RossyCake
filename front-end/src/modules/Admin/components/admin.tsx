@@ -1,13 +1,14 @@
 import { TabsContent } from "@/components/ui/tabs";
-import DashboardOverviewPage from "./dashboard";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { LayoutAdmin } from "./layout";
+import DashboardOverviewPage from "./dashboard";
 import DiscountVoucherManagement from "./vocherManagement";
 import MaterialManagement from "./materialsManagement";
 import UserManagement from "./usersManagement";
 import ProductsPage from "./productsManagement";
 import FinanceManagementPage from "./financeManagements";
 import AdminSettingsPage from "./settings";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import ShippingMethodManagement from "./shippingManagement";
 
 export const Admin = () => {
   return (
@@ -36,6 +37,9 @@ export const Admin = () => {
               </TabsContent>
               <TabsContent value="settings" className="w-full flex  ">
                 <AdminSettingsPage />
+              </TabsContent>
+              <TabsContent value="shipping" className="w-full flex  ">
+                <ShippingMethodManagement />
               </TabsContent>
             </div>
           </ScrollArea>

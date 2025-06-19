@@ -7,6 +7,7 @@ import {
   IconSettings,
   IconShoppingBag,
   IconTicket,
+  IconTruckDelivery,
   IconUserBolt,
   IconWorldDownload,
 } from "@tabler/icons-react";
@@ -70,6 +71,15 @@ const SidebarAdmin = () => {
       value: "finanace",
       icon: (
         <IconMoneybag className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Shipping",
+      value: "shipping",
+
+      href: "#",
+      icon: (
+        <IconTruckDelivery className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {

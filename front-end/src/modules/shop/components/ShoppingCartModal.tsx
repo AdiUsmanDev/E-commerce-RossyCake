@@ -1,33 +1,40 @@
-// src/components/shop/ShoppingCartModal.tsx (Contoh path)
+// src/components/shop/ShoppingCartModal.tsx (File yang sudah diperbaiki)
+
 "use client";
 
 import React from "react";
+import { useNavigate, Link } from "@tanstack/react-router"; // Gunakan Link untuk navigasi
+import { motion, AnimatePresence } from "framer-motion";
+
+// UI Components
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalTrigger,
-} from "@/components/ui/animated-modal"; // Asumsi path benar
-import {
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  Dialog,
-} from "@/components/ui/dialog"; // Bisa pakai komponen Dialog untuk header
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { IconShoppingCart, IconX } from "@tabler/icons-react";
-import { motion } from "framer-motion";
-import { useNavigate } from "@tanstack/react-router"; // Atau dari next/navigation
-import { CartItem } from "@/types/product.types"; // Asumsi path benar
+} from "@/components/ui/animated-modal";
 
+// Icons & Types
+import { IconShoppingCart, IconX, IconTrash } from "@tabler/icons-react";
+import { CartItem } from "@/hooks/useCart"; // Impor tipe dari useCart
+
+// Definisikan props dengan lebih lengkap
 interface ShoppingCartModalProps {
   cartItems: CartItem[];
-  onUpdateCartItemQuantity: (productId: string, newQuantity: number) => void;
-  onRemoveCartItem: (productId: string) => void;
+  totalItems: number;
+  cartTotal: number;
+  onUpdateCartItemQuantity: (productId: number, newQuantity: number) => void;
+  onRemoveCartItem: (productId: number) => void;
   onClearCart: () => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -35,167 +42,184 @@ interface ShoppingCartModalProps {
 
 const ShoppingCartModal: React.FC<ShoppingCartModalProps> = ({
   cartItems,
+  totalItems,
+  cartTotal,
   onUpdateCartItemQuantity,
   onRemoveCartItem,
   onClearCart,
   open,
   onOpenChange,
 }) => {
-  const navigate = useNavigate(); // Hook untuk navigasi
-
-  const totalCartQuantity = cartItems.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
-  const subtotalCartPrice = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const discountAmount = subtotalCartPrice > 200000 ? 25000 : 0;
-  const finalTotalPrice = subtotalCartPrice - discountAmount;
+  const navigate = useNavigate();
 
   const handleCheckout = () => {
-    // Menutup modal sebelum navigasi
-    onOpenChange(false);
-    // Navigasi ke halaman checkout
-    navigate({ to: "/shop/checkout/konfirmasi" }); // Sesuaikan dengan path halaman checkout Anda
+    onOpenChange(false); // Tutup modal dulu
+    navigate({ to: "/shop/checkout" }); // Arahkan ke halaman checkout
   };
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalTrigger asChild>
-        <Button variant="outline" className="relative h-10">
-          <IconShoppingCart size={18} className="mr-1.5" />
-          <span className="hidden sm:inline">Keranjang</span>
-          {totalCartQuantity > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-sky-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {totalCartQuantity}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative rounded-full h-10 w-10 text-stone-600 dark:text-stone-300 hover:bg-rose-100 dark:hover:bg-neutral-800"
+        >
+          <IconShoppingCart size={22} />
+          {totalItems > 0 && (
+            <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+              {totalItems}
             </span>
           )}
         </Button>
       </ModalTrigger>
       <ModalBody>
-        {" "}
-        {/* ModalBody akan otomatis mengatur max-height dan overflow */}
         <ModalContent>
-          <DialogHeader className="mb-4">
-            <DialogTitle className="text-xl md:text-2xl font-bold text-center">
-              Keranjang Belanja Anda
-            </DialogTitle>
-            {cartItems.length === 0 && (
-              <DialogDescription className="text-center pt-2">
-                Keranjang Anda masih kosong.
-              </DialogDescription>
-            )}
-          </DialogHeader>
+          <Dialog>
+            <DialogHeader className="mb-4 text-center">
+              <DialogTitle className="text-2xl font-bold text-stone-800 dark:text-stone-100">
+                Keranjang Belanja
+              </DialogTitle>
+              {cartItems.length === 0 && (
+                <DialogDescription className="pt-2">
+                  Keranjang Anda masih kosong.
+                </DialogDescription>
+              )}
+            </DialogHeader>
 
-          {cartItems.length > 0 ? (
-            <>
-              <ScrollArea className="h-[40vh] pr-3 mb-4">
-                {" "}
-                {/* Menggunakan viewport height untuk tinggi dinamis */}
-                {cartItems.map((item) => (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    key={item.id}
-                    className="py-3 flex justify-between items-center border-b dark:border-neutral-700 last:border-b-0"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="h-14 w-14 object-cover rounded-md"
-                      />
-                      <div>
-                        <h3 className="font-medium text-neutral-800 dark:text-neutral-200 text-sm leading-tight">
-                          {item.name}
-                        </h3>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                          Rp{item.price.toLocaleString("id-ID")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-7 w-7 rounded-full"
-                        onClick={() =>
-                          onUpdateCartItemQuantity(
-                            item.id,
-                            Math.max(1, item.quantity - 1)
-                          )
-                        }
-                      >
-                        -
-                      </Button>
-                      <span className="text-sm font-medium w-6 text-center">
-                        {item.quantity}
-                      </span>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-7 w-7 rounded-full"
-                        onClick={() =>
-                          onUpdateCartItemQuantity(item.id, item.quantity + 1)
-                        }
-                      >
-                        +
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full"
-                        onClick={() => onRemoveCartItem(item.id)}
-                      >
-                        <IconX size={14} />
-                      </Button>
-                    </div>
-                  </motion.div>
-                ))}
-              </ScrollArea>
-              <Separator className="my-2 dark:bg-neutral-700" />
-              <div className="space-y-1.5 text-sm text-neutral-700 dark:text-neutral-300">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>Rp{subtotalCartPrice.toLocaleString("id-ID")}</span>
-                </div>
-                {discountAmount > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Diskon</span>
-                    <span>- Rp{discountAmount.toLocaleString("id-ID")}</span>
+            {cartItems.length > 0 ? (
+              <>
+                <ScrollArea className="h-[45vh] pr-4">
+                  <div className="flex flex-col gap-4">
+                    <AnimatePresence>
+                      {cartItems.map((item) => (
+                        <motion.div
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{
+                            opacity: 0,
+                            x: -20,
+                            transition: { duration: 0.2 },
+                          }}
+                          key={item.id}
+                          className="flex items-center gap-4"
+                        >
+                          <img
+                            src={
+                              item.imageUrl || "https://placehold.co/100x100"
+                            }
+                            alt={item.name}
+                            className="h-16 w-16 object-cover rounded-lg"
+                          />
+                          <div className="flex-grow">
+                            <h3 className="font-medium text-sm text-stone-800 dark:text-stone-200">
+                              {item.name}
+                            </h3>
+                            <p className="text-xs text-stone-500">
+                              {formatCurrency(item.price)}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-6 w-6 rounded-full"
+                                onClick={() =>
+                                  onUpdateCartItemQuantity(
+                                    item.id,
+                                    item.quantity - 1
+                                  )
+                                }
+                              >
+                                -
+                              </Button>
+                              <span className="text-sm font-medium w-6 text-center">
+                                {item.quantity}
+                              </span>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-6 w-6 rounded-full"
+                                onClick={() =>
+                                  onUpdateCartItemQuantity(
+                                    item.id,
+                                    item.quantity + 1
+                                  )
+                                }
+                              >
+                                +
+                              </Button>
+                            </div>
+                          </div>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="text-stone-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full h-8 w-8"
+                            onClick={() => onRemoveCartItem(item.id)}
+                          >
+                            <IconX size={16} />
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
                   </div>
-                )}
-                <div className="flex justify-between font-semibold text-base text-neutral-800 dark:text-neutral-100 pt-1">
-                  <span>Total</span>
-                  <span>Rp{finalTotalPrice.toLocaleString("id-ID")}</span>
+                </ScrollArea>
+                <Separator className="my-4 dark:bg-neutral-700" />
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-stone-600 dark:text-stone-400">
+                      Subtotal
+                    </span>
+                    <span className="font-medium">
+                      {formatCurrency(cartTotal)}
+                    </span>
+                  </div>
+                  {/* Anda bisa tambahkan logika diskon di sini jika perlu */}
+                  <div className="flex justify-between text-base font-bold text-stone-800 dark:text-stone-100 pt-2">
+                    <span>Total</span>
+                    <span>{formatCurrency(cartTotal)}</span>
+                  </div>
                 </div>
+              </>
+            ) : (
+              <div className="text-center py-12 text-stone-500 flex flex-col items-center gap-4">
+                <IconShoppingCart
+                  size={48}
+                  className="text-stone-300 dark:text-neutral-700"
+                />
+                <p>
+                  Mulai belanja dan isi keranjang Anda dengan kue-kue lezat!
+                </p>
+                <Button
+                  asChild
+                  className="bg-rose-500 hover:bg-rose-600"
+                  onClick={() => onOpenChange(false)}
+                >
+                  <Link to="/shop">Belanja Sekarang</Link>
+                </Button>
               </div>
-            </>
-          ) : (
-            <div className="text-center py-10 text-neutral-500">
-              <IconShoppingCart size={40} className="mx-auto mb-2" />
-              <p>Mulai belanja dan isi keranjang Anda!</p>
-            </div>
-          )}
+            )}
+          </Dialog>
         </ModalContent>
+
         {cartItems.length > 0 && (
-          <ModalFooter className="gap-3 pt-6 sm:flex-row flex-col-reverse">
+          <ModalFooter className="gap-3 pt-6">
             <Button
-              variant="outline"
-              className="w-full sm:w-auto"
-              onClick={() => {
-                onClearCart();
-                onOpenChange(false);
-              }}
+              variant="ghost"
+              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+              onClick={onClearCart}
             >
-              Kosongkan Keranjang
+              <IconTrash size={16} className="mr-2" /> Kosongkan
             </Button>
             <Button
-              className="w-full sm:w-auto flex-grow bg-sky-600 hover:bg-sky-700"
+              className="w-full sm:w-auto flex-grow bg-rose-500 hover:bg-rose-600"
               onClick={handleCheckout}
             >
               Lanjut ke Pembayaran

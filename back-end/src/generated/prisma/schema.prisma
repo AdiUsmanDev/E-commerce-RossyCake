@@ -193,6 +193,24 @@ model custom_orders {
   orders              orders?   @relation(fields: [order_id], references: [id], onDelete: Cascade)
 }
 
+model shipping_method {
+  id                      Int      @id @default(autoincrement())
+  name                    String   @unique @db.VarChar(100)
+  cost                    Decimal  @db.Decimal(10, 2)
+  estimated_delivery_time String?  @db.VarChar(50)
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+}
+
+model Settings {
+  id              Int      @id @default(1) // Hanya ada satu baris, dengan ID 1
+  siteName        String   @default("Rossi Cake")
+  siteTagline     String   @default("Kue Lezat, Momen Spesial")
+  maintenanceMode Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 enum Role {
   CUSTOMER
   ADMIN

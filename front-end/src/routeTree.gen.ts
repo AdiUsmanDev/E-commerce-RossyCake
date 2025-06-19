@@ -22,6 +22,7 @@ const IndexLazyImport = createFileRoute('/')()
 const ShopIndexLazyImport = createFileRoute('/shop/')()
 const AdminIndexLazyImport = createFileRoute('/admin/')()
 const SplatIndexLazyImport = createFileRoute('/$/')()
+const ProductProductIdLazyImport = createFileRoute('/product/$productId')()
 const ShopCheckoutIndexLazyImport = createFileRoute('/shop/checkout/')()
 const ShopCheckoutIdLazyImport = createFileRoute('/shop/checkout/$id')()
 const ShopCheckoutOrderSuccessOrderIdLazyImport = createFileRoute(
@@ -59,6 +60,14 @@ const AuthIndexRoute = AuthIndexImport.update({
   path: '/auth/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const ProductProductIdLazyRoute = ProductProductIdLazyImport.update({
+  id: '/product/$productId',
+  path: '/product/$productId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/product/$productId.lazy').then((d) => d.Route),
+)
 
 const ShopCheckoutIndexLazyRoute = ShopCheckoutIndexLazyImport.update({
   id: '/shop/checkout/',
@@ -102,6 +111,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/product/$productId': {
+      id: '/product/$productId'
+      path: '/product/$productId'
+      fullPath: '/product/$productId'
+      preLoaderRoute: typeof ProductProductIdLazyImport
       parentRoute: typeof rootRoute
     }
     '/auth/': {
@@ -167,6 +183,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/product/$productId': typeof ProductProductIdLazyRoute
   '/auth': typeof AuthIndexRoute
   '/$': typeof SplatIndexLazyRoute
   '/admin': typeof AdminIndexLazyRoute
@@ -179,6 +196,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/product/$productId': typeof ProductProductIdLazyRoute
   '/auth': typeof AuthIndexRoute
   '/$': typeof SplatIndexLazyRoute
   '/admin': typeof AdminIndexLazyRoute
@@ -192,6 +210,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/product/$productId': typeof ProductProductIdLazyRoute
   '/auth/': typeof AuthIndexRoute
   '/$/': typeof SplatIndexLazyRoute
   '/admin/': typeof AdminIndexLazyRoute
@@ -206,6 +225,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/product/$productId'
     | '/auth'
     | '/$'
     | '/admin'
@@ -217,6 +237,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/product/$productId'
     | '/auth'
     | '/$'
     | '/admin'
@@ -228,6 +249,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/product/$productId'
     | '/auth/'
     | '/$/'
     | '/admin/'
@@ -241,6 +263,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  ProductProductIdLazyRoute: typeof ProductProductIdLazyRoute
   AuthIndexRoute: typeof AuthIndexRoute
   SplatIndexLazyRoute: typeof SplatIndexLazyRoute
   AdminIndexLazyRoute: typeof AdminIndexLazyRoute
@@ -253,6 +276,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  ProductProductIdLazyRoute: ProductProductIdLazyRoute,
   AuthIndexRoute: AuthIndexRoute,
   SplatIndexLazyRoute: SplatIndexLazyRoute,
   AdminIndexLazyRoute: AdminIndexLazyRoute,
@@ -275,6 +299,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/product/$productId",
         "/auth/",
         "/$/",
         "/admin/",
@@ -287,6 +312,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/product/$productId": {
+      "filePath": "product/$productId.lazy.tsx"
     },
     "/auth/": {
       "filePath": "auth/index.tsx"

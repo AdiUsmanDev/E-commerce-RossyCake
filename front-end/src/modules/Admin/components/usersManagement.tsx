@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Toaster, toast } from "react-hot-toast";
+import {  toast } from "react-hot-toast";
 import {
   Table,
   TableBody,
@@ -339,7 +339,7 @@ const UserManagementPage: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-5 p-4 md:p-6 lg:p-8 w-full">
-      <Toaster position="top-center" reverseOrder={false} />
+     
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
           Manajemen Pengguna

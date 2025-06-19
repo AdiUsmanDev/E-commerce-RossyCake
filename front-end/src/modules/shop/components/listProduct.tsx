@@ -3,6 +3,7 @@ import { HoverBorderGradient } from "@/components/ui/hover-border-gradient"; // 
 import CardProduct from "./ProductCard";
 import { useState } from "react";
 import { Product } from "@/types/product.types";
+import ProductCard from "@/modules/home/components/ProductCard";
 
 interface ListProductProps {
   products: Product[];
@@ -41,11 +42,7 @@ const ListProduct = ({ products, onAddToCart }: ListProductProps) => {
       {filteredProducts?.length > 0 ? (
         <div className="listProducts grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 my-10">
           {filteredProducts.map((product) => (
-            <CardProduct
-              key={product.id}
-              product={product}
-              onAddToCart={onAddToCart}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (

@@ -4,11 +4,15 @@ import { useState, FormEvent, useEffect, ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "@tanstack/react-router";
 import { AppDispatch, RootState } from "@/lib/redux/store";
-import { loginUser, registerUser, resetAuthStatus } from "@/lib/redux/slices/authSlice";
+import {
+  loginUser,
+  registerUser,
+  resetAuthStatus,
+} from "@/lib/redux/slices/authSlice";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import InputAuth from "./InputAuth";
 import { LoaderCircle, User, Mail, Lock, ArrowLeft } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 interface AuthFormProps {
   isSignUp: boolean;
@@ -25,7 +29,9 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { status, token, error } = useSelector((state: RootState) => state.auth);
+  const { status, token, error } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const [formState, setFormState] = useState<FormState>({
     name: "",
@@ -33,7 +39,9 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
     password: "",
   });
   // State untuk melacak aksi terakhir yang disubmit
-  const [submittedAction, setSubmittedAction] = useState<"login" | "register" | null>(null);
+  const [submittedAction, setSubmittedAction] = useState<
+    "login" | "register" | null
+  >(null);
 
   // PERBAIKAN: useEffect untuk menampilkan notifikasi berdasarkan status dari Redux
   useEffect(() => {
@@ -47,7 +55,7 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
       }
       // Notifikasi login akan ditangani oleh useEffect di bawah yang menghandle navigasi
       if (submittedAction === "login" && token) {
-         toast.success("Berhasil masuk!");
+        toast.success("Berhasil masuk!");
       }
       setSubmittedAction(null); // Reset aksi
       dispatch(resetAuthStatus()); // Reset status di Redux
@@ -99,14 +107,6 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
 
   return (
     <div className="relative flex flex-col items-center w-full max-w-sm">
-      <Toaster position="top-center" />
-      <button
-        onClick={() => navigate({ to: "/" })}
-        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-        aria-label="Go back"
-      >
-        <ArrowLeft size={24} className="text-gray-600 dark:text-gray-300" />
-      </button>
       <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
         {isSignUp ? "Buat Akun" : "Masuk"}
       </h2>
@@ -118,7 +118,9 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
             type="text"
             placeholder="Nama"
             value={formState.name}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("name", e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleInputChange("name", e.target.value)
+            }
           />
         )}
         <InputAuth
@@ -126,20 +128,27 @@ const AuthForm = ({ isSignUp, onSwitch }: AuthFormProps) => {
           type="email"
           placeholder="Email"
           value={formState.email}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("email", e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            handleInputChange("email", e.target.value)
+          }
         />
         <InputAuth
           icon={<Lock size={20} className="text-gray-400" />}
           type="password"
           placeholder="Password"
           value={formState.password}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("password", e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            handleInputChange("password", e.target.value)
+          }
         />
-        {!isSignUp && (
-          <a href="#" className="text-sm text-gray-500 dark:text-gray-400 self-end mb-4">
+        {/* {!isSignUp && (
+          <a
+            href="#"
+            className="text-sm text-gray-500 dark:text-gray-400 self-end mb-4"
+          >
             Lupa password?
           </a>
-        )}
+        )} */}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2.5 mt-2 rounded-full font-semibold hover:bg-blue-600 transition flex items-center justify-center disabled:bg-blue-400"

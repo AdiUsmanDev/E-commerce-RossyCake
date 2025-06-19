@@ -85,7 +85,7 @@ export const NewArrivalsSection = () => {
                   className="pl-10 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
                 >
                   {/* Asumsi ProductCard menerima onAddToCart, jika tidak, bisa dihapus */}
-                  <ProductCard product={product} onAddToCart={() => {}} />
+                  <ProductCard product={product} />
                 </CarouselItem>
               ))
             )}

@@ -11,8 +11,10 @@ export const getProductById = async (productId: number): Promise<Product> => {
   if (!productId) {
     throw new Error("Product ID is required to fetch a product.");
   }
-  const { data } = await apiClient.get<Product>(`/products/${productId}`);
-  return data;
+  const response = await apiClient.get<ApiResponse<Product>>(
+    `/products/${productId}`
+  );
+  return response.data.data;
 };
 
 export const createProduct = async (
